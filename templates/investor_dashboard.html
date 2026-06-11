@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Investor · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<style>
+:root{
+  --bg:#fdf8f3;--surf:#fff;--card2:#fdf5eb;
+  --gold:#b87333;--gold2:#d4a054;--gold3:#f5e0b0;--goldG:rgba(184,115,51,.1);
+  --border:#eadece;--muted:#9a8070;--text:#2d1a0e;--text2:#6b4c35;
+  --green:#16a34a;--gG:rgba(22,163,74,.1);--red:#dc2626;--rG:rgba(220,38,38,.1);
+  --blue:#0369a1;--blueG:rgba(3,105,161,.08);
+  --sh:0 1px 4px rgba(0,0,0,.07);--shm:0 6px 24px rgba(0,0,0,.1);--shl:0 16px 48px rgba(0,0,0,.14)
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;display:grid;grid-template-columns:236px 1fr;position:relative}
+#ptcl{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.25}
+aside{background:var(--surf);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:10;position:relative;box-shadow:2px 0 12px rgba(184,115,51,.08)}
+.a-logo{padding:1.1rem 1.15rem .9rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.55rem}
+.a-logo-t{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;background:linear-gradient(120deg,var(--gold),var(--gold3));-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex:1}
+.a-badge{background:var(--goldG);color:var(--gold);border:1px solid rgba(184,115,51,.25);padding:.14rem .44rem;border-radius:100px;font-size:.6rem;font-weight:700;text-transform:uppercase}
+.aside-user{padding:.85rem 1.15rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:.65rem}
+.av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;flex-shrink:0;box-shadow:0 2px 8px rgba(184,115,51,.35)}
+.u-name{font-size:.83rem;font-weight:600;color:var(--text)}
+.u-role{font-size:.67rem;color:var(--gold);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+nav.side{flex:1;padding:.5rem 0;overflow-y:auto}
+.ns{padding:.26rem 1.1rem;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-top:.45rem}
+.ni{display:flex;align-items:center;gap:.52rem;padding:.52rem 1.1rem;color:var(--text2);font-size:.83rem;font-weight:500;transition:all .18s;cursor:pointer;border:none;background:none;width:100%;text-align:left;border-left:2.5px solid transparent}
+.ni:hover{color:var(--gold);background:var(--goldG)}
+.ni.active{color:var(--gold);background:var(--goldG);font-weight:600;border-left-color:var(--gold)}
+.nb{margin-left:auto;background:var(--gold);color:#fff;border-radius:100px;font-size:.58rem;font-weight:700;padding:.08rem .38rem}
+.a-foot{padding:.85rem 1.1rem;border-top:1px solid var(--border)}
+.logout{display:flex;align-items:center;gap:.42rem;color:var(--muted);text-decoration:none;font-size:.8rem;transition:color .15s;padding:.3rem 0}
+.logout:hover{color:var(--red)}
+main{display:flex;flex-direction:column;overflow:hidden;z-index:5;position:relative}
+.topbar{padding:.75rem 1.65rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--surf);flex-shrink:0;box-shadow:var(--sh)}
+.pt{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:900}
+.ps{font-size:.71rem;color:var(--muted);margin-top:.06rem}
+.badge-live{display:flex;align-items:center;gap:.32rem;background:var(--gG);border:1px solid rgba(22,163,74,.22);color:var(--green);padding:.22rem .58rem;border-radius:100px;font-size:.67rem;font-weight:700}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.tb-r{display:flex;align-items:center;gap:.55rem}
+.content{flex:1;overflow-y:auto;padding:1.25rem 1.65rem;display:flex;flex-direction:column;gap:1.1rem}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.sec{display:none;animation:fadeUp .3s ease both}
+.sec.active{display:flex;flex-direction:column;gap:1.1rem}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem}
+.sc{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;box-shadow:var(--sh);position:relative;overflow:hidden;transition:box-shadow .2s,transform .18s}
+.sc:hover{box-shadow:var(--shm);transform:translateY(-2px)}
+.sa{position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.si{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0}
+.sg{background:#dcfce7}.sy{background:#fef3c7}.sb{background:#e0f2fe}.sp{background:#ede9fe}
+.sv{font-family:'Playfair Display',serif;font-size:1.65rem;font-weight:900;line-height:1;color:var(--text);margin-top:.3rem}
+.sl{font-size:.67rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.04em;margin-top:.2rem}
+.panel{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.75rem;box-shadow:var(--sh)}
+.ph{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between;padding-bottom:.6rem;border-bottom:1px solid var(--border)}
+.phv{font-size:.72rem;font-weight:600;color:var(--gold);background:var(--goldG);padding:.12rem .42rem;border-radius:6px;text-transform:none;letter-spacing:0}
+.pitches-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.pitch-card{background:var(--surf);border:1px solid var(--border);border-radius:14px;overflow:hidden;cursor:pointer;transition:all .25s;box-shadow:var(--sh)}
+.pitch-card:hover{box-shadow:var(--shm);transform:translateY(-4px);border-color:rgba(184,115,51,.35)}
+.pc-img{height:145px;position:relative;overflow:hidden;flex-shrink:0}
+.pc-img img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
+.pitch-card:hover .pc-img img{transform:scale(1.07)}
+.pc-ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(45,26,14,.05) 0%,rgba(45,26,14,.75) 100%)}
+.pc-top{position:absolute;top:.6rem;left:.6rem;right:.6rem;display:flex;align-items:flex-start;justify-content:space-between}
+.pc-cat{background:rgba(184,115,51,.85);backdrop-filter:blur(6px);color:#fff;padding:.2rem .55rem;border-radius:100px;font-size:.67rem;font-weight:700}
+.pc-score{background:rgba(255,255,255,.9);backdrop-filter:blur(6px);color:var(--text);font-family:'Playfair Display',serif;font-size:.82rem;font-weight:900;padding:.18rem .5rem;border-radius:100px}
+.pc-locked{position:absolute;inset:0;background:rgba(45,26,14,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;font-size:2rem}
+.pc-body{padding:1rem}
+.pc-title{font-size:.88rem;font-weight:600;line-height:1.45;margin-bottom:.45rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--text)}
+.pc-preview{font-size:.77rem;color:var(--muted);line-height:1.6;margin-bottom:.65rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:300}
+.pc-tags{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.7rem}
+.pc-tag{background:var(--goldG);border:1px solid rgba(184,115,51,.2);color:var(--gold);padding:.15rem .45rem;border-radius:5px;font-size:.67rem;font-weight:600}
+.pc-actions{display:flex;gap:.5rem}
+.btn-unlock{flex:1;background:linear-gradient(135deg,#7a4a10,var(--gold));color:#fff;border:none;padding:.5rem;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;text-align:center;text-decoration:none;display:block}
+.btn-unlock:hover{box-shadow:0 6px 18px rgba(184,115,51,.4)}
+.btn-view{flex:1;background:var(--goldG);border:1.5px solid rgba(184,115,51,.25);color:var(--gold);padding:.5rem;border-radius:8px;font-size:.78rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;text-align:center;text-decoration:none;display:block}
+.btn-view:hover{background:rgba(184,115,51,.18)}
+.filter-bar{background:var(--surf);border:1px solid var(--border);border-radius:12px;padding:.9rem 1.1rem;display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;box-shadow:var(--sh)}
+.filter-bar label{font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase}
+.inp{background:var(--card2);border:1.5px solid var(--border);border-radius:8px;padding:.38rem .75rem;color:var(--text);font-size:.8rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .15s}
+.inp:focus{border-color:var(--gold)}.inp::placeholder{color:var(--muted)}.ins{flex:1;min-width:155px}
+.detail-panel{background:var(--surf);border:1px solid var(--border);border-radius:14px;display:none;flex-direction:column;gap:1rem;padding:1.4rem;box-shadow:var(--sh);animation:fadeUp .25s ease}
+.detail-panel.open{display:flex}
+.detail-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--border);padding-bottom:.85rem;overflow-x:auto}
+.dtab{padding:.38rem .82rem;border-radius:8px;font-size:.77rem;font-weight:600;cursor:pointer;border:1px solid transparent;color:var(--muted);background:transparent;font-family:'DM Sans',sans-serif;transition:all .18s;white-space:nowrap}
+.dtab.active{background:var(--goldG);color:var(--gold);border-color:rgba(184,115,51,.25)}
+.dtab:hover:not(.active){color:var(--gold)}
+.ablock{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.9rem}
+.ablock-label{font-size:.7rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.55rem}
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
+.run-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--goldG);border:1px solid rgba(184,115,51,.25);color:var(--gold);padding:.38rem .82rem;border-radius:7px;font-size:.77rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.run-btn:hover{background:rgba(184,115,51,.18)}.run-btn:disabled{opacity:.4;cursor:not-allowed}
+.sc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem}
+.sc-card{border-radius:10px;padding:.9rem;text-align:center}
+.sc-card.base{background:#f0fdf4;border:1px solid #bbf7d0}
+.sc-card.bull{background:#f0fdf4;border:1px solid #86efac}
+.sc-card.bear{background:#fef2f2;border:1px solid #fecaca}
+.sc-title{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.5rem;color:var(--muted)}
+.sc-val{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.sc-sub{font-size:.7rem;color:var(--muted);font-weight:300}
+.risk-row{display:flex;align-items:center;gap:.75rem;padding:.65rem .85rem;background:var(--card2);border:1px solid var(--border);border-radius:9px;margin-bottom:.45rem}
+.risk-cat{flex:1;font-size:.83rem;font-weight:600;color:var(--text)}
+.risk-level{padding:.18rem .55rem;border-radius:100px;font-size:.68rem;font-weight:800}
+.risk-level.Critical,.risk-level.High{background:#fee2e2;color:#dc2626}
+.risk-level.Medium{background:#fef3c7;color:#d97706}
+.risk-level.Low{background:#dcfce7;color:#16a34a}
+.email-block{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.9rem;margin-bottom:.7rem}
+.email-type{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--gold);margin-bottom:.4rem}
+.email-subject{font-size:.84rem;font-weight:600;margin-bottom:.45rem;color:var(--text)}
+.email-body{font-size:.78rem;color:var(--text2);line-height:1.65;white-space:pre-line;font-weight:300}
+.copy-btn{margin-top:.55rem;background:var(--goldG);border:1px solid rgba(184,115,51,.2);color:var(--gold);padding:.28rem .65rem;border-radius:6px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s}
+.copy-btn:hover{background:rgba(184,115,51,.18)}
+.msg-list{display:flex;flex-direction:column;gap:.65rem;max-height:400px;overflow-y:auto;padding-right:.25rem}
+.msg-item{display:flex;gap:.65rem;padding:.75rem;background:var(--card2);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:all .18s}
+.msg-item:hover{border-color:rgba(184,115,51,.3);background:var(--surf)}
+.msg-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;flex-shrink:0}
+.msg-meta{flex:1;min-width:0}
+.msg-sender{font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.15rem}
+.msg-preview{font-size:.75rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:300}
+.msg-time{font-size:.67rem;color:var(--muted);white-space:nowrap}
+.msg-unread{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;margin-top:.35rem}
+.ch-wrap{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:1rem 1.1rem;box-shadow:var(--sh);display:flex;flex-direction:column;gap:.6rem}
+.ch-title{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+canvas{max-height:220px !important}
+.btn{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .62rem;border-radius:7px;font-size:.71rem;font-weight:600;cursor:pointer;border:1px solid;font-family:'DM Sans',sans-serif;transition:all .15s}
+.bg2{background:var(--gG);color:var(--green);border-color:rgba(22,163,74,.25)}.bg2:hover{background:rgba(22,163,74,.18)}
+.bgold{background:var(--goldG);color:var(--gold);border-color:rgba(184,115,51,.25)}.bgold:hover{background:rgba(184,115,51,.18)}
+.badge{display:inline-block;padding:.16rem .48rem;border-radius:100px;font-size:.64rem;font-weight:700;white-space:nowrap}
+.bg-b{background:var(--gG);color:var(--green)}.by-b{background:#fef3c7;color:#d97706}.br-b{background:var(--rG);color:var(--red)}.bgold-b{background:var(--goldG);color:var(--gold)}
+.empty-state{text-align:center;padding:2.5rem;color:var(--muted)}
+.empty-state .big{font-size:2.5rem;margin-bottom:.6rem}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(184,115,51,.2);border-top-color:var(--gold);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ib{background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:.65rem .85rem;font-size:.75rem;color:var(--text2);line-height:1.85}
+.ib strong{color:var(--text)}
+
+/* ── PAYMENT MODAL ── */
+.pay-mo{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;padding:1rem;backdrop-filter:blur(4px)}
+.pay-mo.open{display:flex}
+.pay-md{background:var(--surf);border-radius:20px;width:100%;max-width:460px;overflow:hidden;box-shadow:var(--shl);border:1px solid var(--border);animation:mdIn .25s cubic-bezier(.22,1,.36,1)}
+@keyframes mdIn{from{opacity:0;transform:scale(.94) translateY(16px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.pay-head{background:linear-gradient(135deg,#5c2d0a,#7a4a10,var(--gold));padding:1.4rem 1.5rem 1.1rem;position:relative}
+.pay-head-pid{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.28rem}
+.pay-head-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:900;color:#fff;margin-bottom:.55rem;line-height:1.3}
+.pay-head-price{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;padding:.28rem .78rem;border-radius:100px;font-size:.8rem;font-weight:700}
+.pay-x{position:absolute;top:.85rem;right:.85rem;width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.78rem}
+.pay-x:hover{background:rgba(255,255,255,.25)}
+.pay-body{padding:1.3rem 1.5rem}
+.pay-features{display:flex;flex-direction:column;gap:.38rem;margin-bottom:1rem}
+.pay-feat{display:flex;align-items:center;gap:.55rem;padding:.5rem .75rem;background:var(--card2);border:1px solid var(--border);border-radius:8px;font-size:.79rem;color:var(--text2);font-weight:500}
+.pay-divider{border:none;border-top:1px solid var(--border);margin:.1rem 0 .9rem}
+.pay-amt-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem}
+.pay-amt-lbl{font-size:.82rem;color:var(--muted)}
+.pay-amt-val{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:900;color:var(--gold)}
+.pay-amt-sub{font-size:.62rem;color:var(--muted);text-align:right;margin-top:.05rem}
+.upi-lbl{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.6rem}
+.upi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.45rem;margin-bottom:.8rem}
+.upi-btn{border:1.5px solid var(--border);border-radius:9px;padding:.6rem .35rem;background:var(--card2);cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:.3rem;font-size:.68rem;font-weight:600;color:var(--text2)}
+.upi-btn:hover,.upi-btn.sel{border-color:var(--gold);background:var(--goldG);color:var(--gold)}
+.upi-icon{font-size:1.15rem}
+.upi-id-row{display:flex;gap:.5rem;margin-bottom:.85rem}
+.upi-inp{flex:1;background:var(--card2);border:1.5px solid var(--border);border-radius:8px;padding:.65rem .85rem;color:var(--text);font-size:.83rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .18s}
+.upi-inp:focus{border-color:var(--gold)}.upi-inp::placeholder{color:var(--muted)}
+.pay-btn{width:100%;padding:.85rem;border-radius:10px;border:none;background:linear-gradient(135deg,#7a4a10,var(--gold),var(--gold2));color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 16px rgba(184,115,51,.3);transition:all .2s}
+.pay-btn:hover{box-shadow:0 8px 26px rgba(184,115,51,.45);transform:translateY(-1px)}
+.pay-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.pay-secure{display:flex;align-items:center;justify-content:center;gap:.32rem;margin-top:.7rem;font-size:.67rem;color:var(--muted)}
+.pay-proc{display:none;text-align:center;padding:.6rem 0 .3rem}
+.pay-proc-spin{width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:sp .85s linear infinite;margin:0 auto .65rem}
+.pay-proc-t{font-family:'Playfair Display',serif;font-size:.92rem;font-weight:900;color:var(--gold);margin-bottom:.22rem}
+.pay-proc-s{font-size:.77rem;color:var(--muted);font-weight:300}
+.pay-ok{display:none;text-align:center;padding:.6rem 0 .3rem}
+.pay-ok-ico{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--green),#22c55e);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto .65rem;box-shadow:0 6px 18px rgba(22,163,74,.28)}
+.pay-ok-t{font-family:'Playfair Display',serif;font-size:.98rem;font-weight:900;color:var(--green);margin-bottom:.22rem}
+.pay-ok-s{font-size:.79rem;color:var(--muted);margin-bottom:1rem}
+.go-btn{background:linear-gradient(135deg,#7a4a10,var(--gold));color:#fff;border:none;padding:.68rem 1.4rem;border-radius:9px;font-size:.83rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;box-shadow:0 4px 12px rgba(184,115,51,.28);transition:all .2s}
+.go-btn:hover{box-shadow:0 8px 22px rgba(184,115,51,.42);transform:translateY(-1px)}
+
+@media(max-width:960px){body{grid-template-columns:1fr}aside{display:none}.pitches-grid{grid-template-columns:1fr 1fr}.analysis-grid,.sc-grid{grid-template-columns:1fr}.stat-row{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="ptcl"></div>
+
+<aside>
+  <div class="a-logo">
+    <div class="a-logo-t">💰 DreamLaunch</div>
+    <div class="a-badge">Investor</div>
+  </div>
+  <div class="aside-user">
+    <div class="av" id="userAv">V</div>
+    <div>
+      <div class="u-name">{{ user_name }}</div>
+      <div class="u-role">Venture Capital</div>
+    </div>
+  </div>
+  <nav class="side">
+    <div class="ns">Deal Flow</div>
+    <button class="ni active" onclick="nav(this,'s-pitches')"><span>📋</span>All Pitches<span class="nb" id="nb-p">0</span></button>
+    <button class="ni" onclick="nav(this,'s-unlocked')"><span>🔓</span>Unlocked Deals<span class="nb" id="nb-u">0</span></button>
+    <div class="ns">Analytics</div>
+    <button class="ni" onclick="nav(this,'s-charts')"><span>📊</span>Charts &amp; Insights</button>
+    <div class="ns">Communication</div>
+    <button class="ni" onclick="nav(this,'s-messages')"><span>💬</span>Messages<span class="nb" id="nb-m">0</span></button>
+    <div class="ns">Settings</div>
+    <button class="ni" onclick="nav(this,'s-thesis')"><span>🎯</span>My Thesis</button>
+  </nav>
+  <div class="a-foot">
+    <a href="/logout" class="logout">↩ Logout</a>
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <div>
+      <div class="pt" id="pgT">All Pitches</div>
+      <div class="ps" id="pgS">Browse and analyze startup pitches</div>
+    </div>
+    <div class="tb-r">
+      <div class="badge-live"><span class="dot"></span>AI Live</div>
+      <span style="font-size:.78rem;color:var(--muted)">Gemini 2.5 Flash</span>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="stat-row" id="statsRow"></div>
+
+    <!-- ALL PITCHES -->
+    <div class="sec active" id="s-pitches">
+      <div class="filter-bar">
+        <label>Filter:</label>
+        <input type="text" class="inp ins" placeholder="🔍 Search pitches…" oninput="filterPitches()" id="searchInput">
+        <select class="inp" onchange="filterPitches()" id="catFilter"><option value="">All Industries</option><option>HealthTech</option><option>FinTech</option><option>EdTech</option><option>AgriTech</option><option>SaaS</option><option>CleanTech</option><option>E-commerce</option><option>LogisticsTech</option></select>
+        <select class="inp" onchange="filterPitches()" id="scoreFilter"><option value="">All Scores</option><option value="80">Score 80+</option><option value="70">Score 70+</option><option value="60">Score 60+</option></select>
+        <select class="inp" onchange="filterPitches()" id="lockFilter"><option value="">All Pitches</option><option value="unlocked">Unlocked Only</option><option value="locked">Locked Only</option></select>
+      </div>
+      <div class="pitches-grid" id="pitchesGrid"></div>
+    </div>
+
+    <!-- UNLOCKED -->
+    <div class="sec" id="s-unlocked">
+      <div class="pitches-grid" id="unlockedGrid"></div>
+    </div>
+
+    <!-- CHARTS -->
+    <div class="sec" id="s-charts">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="ch-wrap"><div class="ch-title">📊 Score Distribution</div><canvas id="ch-scores"></canvas></div>
+        <div class="ch-wrap"><div class="ch-title">🏷️ Industry Breakdown</div><canvas id="ch-cats"></canvas></div>
+        <div class="ch-wrap" style="grid-column:1/-1"><div class="ch-title">📈 Score vs Industry (Avg) — Benchmark your portfolio</div><canvas id="ch-catsc" style="max-height:180px !important"></canvas></div>
+        <div class="ch-wrap"><div class="ch-title">🔓 Locked vs Unlocked</div><canvas id="ch-lock"></canvas></div>
+        <div class="ch-wrap"><div class="ch-title">🎯 Grade Distribution</div><canvas id="ch-grade"></canvas></div>
+        <div class="ch-wrap" style="grid-column:1/-1"><div class="ch-title">💰 Investment Pipeline — Potential vs Actual</div><canvas id="ch-pipeline" style="max-height:180px !important"></canvas></div>
+      </div>
+    </div>
+
+    <!-- MESSAGES -->
+    <div class="sec" id="s-messages">
+      <div class="panel">
+        <div class="ph">💬 Pitch Conversations <span class="phv" id="ms-count">0 threads</span></div>
+        <div id="msgConvList" class="msg-list"></div>
+      </div>
+      <div class="detail-panel" id="msgDetail">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:900" id="msgDetailTitle">Conversation</div>
+          <button onclick="closeMsgDetail()" style="background:var(--card2);border:1px solid var(--border);color:var(--muted);padding:.3rem .7rem;border-radius:7px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.8rem">✕ Close</button>
+        </div>
+        <div id="msgThread" style="display:flex;flex-direction:column;gap:.65rem;max-height:380px;overflow-y:auto;padding-right:.25rem"></div>
+        <div style="display:flex;gap:.65rem;margin-top:.25rem">
+          <input type="text" class="inp" style="flex:1" placeholder="Type a message…" id="msgInput" onkeydown="if(event.key==='Enter')sendMsg()">
+          <button class="btn bgold" onclick="sendMsg()">Send →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- THESIS -->
+    <div class="sec" id="s-thesis">
+      <div class="panel">
+        <div class="ph">🎯 Investment Thesis</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">
+          <div><label style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.4rem">Thesis Statement</label>
+          <textarea id="thesisText" style="width:100%;background:var(--card2);border:1.5px solid var(--border);border-radius:9px;padding:.75rem;color:var(--text);font-size:.85rem;font-family:'DM Sans',sans-serif;resize:vertical;min-height:100px;outline:none;transition:border-color .15s" placeholder="Describe your investment focus…" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"></textarea></div>
+          <div style="display:flex;flex-direction:column;gap:.65rem">
+            <div><label style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.4rem">Industries</label><input type="text" class="inp" style="width:100%" id="thIndustry" placeholder="HealthTech, FinTech, SaaS…"></div>
+            <div><label style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.4rem">Stage</label><select class="inp" style="width:100%" id="thStage"><option>Seed</option><option>Pre-Seed</option><option>Series A</option><option>Series B+</option></select></div>
+            <div style="display:flex;gap:.5rem"><div style="flex:1"><label style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.4rem">Min Ticket (₹ Lakhs)</label><input type="number" class="inp" style="width:100%" id="thMin" placeholder="50"></div><div style="flex:1"><label style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:.4rem">Max Ticket (₹ Lakhs)</label><input type="number" class="inp" style="width:100%" id="thMax" placeholder="500"></div></div>
+          </div>
+        </div>
+        <button class="run-btn" onclick="saveThesis()">💾 Save Thesis</button>
+      </div>
+    </div>
+
+    <!-- DETAIL PANEL -->
+    <div class="detail-panel" id="detailPanel">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
+        <div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900" id="detailTitle">Deep Analysis</div>
+          <div style="font-size:.77rem;color:var(--muted);margin-top:.18rem" id="detailSub"></div>
+        </div>
+        <div style="display:flex;gap:.55rem;align-items:center">
+          <span id="detailLockStatus"></span>
+          <button onclick="closeDetail()" style="background:var(--card2);border:1px solid var(--border);color:var(--muted);padding:.33rem .75rem;border-radius:7px;cursor:pointer;font-size:.8rem;font-family:'DM Sans',sans-serif">✕ Close</button>
+        </div>
+      </div>
+      <div class="detail-tabs" id="detailTabs"></div>
+      <div id="detailBody"></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- PAYMENT MODAL -->
+<div class="pay-mo" id="payMo">
+  <div class="pay-md">
+    <div class="pay-head">
+      <button class="pay-x" onclick="closePayMo()">✕</button>
+      <div class="pay-head-pid" id="payPid">Pitch #—</div>
+      <div class="pay-head-title" id="payTitle">Loading…</div>
+      <div class="pay-head-price">₹ 5,000 · One-time unlock</div>
+    </div>
+    <div class="pay-body">
+      <div id="payForm">
+        <div class="pay-features">
+          <div class="pay-feat"><span>🔍</span>Due Diligence Checklist</div>
+          <div class="pay-feat"><span>📊</span>Investment Committee Memo</div>
+          <div class="pay-feat"><span>⚖️</span>Risk Assessment Matrix</div>
+          <div class="pay-feat"><span>📋</span>Term Sheet Generator</div>
+          <div class="pay-feat"><span>📈</span>ROI Exit Scenarios + 8 more tools</div>
+        </div>
+        <hr class="pay-divider">
+        <div class="pay-amt-row">
+          <div class="pay-amt-lbl">Total Amount</div>
+          <div><div class="pay-amt-val">₹5,000</div><div class="pay-amt-sub">One-time · Full AI access</div></div>
+        </div>
+        <div class="upi-lbl">Pay via UPI</div>
+        <div class="upi-grid">
+          <button class="upi-btn" onclick="selUPI(this,'gpay')"><span class="upi-icon">🟢</span>Google Pay</button>
+          <button class="upi-btn" onclick="selUPI(this,'phonepe')"><span class="upi-icon">🟣</span>PhonePe</button>
+          <button class="upi-btn" onclick="selUPI(this,'paytm')"><span class="upi-icon">🔵</span>Paytm</button>
+          <button class="upi-btn" onclick="selUPI(this,'amazonpay')"><span class="upi-icon">🟠</span>Amazon Pay</button>
+          <button class="upi-btn" onclick="selUPI(this,'bhim')"><span class="upi-icon">🇮🇳</span>BHIM</button>
+          <button class="upi-btn" onclick="selUPI(this,'other')"><span class="upi-icon">◆</span>Other UPI</button>
+        </div>
+        <div class="upi-id-row">
+          <input type="text" class="upi-inp" id="upiInp" placeholder="Enter UPI ID  e.g. name@upi">
+        </div>
+        <button class="pay-btn" id="payNowBtn" onclick="doPay()">🔐 Pay ₹5,000 &amp; Unlock</button>
+        <div class="pay-secure">🔒 256-bit encrypted · Instant unlock after payment</div>
+      </div>
+      <div class="pay-proc" id="payProc">
+        <div class="pay-proc-spin"></div>
+        <div class="pay-proc-t">Processing Payment…</div>
+        <div class="pay-proc-s">Verifying your UPI transaction</div>
+      </div>
+      <div class="pay-ok" id="payOk">
+        <div class="pay-ok-ico">✓</div>
+        <div class="pay-ok-t">Payment Successful! 🎉</div>
+        <div class="pay-ok-s">Pitch unlocked. All 13 AI investor tools now available.</div>
+        <button class="go-btn" onclick="goReport()">Open Full Analysis →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_PITCHES = {{ pitches|safe }};
+const STATS       = {{ stats|safe }};
+const UNLOCKED    = {{ unlocked_ids|safe }};
+const FN_M        = {{ fn_meta|safe }};
+const USER_ID     = {{ user_id }};
+
+const PI = {
+  's-pitches': ['All Pitches','Browse and analyze startup pitches'],
+  's-unlocked': ['Unlocked Deals','Your purchased pitch reports'],
+  's-charts': ['Charts & Insights','Visual analytics of deal flow'],
+  's-messages': ['Messages','Pitch conversations with founders'],
+  's-thesis': ['My Thesis','Your investment criteria']
+};
+const IMGS = [
+  'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/1181406/pexels-photo-1181406.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/3182812/pexels-photo-3182812.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/3182773/pexels-photo-3182773.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/1181244/pexels-photo-1181244.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=600',
+  'https://images.pexels.com/photos/4050290/pexels-photo-4050290.jpeg?auto=compress&cs=tinysrgb&w=600',
+];
+
+let activePitch=null, activeThread=null, chartsBuilt=false, pollTimer=null;
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function tr(s,n){s=String(s||'');return s.length>n?s.substring(0,n)+'…':s}
+function sj(s){try{return typeof s==='object'&&s!==null?s:JSON.parse(s||'{}')}catch{return{}}}
+
+/* ── NAV ── */
+function nav(btn,id){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  const sec=document.getElementById(id);if(sec)sec.classList.add('active');
+  const i=PI[id]||['Investor',''];
+  document.getElementById('pgT').textContent=i[0];
+  document.getElementById('pgS').textContent=i[1];
+  document.getElementById('detailPanel').classList.remove('open');
+  if(id==='s-charts'&&!chartsBuilt){buildCharts();chartsBuilt=true;}
+  if(id==='s-messages')loadMessages();
+  if(id==='s-unlocked')renderUnlocked();
+}
+
+/* ── STATS ── */
+function renderStats(){
+  document.getElementById('nb-p').textContent=ALL_PITCHES.length;
+  document.getElementById('nb-u').textContent=STATS.unlockedDeals||0;
+  document.getElementById('userAv').textContent=('{{ user_name }}'[0]||'V').toUpperCase();
+  document.getElementById('statsRow').innerHTML=`
+    <div class="sc"><div class="sa" style="background:linear-gradient(90deg,#b87333,#d4a054)"></div><div class="si sy" style="margin-bottom:.25rem">📋</div><div class="sv">${ALL_PITCHES.length}</div><div class="sl">Total Pitches</div></div>
+    <div class="sc"><div class="sa" style="background:linear-gradient(90deg,#16a34a,#22c55e)"></div><div class="si sg" style="margin-bottom:.25rem">🔓</div><div class="sv">${STATS.unlockedDeals||0}</div><div class="sl">Unlocked Deals</div></div>
+    <div class="sc"><div class="sa" style="background:linear-gradient(90deg,#0369a1,#0284c7)"></div><div class="si sb" style="margin-bottom:.25rem">📊</div><div class="sv">${STATS.avgScore||0}</div><div class="sl">Avg AI Score</div></div>
+    <div class="sc"><div class="sa" style="background:linear-gradient(90deg,#7c3aed,#8b5cf6)"></div><div class="si sp" style="margin-bottom:.25rem">💰</div><div class="sv">₹${((STATS.investments||0)/100).toFixed(0)}K</div><div class="sl">Invested</div></div>`;
+}
+
+/* ── PITCH GRID ── */
+function filterPitches(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const cat=document.getElementById('catFilter').value;
+  const minScore=parseInt(document.getElementById('scoreFilter').value)||0;
+  const lock=document.getElementById('lockFilter').value;
+  const pts=ALL_PITCHES.filter(p=>{
+    const txt=(p.title+' '+(p.raw_text||'')+' '+p.category).toLowerCase();
+    if(q&&!txt.includes(q))return false;
+    if(cat&&!(p.category||'').includes(cat))return false;
+    if(minScore&&p.score<minScore)return false;
+    if(lock==='unlocked'&&!p.is_unlocked)return false;
+    if(lock==='locked'&&p.is_unlocked)return false;
+    return true;
+  });
+  renderGrid(pts,'pitchesGrid');
+}
+
+function renderGrid(pts,gridId){
+  const grid=document.getElementById(gridId);if(!grid)return;
+  if(!pts.length){grid.innerHTML=`<div style="grid-column:1/-1"><div class="empty-state"><div class="big">🔍</div><p>No pitches found</p></div></div>`;return;}
+  grid.innerHTML=pts.map((p,i)=>`
+  <div class="pitch-card" onclick="openDetail(${p.id})" style="animation:fadeUp .3s ease ${(i%6)*.06}s both">
+    <div class="pc-img">
+      <img src="${IMGS[p.id%IMGS.length]}" alt="${esc(p.category)}" loading="lazy">
+      <div class="pc-ov"></div>
+      ${!p.is_unlocked?'<div class="pc-locked">🔒</div>':''}
+      <div class="pc-top">
+        <span class="pc-cat">${esc(p.category)}</span>
+        <span class="pc-score">${p.score}/100</span>
+      </div>
+    </div>
+    <div class="pc-body">
+      <div class="pc-title">${esc(tr(p.title||p.raw_text,70))}</div>
+      ${p.analysis_preview?`<div class="pc-preview">${esc(tr(p.analysis_preview,110))}</div>`:''}
+      <div class="pc-tags">
+        ${(p.tags||[]).slice(0,2).map(t=>`<span class="pc-tag">${esc(t)}</span>`).join('')}
+        ${p.business_model?`<span class="pc-tag">${esc(p.business_model)}</span>`:''}
+        ${p.grade&&p.grade!=='N/A'?`<span class="pc-tag" style="background:#dcfce7;color:#16a34a;border-color:#bbf7d0">Grade: ${esc(p.grade)}</span>`:''}
+      </div>
+      <div class="pc-actions">
+        ${p.is_unlocked
+          ?`<button class="btn-view" onclick="event.stopPropagation();openDetail(${p.id})">📊 Deep Analysis</button><button class="btn-view" onclick="event.stopPropagation();openMsg(${p.id})">💬 Message</button>`
+          :`<button class="btn-unlock" onclick="event.stopPropagation();openPayMo(${p.id},'${esc(tr(p.title||p.raw_text,55))}')">🔓 Unlock ₹5,000</button>`
+        }
+      </div>
+    </div>
+  </div>`).join('');
+}
+
+function renderUnlocked(){
+  renderGrid(ALL_PITCHES.filter(p=>p.is_unlocked),'unlockedGrid');
+}
+
+/* ── DETAIL PANEL — zero fetch, reads from ALL_PITCHES ── */
+function openDetail(pid){
+  const p=ALL_PITCHES.find(x=>x.id===pid);if(!p)return;
+  activePitch=p;
+  document.getElementById('detailTitle').textContent=tr(p.title||p.raw_text,55);
+  document.getElementById('detailSub').textContent=`${p.category} · Score: ${p.score}/100 · ${p.is_unlocked?'Unlocked':'Locked'}`;
+  document.getElementById('detailLockStatus').innerHTML=p.is_unlocked?'<span class="badge bg-b">🔓 Unlocked</span>':'<span class="badge br-b">🔒 Locked</span>';
+  const tabs=[
+    {id:'overview',label:'📋 Overview'},
+    {id:'score',label:'⭐ AI Score'},
+    {id:'swoc',label:'📊 SWOC'},
+    {id:'redflags',label:'🚩 Red Flags'},
+    ...(p.is_unlocked?[
+      {id:'dd',label:'✅ Due Diligence'},
+      {id:'market',label:'📐 Market Size'},
+      {id:'risk',label:'⚠️ Risk Matrix'},
+      {id:'emails',label:'📧 Emails'},
+      {id:'roi',label:'📈 ROI Model'},
+      {id:'termsheet',label:'📋 Term Sheet'},
+      {id:'meeting',label:'🤝 Meeting Prep'},
+    ]:[])
+  ];
+  document.getElementById('detailTabs').innerHTML=tabs.map((t,i)=>`<button class="dtab ${i===0?'active':''}" onclick="switchTab('${t.id}',this)">${t.label}</button>`).join('');
+  switchTab('overview',document.querySelector('.dtab'));
+  document.getElementById('detailPanel').classList.add('open');
+  document.getElementById('detailPanel').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function switchTab(tid,btn){
+  document.querySelectorAll('.dtab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const p=activePitch;if(!p)return;
+  const body=document.getElementById('detailBody');
+  const an=sj(p.analysis||'{}');
+  const n1=p.n1||{};
+  const n2=an.node_2||{},n3=p.n3||an.node_3||{},n6=an.node_6||{};
+  const n15=an.node_15||{},n17=an.node_17||{},n20=an.node_20||{};
+  const n22=an.node_22||{},n23=an.node_23||{},n24=an.node_24||{},n25=an.node_25||{};
+  const n8c=p.n8_competitors||(an.node_8?.direct_competitors||[]).slice(0,3);
+
+  if(tid==='overview'){
+    const fields=[['Problem',n1.problem],['Solution',n1.solution],['Market Size',n1.market_size],['Target Market',n1.target_market],['Revenue Model',n1.revenue_model],['Traction',n1.traction],['Team',n1.team],['Funding Ask',n1.funding_ask]].filter(f=>f[1]);
+    body.innerHTML=`
+      <div class="analysis-grid">
+        <div class="ablock"><div class="ablock-label">📝 Pitch Excerpt</div><p style="font-size:.83rem;color:var(--text2);line-height:1.7;font-weight:300">${esc(tr(p.raw_text,400))}</p></div>
+        <div class="ablock"><div class="ablock-label">📊 Key Metrics</div>
+          <div style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:.75rem">
+            <div style="display:flex;justify-content:space-between;font-size:.82rem"><span style="color:var(--muted)">AI Score</span><strong style="color:${p.score>=70?'#16a34a':p.score>=50?'#d97706':'#dc2626'}">${p.score}/100</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem"><span style="color:var(--muted)">Grade</span><strong>${esc(p.grade||'N/A')}</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem"><span style="color:var(--muted)">Industry</span><strong>${esc(p.category)}</strong></div>
+            <div style="display:flex;justify-content:space-between;font-size:.82rem"><span style="color:var(--muted)">Business Model</span><strong>${esc(p.business_model||'—')}</strong></div>
+          </div>
+          ${(p.tags||[]).length?`<div style="display:flex;gap:.3rem;flex-wrap:wrap">${p.tags.map(t=>`<span class="badge bgold-b">${esc(t)}</span>`).join('')}</div>`:''}
+        </div>
+      </div>
+      ${fields.length?`<div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-top:.1rem">${fields.map(f=>`<div class="ablock"><div class="ablock-label">${f[0]}</div><div style="font-size:.84rem;font-weight:500;color:var(--text2);line-height:1.5">${esc(f[1])}</div></div>`).join('')}</div>`:''}
+      ${p.investor_verdict?`<div class="ib" style="margin-top:.65rem">💡 <strong>Investor Verdict:</strong> ${esc(p.investor_verdict)}</div>`:''}
+      ${!p.is_unlocked?`<div style="text-align:center;padding:1.5rem;background:var(--card2);border:1.5px dashed var(--border);border-radius:12px;margin-top:.5rem"><div style="font-size:2rem;margin-bottom:.5rem">🔒</div><p style="font-size:.85rem;color:var(--muted);margin-bottom:.75rem">Unlock for full due diligence, risk analysis, ROI models &amp; direct messaging</p><button class="btn-unlock" style="display:inline-block;padding:.6rem 1.5rem;width:auto;border-radius:8px" onclick="openPayMo(${p.id},'${esc(tr(p.title||p.raw_text,45))}')">🔓 Unlock for ₹5,000</button></div>`:''}`;
+  }else if(tid==='score'){
+    const bd=n2.breakdown||{};
+    body.innerHTML=`
+      ${n2.total_score!==undefined?`<div style="text-align:center;margin-bottom:1rem"><div style="font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:${n2.total_score>=70?'#16a34a':n2.total_score>=50?'#d97706':'#dc2626'}">${n2.total_score}</div><div style="font-size:1.1rem;font-weight:700;color:var(--gold)">${esc(n2.grade||'')}</div><p style="font-size:.82rem;color:var(--muted);margin-top:.35rem">${esc(n2.summary||'')}</p></div>`:''}
+      ${Object.keys(bd).length?`<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.5rem;margin-bottom:.85rem">${Object.entries(bd).map(([k,v])=>`<div style="text-align:center;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:.65rem .4rem"><div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:var(--gold)">${v}</div><div style="font-size:.63rem;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-top:.15rem">${k.replace(/_/g,' ')}</div></div>`).join('')}</div>`:''}
+      ${n2.investor_verdict?`<div class="ib">💡 <strong>Verdict:</strong> ${esc(n2.investor_verdict)}</div>`:''}
+      <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(2)">⚡ Refresh Score</button></div>`;
+  }else if(tid==='swoc'){
+    const cards=[['💪 Strengths',n3.strengths||[],'#f0fdf4','#bbf7d0','#16a34a'],['⚠️ Weaknesses',n3.weaknesses||[],'#fef2f2','#fecaca','#dc2626'],['🚀 Opportunities',n3.opportunities||[],'#fefce8','#fef08a','#d97706'],['🛡️ Challenges',n3.challenges||[],'#f5f3ff','#ddd6fe','#7c3aed']];
+    body.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem">${cards.map(([h,items,bg,border,color])=>`<div style="background:${bg};border:1px solid ${border};border-radius:10px;padding:.9rem"><div style="font-size:.72rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:${color};margin-bottom:.5rem">${h}</div><ul style="list-style:none;display:flex;flex-direction:column;gap:.3rem">${(items||[]).map(i=>`<li style="font-size:.79rem;color:var(--text2);padding-left:.85rem;position:relative;font-weight:300;line-height:1.5"><span style="position:absolute;left:0;color:${color}">•</span>${esc(i)}</li>`).join('')||'<li style="font-size:.79rem;color:var(--muted)">Run analysis first</li>'}</ul></div>`).join('')}</div>
+    ${n3.strategic_score!==undefined?`<div class="ib" style="margin-top:.75rem">Strategic Score: <strong style="color:var(--gold)">${n3.strategic_score}/100</strong>${n3.summary?` · ${esc(n3.summary)}`:''}</div>`:''}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(3)">⚡ Refresh SWOC</button></div>`;
+  }else if(tid==='redflags'){
+    const flags=n6.flags||[];
+    body.innerHTML=`${flags.length?flags.map(f=>`<div style="display:flex;align-items:flex-start;gap:.75rem;padding:.75rem;background:var(--card2);border:1px solid var(--border);border-radius:9px;margin-bottom:.55rem"><span style="padding:.18rem .55rem;border-radius:100px;font-size:.68rem;font-weight:800;flex-shrink:0;background:${f.severity==='High'?'#fee2e2':f.severity==='Medium'?'#fef3c7':'#dcfce7'};color:${f.severity==='High'?'#dc2626':f.severity==='Medium'?'#d97706':'#16a34a'}">${esc(f.severity||'Info')}</span><div><div style="font-size:.82rem;font-weight:600;margin-bottom:.2rem">${esc(f.issue||f.type||'')}</div><div style="font-size:.77rem;color:var(--muted);font-weight:300">${esc(f.recommendation||'')}</div></div></div>`).join(''):'<div class="empty-state"><div class="big">✅</div><p>No red flags detected</p></div>'}
+    ${n6.overall_assessment?`<div class="ib">📋 ${esc(n6.overall_assessment)}</div>`:''}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(6)">⚡ Scan Red Flags</button></div>`;
+  }else if(tid==='dd'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access due diligence.</p></div>';return;}
+    const docs=n15.documents_to_request||[],qs=n15.key_questions||[];
+    body.innerHTML=`<div class="analysis-grid"><div class="ablock"><div class="ablock-label">📂 Documents to Request</div>${docs.map(d=>`<div style="display:flex;align-items:center;gap:.5rem;margin-bottom:.4rem;font-size:.81rem"><span style="color:var(--gold)">→</span>${esc(d)}</div>`).join('')||'<p style="color:var(--muted)">Run analysis first</p>'}</div><div class="ablock"><div class="ablock-label">❓ Key Questions</div>${qs.map(q=>`<div style="margin-bottom:.4rem;font-size:.8rem;color:var(--text2)">• ${esc(q)}</div>`).join('')||'<p style="color:var(--muted)">Run analysis first</p>'}</div></div>
+    ${n15.estimated_dd_duration?`<div class="ib">⏱ Estimated DD Duration: <strong>${esc(n15.estimated_dd_duration)}</strong></div>`:''}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(15)">⚡ Generate DD Checklist</button></div>`;
+  }else if(tid==='market'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access market validation.</p></div>';return;}
+    const tv=n17.tam_validation||{},sv=n17.sam_validation||{},som=n17.som_validation||{};
+    body.innerHTML=`<div class="analysis-grid">${[{l:'TAM',d:tv},{l:'SAM',d:sv},{l:'SOM',d:som}].filter(x=>Object.keys(x.d).length).map(x=>`<div class="ablock"><div class="ablock-label">${x.l} Validation</div><div style="font-size:.84rem;margin-bottom:.3rem"><span style="color:var(--muted)">Claimed:</span> ${esc(x.d.claimed||'—')}</div><div style="font-size:.84rem;margin-bottom:.3rem"><span style="color:var(--muted)">Actual:</span> ${esc(x.d.actual_estimate||'—')}</div><div style="font-weight:700;color:${(x.d.verdict||'').includes('Exaggerat')?'#dc2626':'#16a34a'}">${esc(x.d.verdict||'—')}</div></div>`).join('')||'<div class="ablock" style="grid-column:1/-1"><p style="color:var(--muted)">Run validation first</p></div>'}</div>
+    ${n17.credibility_score!==undefined?`<div class="ib">Credibility Score: <strong style="color:var(--gold)">${n17.credibility_score}/10</strong></div>`:''}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(17)">⚡ Validate Market Size</button></div>`;
+  }else if(tid==='risk'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access risk analysis.</p></div>';return;}
+    const rm=n20.risk_matrix||[];
+    body.innerHTML=`${rm.map(r=>`<div class="risk-row"><div class="risk-cat">${esc(r.category||'')} <span style="font-size:.72rem;color:var(--muted);font-weight:300">${(r.factors||[]).join(' · ')}</span></div><span class="risk-level ${r.level||'Low'}">${esc(r.level||'Low')}</span></div>`).join('')||'<div class="empty-state"><div class="big">⚠️</div><p>Run risk analysis first</p></div>'}
+    ${n20.investment_conditions?.length?`<div class="ablock" style="margin-top:.75rem"><div class="ablock-label">Recommended Conditions</div>${n20.investment_conditions.map(c=>`<div style="font-size:.8rem;color:var(--text2);margin-bottom:.35rem">• ${esc(c)}</div>`).join('')}</div>`:''}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(20)">⚡ Run Risk Assessment</button></div>`;
+  }else if(tid==='emails'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access email templates.</p></div>';return;}
+    const emails=n23.emails||[];
+    body.innerHTML=`${emails.map(e=>`<div class="email-block"><div class="email-type">${esc(e.type||'')}</div><div class="email-subject">Subject: ${esc(e.subject||'')}</div><div class="email-body">${esc((e.body||'').substring(0,500))}${(e.body||'').length>500?'…':''}</div><button class="copy-btn" onclick="navigator.clipboard.writeText(${JSON.stringify(e.body||'')});this.textContent='✓ Copied!'">Copy Email</button></div>`).join('')||'<div class="empty-state"><div class="big">📧</div><p>Run email generator first</p></div>'}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(23)">⚡ Generate Emails</button></div>`;
+  }else if(tid==='roi'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access ROI projections.</p></div>';return;}
+    const sc=n25.scenarios||{},base=sc.base_case||{},bull=sc.bull_case||{},bear=sc.bear_case||{};
+    body.innerHTML=`<div class="sc-grid">
+      <div class="sc-card base"><div class="sc-title">📊 Base Case · ${esc(base.probability||'60%')}</div><div class="sc-val" style="color:#16a34a">${esc(base.roi||'—')}</div><div class="sc-sub">ROI · IRR: ${esc(base.irr||'—')}</div><div style="font-size:.75rem;color:var(--muted);margin-top:.5rem">Exit: ${esc(base.exit_valuation||'—')}</div></div>
+      <div class="sc-card bull"><div class="sc-title">🚀 Bull Case · ${esc(bull.probability||'25%')}</div><div class="sc-val" style="color:#16a34a">${esc(bull.roi||'—')}</div><div class="sc-sub">ROI · IRR: ${esc(bull.irr||'—')}</div><div style="font-size:.75rem;color:var(--muted);margin-top:.5rem">Exit: ${esc(bull.exit_valuation||'—')}</div></div>
+      <div class="sc-card bear"><div class="sc-title">🐻 Bear Case · ${esc(bear.probability||'15%')}</div><div class="sc-val" style="color:#dc2626">${esc(bear.roi||'—')}</div><div class="sc-sub">ROI · IRR: ${esc(bear.irr||'—')}</div><div style="font-size:.75rem;color:var(--muted);margin-top:.5rem">Exit: ${esc(bear.exit_valuation||'—')}</div></div>
+    </div>
+    ${n25.weighted_expected_value?`<div class="ib" style="margin-top:.85rem">Weighted Expected Value: <strong style="color:var(--gold)">${esc(n25.weighted_expected_value)}</strong> · Weighted IRR: <strong>${esc(n25.weighted_irr||'—')}</strong></div>`:''}
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(25)">⚡ Generate ROI Model</button></div>`;
+  }else if(tid==='termsheet'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access term sheet.</p></div>';return;}
+    const fields=[['Pre-Money Valuation',n22.pre_money_valuation],['Investment Amount',n22.investment_amount],['Equity Stake',n22.equity_stake],['Instrument',n22.instrument],['Liquidation Preference',n22.liquidation_preference],['Anti-Dilution',n22.anti_dilution],['Vesting',n22.vesting?.schedule]].filter(f=>f[1]);
+    body.innerHTML=`<div class="analysis-grid">${fields.map(f=>`<div class="ablock"><div class="ablock-label">${f[0]}</div><div style="font-size:.92rem;font-weight:600;color:var(--gold)">${esc(f[1])}</div></div>`).join('')||'<p style="color:var(--muted)">Run term sheet generator first</p>'}</div>
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(22)">⚡ Generate Term Sheet</button></div>`;
+  }else if(tid==='meeting'){
+    if(!p.is_unlocked){body.innerHTML='<div class="empty-state"><div class="big">🔒</div><p>Unlock to access meeting prep.</p></div>';return;}
+    const agenda=n24.agenda||[],qs=(n24.key_questions||[]).slice(0,8);
+    body.innerHTML=`<div class="analysis-grid">
+      <div class="ablock"><div class="ablock-label">📅 Meeting Agenda</div>${agenda.map(a=>`<div style="display:flex;gap:.55rem;margin-bottom:.45rem;font-size:.79rem"><span style="color:var(--gold);font-weight:700;min-width:60px;flex-shrink:0">${esc(a.time||'')}</span><span style="color:var(--text2)">${esc(a.activity||'')}</span></div>`).join('')||'<p style="color:var(--muted)">Run analysis first</p>'}</div>
+      <div class="ablock" style="max-height:280px;overflow-y:auto"><div class="ablock-label">❓ Key Questions</div>${qs.map((q,i)=>`<div style="margin-bottom:.45rem;font-size:.79rem;color:var(--text2)"><span style="color:var(--gold);font-weight:700">${i+1}.</span> ${esc(q.question||q)}</div>`).join('')||'<p style="color:var(--muted)">Run analysis first</p>'}</div>
+    </div>
+    <div style="margin-top:.75rem"><button class="run-btn" onclick="runNode(24)">⚡ Generate Meeting Playbook</button></div>`;
+  }
+}
+
+function closeDetail(){document.getElementById('detailPanel').classList.remove('open');activePitch=null;}
+
+async function runNode(node){
+  if(!activePitch)return;
+  if(!activePitch.is_unlocked&&node>=13){alert('Unlock this pitch first to run investor analysis.');return;}
+  document.querySelectorAll('.run-btn').forEach(b=>b.disabled=true);
+  try{
+    const r=await fetch(`/api/investor/analyze/${activePitch.id}/${node}`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const d=await r.json();
+    if(d.success){
+      if(!activePitch.analysis)activePitch.analysis='{}';
+      const an=sj(activePitch.analysis);an[`node_${node}`]=d.data;activePitch.analysis=JSON.stringify(an);
+      const at=document.querySelector('.dtab.active');if(at)at.click();
+    }else alert(d.error||'Analysis failed');
+  }catch{alert('Network error');}
+  document.querySelectorAll('.run-btn').forEach(b=>b.disabled=false);
+}
+
+/* ── MESSAGES ── */
+async function loadMessages(){
+  const unlocked=ALL_PITCHES.filter(p=>p.is_unlocked);
+  const el=document.getElementById('msgConvList');
+  document.getElementById('nb-m').textContent=unlocked.length;
+  document.getElementById('ms-count').textContent=unlocked.length+' threads';
+  if(!unlocked.length){el.innerHTML='<div class="empty-state"><div class="big">💬</div><p>Unlock pitches to message founders</p></div>';return;}
+  el.innerHTML=unlocked.map(p=>`
+    <div class="msg-item" onclick="openThread(${p.id})">
+      <div class="msg-av">${(p.title||p.raw_text||'P')[0].toUpperCase()}</div>
+      <div class="msg-meta">
+        <div class="msg-sender">${esc(tr(p.title||p.raw_text,45))}</div>
+        <div class="msg-preview">${esc(p.category)} · Click to open conversation</div>
+      </div>
+      <div class="msg-time">${esc(p.category)}</div>
+      <div class="msg-unread"></div>
+    </div>`).join('');
+}
+
+async function openThread(pid){
+  const p=ALL_PITCHES.find(x=>x.id===pid);if(!p)return;
+  activeThread=pid;
+  document.getElementById('msgDetailTitle').textContent=`💬 ${tr(p.title||p.raw_text,50)}`;
+  const dp=document.getElementById('msgDetail');dp.classList.add('open');
+  await fetchThread(pid);
+  stopPoll();pollTimer=setInterval(()=>fetchThread(pid),4000);
+}
+
+async function fetchThread(pid){
+  try{
+    const r=await fetch(`/api/messages/${pid}`);
+    if(!r.ok)return;
+    const msgs=await r.json();
+    const thread=document.getElementById('msgThread');
+    if(!msgs.length){thread.innerHTML='<div class="empty-state" style="padding:1.5rem"><div class="big" style="font-size:1.5rem">💬</div><p>Start the conversation below</p></div>';return;}
+    thread.innerHTML=msgs.map(m=>{
+      const isMe=m.sender_id===USER_ID;
+      const ts=m.timestamp?String(m.timestamp).slice(0,16).replace('T',' '):'';
+      return`<div style="display:flex;justify-content:${isMe?'flex-end':'flex-start'}">
+        <div>
+          <div style="padding:.62rem .9rem;border-radius:${isMe?'12px 12px 4px 12px':'12px 12px 12px 4px'};font-size:.82rem;line-height:1.6;max-width:75%;background:${isMe?'linear-gradient(135deg,var(--gold),var(--gold2))':'var(--card2)'};color:${isMe?'#fff':'var(--text2)'};border:${isMe?'none':'1px solid var(--border)'};">${esc(m.message)}</div>
+          <div style="font-size:.65rem;color:var(--muted);margin-top:.15rem;text-align:${isMe?'right':'left'}">${esc(m.sender_name||'')} · ${esc(ts)}</div>
+        </div>
+      </div>`;
+    }).join('');
+    thread.scrollTop=thread.scrollHeight;
+  }catch{}
+}
+
+async function sendMsg(){
+  if(!activeThread)return;
+  const inp=document.getElementById('msgInput');
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';
+  try{
+    await fetch(`/api/messages/${activeThread}/send`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+    await fetchThread(activeThread);
+  }catch{inp.value=msg;alert('Could not send message');}
+}
+
+function closeMsgDetail(){document.getElementById('msgDetail').classList.remove('open');stopPoll();activeThread=null;}
+function stopPoll(){if(pollTimer){clearInterval(pollTimer);pollTimer=null;}}
+function openMsg(pid){nav(document.querySelector('.ni[onclick*="s-messages"]'),'s-messages');setTimeout(()=>openThread(pid),200);}
+
+/* ── PAYMENT MODAL ── */
+let _pid=null;
+function openPayMo(pid,title){
+  _pid=pid;
+  document.getElementById('payPid').textContent=`Pitch #${pid}`;
+  document.getElementById('payTitle').textContent=title||`Pitch #${pid}`;
+  document.getElementById('payForm').style.display='';
+  document.getElementById('payProc').style.display='none';
+  document.getElementById('payOk').style.display='none';
+  document.getElementById('upiInp').value='';
+  document.querySelectorAll('.upi-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('payMo').classList.add('open');
+}
+function closePayMo(){document.getElementById('payMo').classList.remove('open');}
+document.getElementById('payMo').addEventListener('click',e=>{if(e.target===document.getElementById('payMo'))closePayMo();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closePayMo();});
+function selUPI(btn,app){
+  document.querySelectorAll('.upi-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');
+  const m={gpay:'name@okaxis',phonepe:'name@ybl',paytm:'name@paytm',bhim:'name@upi',amazonpay:'name@apl',other:'name@upi'};
+  document.getElementById('upiInp').placeholder=`Enter UPI ID  e.g. ${m[app]||'name@upi'}`;
+}
+async function doPay(){
+  const upi=document.getElementById('upiInp').value.trim();
+  if(!upi||!upi.includes('@')){document.getElementById('upiInp').style.borderColor='#dc2626';document.getElementById('upiInp').focus();return;}
+  document.getElementById('upiInp').style.borderColor='';
+  document.getElementById('payForm').style.display='none';
+  document.getElementById('payProc').style.display='block';
+  await new Promise(r=>setTimeout(r,1800));
+  let success=false,errMsg='Payment failed. Please try again.';
+  try{
+    const r=await fetch('/api/payment/upi_confirm',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pid:_pid,upi_id:upi})});
+    const d=await r.json();
+    if(d.ok){
+      success=true;
+      // Mark this pitch as unlocked in memory immediately
+      const p=ALL_PITCHES.find(x=>x.id===_pid);
+      if(p){
+        p.is_unlocked=true;
+        if(!UNLOCKED.includes(_pid))UNLOCKED.push(_pid);
+      }
+    }else{
+      errMsg=d.error||errMsg;
+    }
+  }catch(e){console.error('Payment error:',e);}
+  document.getElementById('payProc').style.display='none';
+  if(success){
+    document.getElementById('payOk').style.display='block';
+    // Refresh all UI that reflects unlock state
+    document.getElementById('nb-u').textContent=ALL_PITCHES.filter(p=>p.is_unlocked).length;
+    filterPitches();
+    if(document.getElementById('s-unlocked').classList.contains('active'))renderUnlocked();
+  }else{
+    document.getElementById('payForm').style.display='block';
+    document.getElementById('upiInp').style.borderColor='#dc2626';
+    const prev=document.getElementById('upi-err-msg');if(prev)prev.remove();
+    const msg=document.createElement('p');
+    msg.id='upi-err-msg';
+    msg.style.cssText='color:#dc2626;font-size:.72rem;margin-top:.4rem;font-weight:600';
+    msg.textContent='⚠️ '+errMsg;
+    document.getElementById('upiInp').insertAdjacentElement('afterend',msg);
+  }
+}
+// Stay on this page — close modal and open the detail panel inline
+function goReport(){
+  closePayMo();
+  if(_pid)openDetail(_pid);
+}
+
+/* ── CHARTS ── */
+const PAL=['#b87333','#d4a054','#7c3aed','#16a34a','#0369a1','#dc2626','#9333ea','#d97706','#0d9488','#be185d'];
+function buildCharts(){
+  const cg='#9a8070',gg='rgba(0,0,0,.05)';
+  const bkts=Array(10).fill(0);ALL_PITCHES.forEach(p=>{const b=Math.min(Math.floor((p.score||0)/10),9);bkts[b]++;});
+  mkCh('ch-scores','bar',{labels:['0-10','10-20','20-30','30-40','40-50','50-60','60-70','70-80','80-90','90+'],datasets:[{label:'Pitches',data:bkts,backgroundColor:PAL,borderRadius:4}]},{plugins:{legend:{display:false}},scales:{x:{ticks:{color:cg},grid:{color:gg}},y:{ticks:{color:cg},grid:{color:gg}}}});
+  const cc={};ALL_PITCHES.forEach(p=>{const c=p.category||'Other';cc[c]=(cc[c]||0)+1;});
+  const tc=Object.entries(cc).sort((a,b)=>b[1]-a[1]).slice(0,8);
+  mkCh('ch-cats','doughnut',{labels:tc.map(x=>x[0]),datasets:[{data:tc.map(x=>x[1]),backgroundColor:PAL,borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'right',labels:{color:cg,font:{size:9},padding:6}}}});
+  const cs={};const cn={};ALL_PITCHES.forEach(p=>{const c=p.category||'Other';cs[c]=(cs[c]||0)+(p.score||0);cn[c]=(cn[c]||0)+1;});
+  const ca=Object.entries(cs).map(([c,s])=>({c,avg:Math.round(s/cn[c])})).sort((a,b)=>b.avg-a.avg).slice(0,8);
+  mkCh('ch-catsc','bar',{labels:ca.map(x=>x.c),datasets:[{label:'Avg Score',data:ca.map(x=>x.avg),backgroundColor:ca.map(x=>x.avg>=70?'rgba(22,163,74,.75)':x.avg>=50?'rgba(217,119,6,.75)':'rgba(220,38,38,.75)'),borderRadius:5}]},{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{ticks:{color:cg},grid:{color:gg},min:0,max:100},y:{ticks:{color:cg,font:{size:9}},grid:{display:false}}}});
+  const unlocked=ALL_PITCHES.filter(p=>p.is_unlocked).length;
+  mkCh('ch-lock','doughnut',{labels:['Unlocked','Locked'],datasets:[{data:[unlocked,ALL_PITCHES.length-unlocked],backgroundColor:['#16a34a','#d1d5db'],borderWidth:2,borderColor:'#fff'}]},{plugins:{legend:{position:'right',labels:{color:cg,font:{size:9},padding:8}}}});
+  const gd={};ALL_PITCHES.forEach(p=>{if(p.grade&&p.grade!=='N/A'){gd[p.grade]=(gd[p.grade]||0)+1;}});
+  const grd=Object.entries(gd).sort((a,b)=>a[0].localeCompare(b[0]));
+  mkCh('ch-grade','bar',{labels:grd.map(x=>x[0]),datasets:[{label:'Pitches',data:grd.map(x=>x[1]),backgroundColor:'rgba(184,115,51,.7)',borderRadius:5}]},{plugins:{legend:{display:false}},scales:{x:{ticks:{color:cg},grid:{color:gg}},y:{ticks:{color:cg},grid:{color:gg}}}});
+  const potBycat={};ALL_PITCHES.forEach(p=>{const c=p.category||'Other';potBycat[c]=(potBycat[c]||0)+1;});
+  const topC=Object.entries(potBycat).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  const unBycat={};ALL_PITCHES.filter(p=>p.is_unlocked).forEach(p=>{const c=p.category||'Other';unBycat[c]=(unBycat[c]||0)+1;});
+  mkCh('ch-pipeline','bar',{labels:topC.map(x=>x[0]),datasets:[{label:'Total Pitches',data:topC.map(x=>x[1]),backgroundColor:'rgba(184,115,51,.35)',borderRadius:3},{label:'Unlocked',data:topC.map(x=>unBycat[x[0]]||0),backgroundColor:'rgba(184,115,51,.8)',borderRadius:3}]},{plugins:{legend:{labels:{color:cg,font:{size:9}}}},scales:{x:{ticks:{color:cg},grid:{color:gg}},y:{ticks:{color:cg},grid:{color:gg}}}});
+}
+function mkCh(id,type,data,opts={}){
+  const ctx=document.getElementById(id);if(!ctx)return;
+  new Chart(ctx,{type,data,options:{responsive:true,maintainAspectRatio:true,...opts}});
+}
+
+/* ── THESIS ── */
+async function saveThesis(){
+  const data={thesis:document.getElementById('thesisText').value,industries:document.getElementById('thIndustry').value,stage:document.getElementById('thStage').value,ticket_min:parseInt(document.getElementById('thMin').value)||0,ticket_max:parseInt(document.getElementById('thMax').value)||0};
+  try{await fetch('/api/investor/thesis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});alert('✅ Thesis saved!');}catch{alert('Error saving thesis');}
+}
+
+/* ── PARTICLES ── */
+particlesJS('ptcl',{particles:{number:{value:45},color:{value:'#b87333'},shape:{type:'circle'},opacity:{value:.3,random:true},size:{value:2.5,random:true},line_linked:{enable:true,distance:130,color:'#b87333',opacity:.12,width:1},move:{enable:true,speed:1,random:true}},interactivity:{events:{onhover:{enable:true,mode:'grab'}},modes:{grab:{distance:120,line_linked:{opacity:.28}}}}});
+
+/* ── INIT ── */
+renderStats();
+filterPitches();
+window.addEventListener('beforeunload',stopPoll);
+</script>
+</body>
+</html>

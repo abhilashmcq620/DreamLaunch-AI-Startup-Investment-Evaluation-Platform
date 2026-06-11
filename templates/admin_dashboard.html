@@ -1,0 +1,2634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DreamLaunch — Admin Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --cream: #faf8f3;
+  --white: #ffffff;
+  --warm-gray: #f0ede6;
+  --border: #e8e2d9;
+  --text-dark: #1a1512;
+  --text-mid: #4a3f35;
+  --text-soft: #8b7d72;
+  --accent: #c0392b;
+  --accent2: #e67e22;
+  --accent3: #27ae60;
+  --accent4: #2980b9;
+  --accent5: #8e44ad;
+  --gold: #d4a017;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.07);
+  --shadow-md: 0 8px 32px rgba(0,0,0,0.10);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.13);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text-dark);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── PARTICLE CANVAS ── */
+#particles-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+/* ── HERO HEADER ── */
+.hero-header {
+  position: relative;
+  z-index: 10;
+  min-height: 320px;
+  display: flex;
+  align-items: flex-end;
+  padding: 0 40px 40px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1600');
+  background-size: cover;
+  background-position: center 30%;
+  filter: brightness(0.35) saturate(0.7);
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(26,21,18,0.85) 0%, rgba(192,57,43,0.25) 60%, rgba(26,21,18,0.6) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  width: 100%;
+  gap: 20px;
+}
+
+.hero-left h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+}
+
+.hero-left h1 span {
+  color: var(--accent2);
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+
+.hero-badge .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  animation: pulse-dot 1.5s infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+
+.hero-meta {
+  display: flex;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.hero-meta-item {
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hero-meta-item strong {
+  color: #fff;
+  font-weight: 600;
+}
+
+.hero-right {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.hero-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border-radius: 100px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.hero-btn.primary {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(192,57,43,0.4);
+}
+
+.hero-btn.primary:hover { background: #a93226; transform: translateY(-1px); }
+
+.hero-btn.secondary {
+  background: rgba(255,255,255,0.15);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.3);
+  backdrop-filter: blur(8px);
+}
+
+.hero-btn.secondary:hover { background: rgba(255,255,255,0.25); }
+
+/* ── NAV TABS ── */
+.nav-wrapper {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250,248,243,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+
+.nav-tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.nav-tabs::-webkit-scrollbar { display:none; }
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 22px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--text-soft);
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.nav-tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transition: transform 0.2s;
+}
+
+.nav-tab.active { color: var(--accent); font-weight: 600; }
+.nav-tab.active::after { transform: scaleX(1); }
+.nav-tab:hover { color: var(--text-dark); }
+
+.tab-badge {
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 100px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.tab-badge.warn { background: var(--accent2); }
+.tab-badge.green { background: var(--accent3); }
+
+/* ── MAIN CONTENT ── */
+.main-content {
+  position: relative;
+  z-index: 5;
+  padding: 32px 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ── PANEL SYSTEM ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── KPI GRID ── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 22px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+
+.kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+
+.kpi-card.red::before { background: linear-gradient(90deg, var(--accent), #e74c3c); }
+.kpi-card.orange::before { background: linear-gradient(90deg, var(--accent2), #f39c12); }
+.kpi-card.green::before { background: linear-gradient(90deg, var(--accent3), #2ecc71); }
+.kpi-card.blue::before { background: linear-gradient(90deg, var(--accent4), #3498db); }
+.kpi-card.purple::before { background: linear-gradient(90deg, var(--accent5), #9b59b6); }
+
+.kpi-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 10px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.kpi-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+.kpi-sub {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 100px;
+}
+
+.kpi-trend.up { background: #d4fce3; color: #166534; }
+.kpi-trend.down { background: #ffe4e4; color: #991b1b; }
+.kpi-trend.neutral { background: #f0ede6; color: var(--text-soft); }
+
+.kpi-icon {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  opacity: 0.15;
+}
+
+/* ── CHART GRID ── */
+.chart-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.chart-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.chart-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.chart-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.chart-subtitle {
+  font-size: 12px;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
+
+.chart-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  color: var(--text-soft);
+}
+
+/* ── FRAUD SECTION ── */
+.fraud-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: linear-gradient(135deg, #fff5f5 0%, #fff0e8 100%);
+  border: 1px solid #fecaca;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.fraud-icon-big {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, #c0392b, #e74c3c);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(192,57,43,0.3);
+}
+
+.fraud-header-info h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #7f1d1d;
+}
+
+.fraud-header-info p {
+  font-size: 13px;
+  color: #991b1b;
+  margin-top: 2px;
+}
+
+.fraud-header-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+/* ── DATA TABLE ── */
+.data-section {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 24px;
+}
+
+.data-section-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, var(--warm-gray), var(--white));
+}
+
+.data-section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.search-filter-bar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-input {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  width: 220px;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus { border-color: var(--accent4); }
+
+.filter-select {
+  padding: 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 13px;
+  background: var(--cream);
+  color: var(--text-dark);
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  cursor: pointer;
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+th {
+  background: var(--warm-gray);
+  padding: 12px 16px;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+td {
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  color: var(--text-mid);
+}
+
+tr:hover td { background: var(--cream); }
+tr:last-child td { border-bottom: none; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.status-pill.active { background: #dcfce7; color: #166534; }
+.status-pill.flagged { background: #fee2e2; color: #991b1b; }
+.status-pill.rejected { background: #fef3c7; color: #92400e; }
+.status-pill.pending { background: #dbeafe; color: #1e40af; }
+.status-pill.success { background: #dcfce7; color: #166534; }
+
+.score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+
+.score-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--warm-gray);
+  border-radius: 100px;
+  overflow: hidden;
+  min-width: 60px;
+}
+
+.score-fill {
+  height: 100%;
+  border-radius: 100px;
+  background: linear-gradient(90deg, var(--accent4), var(--accent3));
+  transition: width 1s ease;
+}
+
+.score-fill.low { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.score-fill.mid { background: linear-gradient(90deg, var(--accent2), var(--gold)); }
+
+.score-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dark);
+  min-width: 28px;
+  text-align: right;
+}
+
+.action-btn {
+  padding: 5px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.action-btn.danger { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.action-btn.danger:hover { background: #fecaca; }
+.action-btn.primary { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+.action-btn.primary:hover { background: #bfdbfe; }
+.action-btn.success { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+.action-btn.success:hover { background: #bbf7d0; }
+
+/* ── FRAUD CARDS GRID ── */
+.fraud-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.fraud-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.fraud-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+}
+
+.fraud-card.high::before { background: var(--accent); }
+.fraud-card.medium::before { background: var(--accent2); }
+.fraud-card.low::before { background: var(--accent3); }
+
+.fraud-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.fraud-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.fraud-card-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  line-height: 1.3;
+}
+
+.fraud-risk-badge {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 100px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.fraud-risk-badge.high { background: #fee2e2; color: #991b1b; }
+.fraud-risk-badge.medium { background: #fef3c7; color: #92400e; }
+.fraud-risk-badge.low { background: #dcfce7; color: #166534; }
+
+.fraud-card-body {
+  font-size: 13px;
+  color: var(--text-soft);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+.fraud-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.fraud-tag {
+  padding: 3px 10px;
+  background: var(--warm-gray);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  font-size: 11px;
+  color: var(--text-mid);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.fraud-card-actions { display: flex; gap: 8px; }
+
+/* ── TRENDS SECTION ── */
+.trends-container {
+  background: linear-gradient(135deg, #1a1512 0%, #2c1f19 100%);
+  border-radius: var(--radius);
+  padding: 32px;
+  color: #fff;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.trends-container::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(192,57,43,0.3), transparent);
+  border-radius: 50%;
+}
+
+.trends-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin-bottom: 6px;
+}
+
+.trends-subtitle {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 28px;
+}
+
+.trends-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 100px;
+  font-family: 'Syne', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 20px rgba(192,57,43,0.4);
+}
+
+.trends-btn:hover { background: #a93226; transform: translateY(-1px); }
+
+.trends-insights {
+  margin-top: 24px;
+  display: none;
+}
+
+.trends-insights.visible { display: block; }
+
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.insight-card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.insight-label {
+  font-size: 11px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,0.45);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.insight-value {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+}
+
+/* ── LOADING SPINNER ── */
+.spinner {
+  display: inline-block;
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TOAST ── */
+.toast-container {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  background: var(--text-dark);
+  color: #fff;
+  padding: 14px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideInToast 0.3s ease;
+  pointer-events: all;
+  max-width: 320px;
+}
+
+.toast.success { border-left: 3px solid var(--accent3); }
+.toast.error { border-left: 3px solid var(--accent); }
+.toast.info { border-left: 3px solid var(--accent4); }
+
+@keyframes slideInToast {
+  from { transform: translateX(60px); opacity: 0; }
+  to { transform: translateX(0); opacity: 1; }
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26,21,18,0.7);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal-box {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 32px;
+  max-width: 640px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 0.25s ease;
+}
+
+@keyframes modalIn {
+  from { transform: scale(0.95) translateY(10px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  background: var(--warm-gray);
+  border: none;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-soft);
+}
+
+/* ── SECTION TITLE ── */
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-title .accent-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1200px) {
+  .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+  .chart-grid { grid-template-columns: 1fr; }
+  .chart-grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .hero-header { padding: 20px; min-height: 240px; }
+  .hero-left h1 { font-size: 2rem; }
+  .main-content { padding: 20px; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .nav-wrapper { padding: 0 20px; }
+  .chart-grid-3, .insight-grid { grid-template-columns: 1fr; }
+}
+
+/* ── INLINE STATS ROW ── */
+.inline-stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.inline-stat {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+  min-width: 160px;
+}
+
+.inline-stat-icon {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.inline-stat-icon.red { background: #fee2e2; }
+.inline-stat-icon.orange { background: #fef3c7; }
+.inline-stat-icon.green { background: #dcfce7; }
+.inline-stat-icon.blue { background: #dbeafe; }
+.inline-stat-icon.purple { background: #ede9fe; }
+
+.inline-stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-dark);
+}
+
+.inline-stat-lbl {
+  font-size: 11px;
+  color: var(--text-soft);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+/* ── PROGRESS RINGS ── */
+.ring-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+
+.ring-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.ring-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+
+.ring-title { font-size: 12px; color: var(--text-soft); font-weight: 600; letter-spacing: 0.5px; margin-bottom: 16px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+.ring-val { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-top: 8px; color: var(--text-dark); }
+.ring-sub { font-size: 11px; color: var(--text-soft); margin-top: 4px; }
+
+svg.ring-svg { transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: var(--warm-gray); stroke-width: 8; }
+.ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.5s ease; }
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- HERO HEADER -->
+<div class="hero-header">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-badge">
+        <span class="dot"></span>
+        LIVE PLATFORM — ADMIN COMMAND CENTER
+      </div>
+      <h1>Dream<span>Launch</span><br/>Control Tower</h1>
+      <div class="hero-meta">
+        <div class="hero-meta-item">👤 <strong id="hdr-admin-name">Admin</strong></div>
+        <div class="hero-meta-item">📅 <strong id="hdr-date"></strong></div>
+        <div class="hero-meta-item">🔒 <strong>Full Access</strong></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <button class="hero-btn secondary" onclick="runSpamScan()">🔍 Scan Fraud</button>
+      <button class="hero-btn primary" onclick="runTrends()">⚡ Run AI Trends</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-wrapper">
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchTab('overview', this)">📊 Overview</button>
+    <button class="nav-tab" onclick="switchTab('fraud', this)">
+      🚨 Fraud & Spam
+      <span class="tab-badge" id="fraud-count-badge">0</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('pitches', this)">
+      📋 All Pitches
+      <span class="tab-badge green" id="pitch-count-badge">0</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('users', this)">👥 Users</button>
+    <button class="nav-tab" onclick="switchTab('payments', this)">
+      💳 Payments
+      <span class="tab-badge warn" id="pay-count-badge">0</span>
+    </button>
+    <button class="nav-tab" onclick="switchTab('trends', this)">🤖 AI Trends</button>
+  </div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- ══ OVERVIEW PANEL ══ -->
+  <div id="panel-overview" class="panel active">
+
+    <!-- KPI Grid -->
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi-card red">
+        <div class="kpi-icon red">👥</div>
+        <div class="kpi-label">Total Users</div>
+        <div class="kpi-value" id="kpi-users">—</div>
+        <div class="kpi-sub">
+          <span class="kpi-trend up">↑ Platform growth</span>
+        </div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-icon orange">📋</div>
+        <div class="kpi-label">Total Pitches</div>
+        <div class="kpi-value" id="kpi-pitches">—</div>
+        <div class="kpi-sub">
+          <span id="kpi-active-pitches" class="kpi-trend green">0 active</span>
+        </div>
+      </div>
+      <div class="kpi-card green">
+        <div class="kpi-icon green">💰</div>
+        <div class="kpi-label">Revenue (₹)</div>
+        <div class="kpi-value" id="kpi-revenue">—</div>
+        <div class="kpi-sub">
+          <span id="kpi-payments" class="kpi-trend up">0 transactions</span>
+        </div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-icon blue">⭐</div>
+        <div class="kpi-label">Avg Pitch Score</div>
+        <div class="kpi-value" id="kpi-avg-score">—</div>
+        <div class="kpi-sub">
+          <span class="kpi-trend neutral">out of 100</span>
+        </div>
+      </div>
+      <div class="kpi-card purple">
+        <div class="kpi-icon purple">🚨</div>
+        <div class="kpi-label">Flagged / Rejected</div>
+        <div class="kpi-value" id="kpi-flagged">—</div>
+        <div class="kpi-sub">
+          <span class="kpi-trend down" id="kpi-rejected-txt">0 rejected</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ring Cards -->
+    <div class="ring-grid">
+      <div class="ring-card">
+        <div class="ring-title">Pitch Activation Rate</div>
+        <svg class="ring-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="ring-bg" cx="45" cy="45" r="36"/>
+          <circle class="ring-fill" id="ring-active" cx="45" cy="45" r="36" stroke="#27ae60" stroke-dasharray="226" stroke-dashoffset="226"/>
+        </svg>
+        <div class="ring-val" id="ring-active-val">0%</div>
+        <div class="ring-sub">Active vs Total</div>
+      </div>
+      <div class="ring-card">
+        <div class="ring-title">Fraud Detection Rate</div>
+        <svg class="ring-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="ring-bg" cx="45" cy="45" r="36"/>
+          <circle class="ring-fill" id="ring-fraud" cx="45" cy="45" r="36" stroke="#c0392b" stroke-dasharray="226" stroke-dashoffset="226"/>
+        </svg>
+        <div class="ring-val" id="ring-fraud-val">0%</div>
+        <div class="ring-sub">Flagged vs Total</div>
+      </div>
+      <div class="ring-card">
+        <div class="ring-title">Investor Conversion</div>
+        <svg class="ring-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="ring-bg" cx="45" cy="45" r="36"/>
+          <circle class="ring-fill" id="ring-conv" cx="45" cy="45" r="36" stroke="#2980b9" stroke-dasharray="226" stroke-dashoffset="226"/>
+        </svg>
+        <div class="ring-val" id="ring-conv-val">0%</div>
+        <div class="ring-sub">Payments / Investors</div>
+      </div>
+      <div class="ring-card">
+        <div class="ring-title">Platform Health</div>
+        <svg class="ring-svg" width="90" height="90" viewBox="0 0 90 90">
+          <circle class="ring-bg" cx="45" cy="45" r="36"/>
+          <circle class="ring-fill" id="ring-health" cx="45" cy="45" r="36" stroke="#8e44ad" stroke-dasharray="226" stroke-dashoffset="226"/>
+        </svg>
+        <div class="ring-val" id="ring-health-val">—</div>
+        <div class="ring-sub">Composite Score</div>
+      </div>
+    </div>
+
+    <!-- Charts Row 1 -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Pitch Submissions Over Time</div>
+            <div class="chart-subtitle">Monthly submission volume trends</div>
+          </div>
+          <div class="chart-badge">6 months</div>
+        </div>
+        <canvas id="chart-monthly" height="100"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Category Breakdown</div>
+            <div class="chart-subtitle">Top startup sectors</div>
+          </div>
+        </div>
+        <canvas id="chart-category" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- Charts Row 2 -->
+    <div class="chart-grid-3">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Score Distribution</div>
+            <div class="chart-subtitle">Pitch quality bell curve</div>
+          </div>
+        </div>
+        <canvas id="chart-scores" height="130"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">User Role Split</div>
+            <div class="chart-subtitle">Innovators vs Investors</div>
+          </div>
+        </div>
+        <canvas id="chart-roles" height="130"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Pitch Status Flow</div>
+            <div class="chart-subtitle">Active / Flagged / Rejected</div>
+          </div>
+        </div>
+        <canvas id="chart-status" height="130"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="section-title">
+      Recent Activity
+      <div class="accent-line"></div>
+    </div>
+
+    <div class="data-section">
+      <div class="data-section-header">
+        <div class="data-section-title">📋 Latest Pitches</div>
+        <div class="search-filter-bar">
+          <input class="search-input" type="text" id="recent-search" placeholder="Search pitches..." oninput="filterRecent(this.value)"/>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Category</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="recent-pitches-body">
+            <tr><td colspan="8" style="text-align:center; color:var(--text-soft); padding:32px">Loading pitches...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ══ FRAUD PANEL ══ -->
+  <div id="panel-fraud" class="panel">
+
+    <div class="fraud-header">
+      <div class="fraud-icon-big">🛡️</div>
+      <div class="fraud-header-info">
+        <h3>Fraud & Spam Intelligence Center</h3>
+        <p>AI-powered detection using Gemini — scan, flag, and manage suspicious pitches in real-time</p>
+      </div>
+      <div class="fraud-header-actions">
+        <button class="hero-btn secondary" style="background:#fff5f5; color:#991b1b; border:1px solid #fecaca; backdrop-filter:none;" onclick="runSpamScan()">
+          🔍 Run Gemini Scan
+        </button>
+      </div>
+    </div>
+
+    <!-- Fraud KPIs -->
+    <div class="inline-stats" id="fraud-inline-stats">
+      <div class="inline-stat">
+        <div class="inline-stat-icon red">🚨</div>
+        <div>
+          <div class="inline-stat-val" id="fraud-flagged-count">0</div>
+          <div class="inline-stat-lbl">Flagged Pitches</div>
+        </div>
+      </div>
+      <div class="inline-stat">
+        <div class="inline-stat-icon orange">⚠️</div>
+        <div>
+          <div class="inline-stat-val" id="fraud-rejected-count">0</div>
+          <div class="inline-stat-lbl">Rejected</div>
+        </div>
+      </div>
+      <div class="inline-stat">
+        <div class="inline-stat-icon green">✅</div>
+        <div>
+          <div class="inline-stat-val" id="fraud-active-count">0</div>
+          <div class="inline-stat-lbl">Clean & Active</div>
+        </div>
+      </div>
+      <div class="inline-stat">
+        <div class="inline-stat-icon blue">🤖</div>
+        <div>
+          <div class="inline-stat-val" id="fraud-last-scan">Never</div>
+          <div class="inline-stat-lbl">Last AI Scan</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fraud scan results chart -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Fraud Detection Timeline</div>
+            <div class="chart-subtitle">Flags raised per month</div>
+          </div>
+        </div>
+        <canvas id="chart-fraud-timeline" height="100"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title">Fraud Type Breakdown</div>
+            <div class="chart-subtitle">Categories of violations</div>
+          </div>
+        </div>
+        <canvas id="chart-fraud-types" height="160"></canvas>
+      </div>
+    </div>
+
+    <!-- Flagged Pitches Cards -->
+    <div class="section-title">
+      🚨 Flagged & Suspicious Pitches
+      <div class="accent-line"></div>
+    </div>
+
+    <div class="fraud-cards-grid" id="fraud-cards-grid">
+      <!-- Populated by JS -->
+    </div>
+
+    <!-- All pitches table with fraud scan -->
+    <div class="data-section">
+      <div class="data-section-header">
+        <div class="data-section-title">🔍 Full Pitch Moderation Table</div>
+        <div class="search-filter-bar">
+          <select class="filter-select" id="fraud-status-filter" onchange="filterFraudTable()">
+            <option value="">All Statuses</option>
+            <option value="FLAGGED">🚨 Flagged</option>
+            <option value="REJECTED">❌ Rejected</option>
+            <option value="ACTIVE">✅ Active</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Spam Analysis</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="fraud-table-body">
+            <tr><td colspan="7" style="text-align:center; color:var(--text-soft); padding:32px">Loading...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="fraud-pagination"></div>
+    </div>
+  </div>
+
+  <!-- ══ PITCHES PANEL ══ -->
+  <div id="panel-pitches" class="panel">
+    <div class="data-section">
+      <div class="data-section-header">
+        <div class="data-section-title">📋 All Pitches</div>
+        <div class="search-filter-bar">
+          <input class="search-input" type="text" id="pitches-search" placeholder="Search..." oninput="filterPitches(this.value)"/>
+          <select class="filter-select" id="pitches-status-filter" onchange="filterPitches()">
+            <option value="">All</option>
+            <option value="ACTIVE">Active</option>
+            <option value="FLAGGED">Flagged</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Email</th>
+              <th>Category</th>
+              <th>Score</th>
+              <th>Status</th>
+              <th>Created</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="all-pitches-body"></tbody>
+        </table>
+      </div>
+      <div id="pitches-pagination"></div>
+    </div>
+  </div>
+
+  <!-- ══ USERS PANEL ══ -->
+  <div id="panel-users" class="panel">
+    <div class="chart-grid" style="margin-bottom:24px">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">User Registration Growth</div><div class="chart-subtitle">Cumulative signups</div></div>
+        </div>
+        <canvas id="chart-user-growth" height="100"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">Roles Distribution</div></div>
+        </div>
+        <canvas id="chart-user-roles" height="160"></canvas>
+      </div>
+    </div>
+    <div class="data-section">
+      <div class="data-section-header">
+        <div class="data-section-title">👥 All Users</div>
+        <div class="search-filter-bar">
+          <input class="search-input" type="text" id="users-search" placeholder="Search users..." oninput="filterUsers(this.value)"/>
+          <select class="filter-select" id="users-role-filter" onchange="filterUsers()">
+            <option value="">All Roles</option>
+            <option value="innovator">Innovators</option>
+            <option value="investor">Investors</option>
+            <option value="admin">Admins</option>
+          </select>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody id="all-users-body"></tbody>
+        </table>
+      </div>
+      <div id="users-pagination"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAYMENTS PANEL ══ -->
+  <div id="panel-payments" class="panel">
+    <div class="kpi-grid" style="grid-template-columns: repeat(3,1fr); margin-bottom:24px">
+      <div class="kpi-card green">
+        <div class="kpi-label">Total Revenue</div>
+        <div class="kpi-value" id="pay-total-rev">—</div>
+        <div class="kpi-sub">Successful payments</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">Total Transactions</div>
+        <div class="kpi-value" id="pay-total-tx">—</div>
+        <div class="kpi-sub">Pitch unlocks</div>
+      </div>
+      <div class="kpi-card orange">
+        <div class="kpi-label">Avg. Transaction</div>
+        <div class="kpi-value" id="pay-avg-tx">—</div>
+        <div class="kpi-sub">Per investor</div>
+      </div>
+    </div>
+    <div class="chart-card" style="margin-bottom:24px">
+      <div class="chart-header">
+        <div><div class="chart-title">Revenue Timeline</div><div class="chart-subtitle">Monthly payment volume</div></div>
+      </div>
+      <canvas id="chart-revenue" height="80"></canvas>
+    </div>
+    <div class="data-section">
+      <div class="data-section-header">
+        <div class="data-section-title">💳 Payment Ledger</div>
+        <div class="search-filter-bar">
+          <input class="search-input" type="text" id="pay-search" placeholder="Search payments..." oninput="filterPayments(this.value)"/>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Investor</th>
+              <th>Pitch ID</th>
+              <th>Order ID</th>
+              <th>Amount (₹)</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="all-payments-body"></tbody>
+        </table>
+      </div>
+      <div id="payments-pagination"></div>
+    </div>
+  </div>
+
+  <!-- ══ AI TRENDS PANEL ══ -->
+  <div id="panel-trends" class="panel">
+    <div class="trends-container">
+      <div class="trends-title">🤖 Gemini Platform Intelligence</div>
+      <div class="trends-subtitle">AI-powered analysis of your entire platform — trends, insights, and recommendations from the database</div>
+      <button class="trends-btn" onclick="runTrends()" id="trends-run-btn">
+        <span>⚡</span> Analyse Platform with Gemini
+      </button>
+      <div class="trends-insights" id="trends-output">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- Trend Charts -->
+    <div class="chart-grid">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">Score Trend by Category</div><div class="chart-subtitle">Average quality per sector</div></div>
+        </div>
+        <canvas id="chart-cat-scores" height="110"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">Top Performing Categories</div></div>
+        </div>
+        <canvas id="chart-cat-bar" height="160"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <div><div class="chart-title">Full Activity Heatmap</div><div class="chart-subtitle">Platform events over time</div></div>
+      </div>
+      <canvas id="chart-heatmap" height="60"></canvas>
+    </div>
+  </div>
+
+</div><!-- end main-content -->
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="main-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box" style="position:relative">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script>
+// ══ DATA INJECTION FROM FLASK ══
+const STATS = {{ stats | tojson }};
+const PITCHES = {{ pitches | safe }};
+const USERS = {{ users | safe }};
+const PAYMENTS = {{ payments | safe }};
+const FN_HISTORY = [];
+const USER_NAME = "{{ user_name }}";
+const USER_ID = {{ user_id }};
+
+// ══ PARTICLES ══
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function randomColor() {
+    const colors = ['rgba(192,57,43,', 'rgba(230,126,34,', 'rgba(39,174,96,', 'rgba(41,128,185,', 'rgba(142,68,173,'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  function init() {
+    particles = [];
+    const count = Math.floor((W * H) / 15000);
+    for (let i = 0; i < count; i++) {
+      const c = randomColor();
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 2.5 + 0.5,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        color: c,
+        alpha: Math.random() * 0.5 + 0.1
+      });
+    }
+  }
+
+  let _drawFrame = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + p.alpha + ')';
+      ctx.fill();
+      p.x += p.vx;
+      p.y += p.vy;
+      if (p.x < 0 || p.x > W) p.vx *= -1;
+      if (p.y < 0 || p.y > H) p.vy *= -1;
+    });
+
+    // Draw connections every 3rd frame to reduce CPU load
+    if (++_drawFrame % 3 === 0) {
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx*dx + dy*dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(180,160,140,${0.15 * (1 - dist/120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  resize();
+  init();
+  draw();
+  window.addEventListener('resize', () => { resize(); init(); });
+})();
+
+// ══ INIT ══
+document.getElementById('hdr-admin-name').textContent = USER_NAME;
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+// ══ KPIs ══
+function animateCounter(el, target, prefix='', suffix='') {
+  const duration = 1200;
+  const start = Date.now();
+  const startVal = 0;
+  const step = () => {
+    const elapsed = Date.now() - start;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = prefix + Math.round(startVal + (target - startVal) * ease).toLocaleString('en-IN') + suffix;
+    if (progress < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
+
+function loadKPIs() {
+  animateCounter(document.getElementById('kpi-users'), STATS.users);
+  animateCounter(document.getElementById('kpi-pitches'), STATS.pitches);
+  animateCounter(document.getElementById('kpi-revenue'), STATS.revenue, '₹');
+  document.getElementById('kpi-avg-score').textContent = STATS.avg_score;
+  document.getElementById('kpi-flagged').textContent = STATS.flagged;
+
+  document.getElementById('kpi-active-pitches').textContent = `${STATS.active_pitches} active`;
+  document.getElementById('kpi-payments').textContent = `${STATS.payments} transactions`;
+  document.getElementById('kpi-rejected-txt').textContent = `${STATS.rejected} rejected`;
+
+  // Badge counts
+  document.getElementById('fraud-count-badge').textContent = STATS.flagged + STATS.rejected;
+  document.getElementById('pitch-count-badge').textContent = STATS.pitches;
+  document.getElementById('pay-count-badge').textContent = STATS.payments;
+
+  // Fraud inline
+  document.getElementById('fraud-flagged-count').textContent = STATS.flagged;
+  document.getElementById('fraud-rejected-count').textContent = STATS.rejected;
+  document.getElementById('fraud-active-count').textContent = STATS.active_pitches;
+
+  // Payment KPIs
+  document.getElementById('pay-total-rev').textContent = '₹' + (STATS.revenue||0).toLocaleString('en-IN');
+  document.getElementById('pay-total-tx').textContent = STATS.payments;
+  document.getElementById('pay-avg-tx').textContent = STATS.payments > 0 ? '₹' + Math.round(STATS.revenue / STATS.payments).toLocaleString('en-IN') : '—';
+
+  // Rings
+  const circumference = 226;
+  function setRing(id, pct) {
+    const el = document.getElementById(id);
+    if (el) {
+      setTimeout(() => {
+        el.style.strokeDashoffset = circumference - (pct / 100) * circumference;
+      }, 300);
+    }
+  }
+
+  const activePct = STATS.pitches > 0 ? Math.round((STATS.active_pitches / STATS.pitches) * 100) : 0;
+  const fraudPct = STATS.pitches > 0 ? Math.round((STATS.flagged / STATS.pitches) * 100) : 0;
+  const convPct = STATS.investors > 0 ? Math.round((STATS.payments / STATS.investors) * 100) : 0;
+  const health = Math.max(0, Math.min(100, activePct - fraudPct * 2 + Math.min(convPct, 30) + 40));
+
+  setRing('ring-active', activePct);
+  setRing('ring-fraud', fraudPct);
+  setRing('ring-conv', Math.min(convPct, 100));
+  setRing('ring-health', health);
+
+  document.getElementById('ring-active-val').textContent = activePct + '%';
+  document.getElementById('ring-fraud-val').textContent = fraudPct + '%';
+  document.getElementById('ring-conv-val').textContent = Math.min(convPct, 100) + '%';
+  document.getElementById('ring-health-val').textContent = health;
+}
+
+// ══ CHART COLOURS ══
+const PALETTE = {
+  red:    'rgba(192,57,43,',
+  orange: 'rgba(230,126,34,',
+  green:  'rgba(39,174,96,',
+  blue:   'rgba(41,128,185,',
+  purple: 'rgba(142,68,173,',
+  gold:   'rgba(212,160,23,',
+};
+
+function makeGradient(ctx, color, alpha1=0.85, alpha2=0.05) {
+  const g = ctx.createLinearGradient(0, 0, 0, 300);
+  g.addColorStop(0, color + alpha1 + ')');
+  g.addColorStop(1, color + alpha2 + ')');
+  return g;
+}
+
+Chart.defaults.font.family = "'DM Sans', sans-serif";
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.pointStyleWidth = 8;
+Chart.defaults.plugins.legend.labels.font = { size: 12 };
+
+// Monthly submissions — uses pre-aggregated stats from server
+function buildMonthlyChart() {
+  const sorted = [...(STATS.monthly_submissions || [])].reverse();
+  const labels = sorted.map(e => {
+    const [y, m] = (e.month || e[0] || '').split('-');
+    return y ? new Date(y, m-1).toLocaleString('en', {month:'short', year:'2-digit'}) : '?';
+  });
+  const data = sorted.map(e => e.cnt || e[1] || 0);
+
+  const ctx = document.getElementById('chart-monthly').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Submissions',
+        data,
+        fill: true,
+        backgroundColor: makeGradient(ctx, PALETTE.blue),
+        borderColor: PALETTE.blue + '1)',
+        borderWidth: 2.5,
+        pointBackgroundColor: PALETTE.blue + '1)',
+        pointRadius: 5,
+        pointHoverRadius: 8,
+        tension: 0.45,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72', font:{size:11} } },
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72', font:{size:11} }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Category donut — uses pre-aggregated stats from server
+function buildCategoryChart() {
+  const cats = (STATS.category_counts || []).slice(0, 7);
+  const labels = cats.map(e => e.category || 'Other');
+  const data = cats.map(e => e.cnt || 0);
+  const colors = [PALETTE.red, PALETTE.orange, PALETTE.green, PALETTE.blue, PALETTE.purple, PALETTE.gold, 'rgba(127,140,141,'].map(c => c + '0.85)');
+
+  const ctx = document.getElementById('chart-category').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 8 }] },
+    options: {
+      responsive: true,
+      cutout: '65%',
+      plugins: {
+        legend: { position: 'bottom', labels: { color: '#4a3f35', font:{size:11} } }
+      }
+    }
+  });
+}
+
+// Score distribution — uses pitchesData already in memory
+function buildScoresChart() {
+  const buckets = { '0-20':0,'21-40':0,'41-60':0,'61-80':0,'81-100':0 };
+  pitchesData.forEach(p => {
+    const s = p.score || 0;
+    if (s <= 20) buckets['0-20']++;
+    else if (s <= 40) buckets['21-40']++;
+    else if (s <= 60) buckets['41-60']++;
+    else if (s <= 80) buckets['61-80']++;
+    else buckets['81-100']++;
+  });
+  const ctx = document.getElementById('chart-scores').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: Object.keys(buckets),
+      datasets: [{
+        data: Object.values(buckets),
+        backgroundColor: [PALETTE.red+'0.8)', PALETTE.orange+'0.8)', PALETTE.gold+'0.8)', PALETTE.green+'0.8)', PALETTE.blue+'0.8)'],
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#8b7d72', font:{size:10} } },
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72', font:{size:10} }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Roles pie — uses usersData already in memory
+function buildRolesChart(canvasId) {
+  const roles = { innovator:0, investor:0, admin:0 };
+  usersData.forEach(u => { if (roles[u.role] !== undefined) roles[u.role]++; });
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Innovators', 'Investors', 'Admins'],
+      datasets: [{
+        data: [roles.innovator, roles.investor, roles.admin],
+        backgroundColor: [PALETTE.blue+'0.85)', PALETTE.green+'0.85)', PALETTE.purple+'0.85)'],
+        borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'bottom', labels: { color: '#4a3f35', font:{size:11} } } }
+    }
+  });
+}
+
+// Status donut
+function buildStatusChart() {
+  const ctx = document.getElementById('chart-status').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Active', 'Flagged', 'Rejected'],
+      datasets: [{
+        data: [STATS.active_pitches, STATS.flagged, STATS.rejected],
+        backgroundColor: [PALETTE.green+'0.85)', PALETTE.red+'0.85)', PALETTE.orange+'0.85)'],
+        borderWidth: 2, borderColor: '#fff', hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: { legend: { position: 'bottom', labels: { color: '#4a3f35', font:{size:11} } } }
+    }
+  });
+}
+
+// Fraud timeline
+function buildFraudTimeline() {
+  const monthMap = {};
+  pitchesData.filter(p => p.status === 'FLAGGED' || p.status === 'REJECTED').forEach(p => {
+    if (!p.created_at) return;
+    const m = p.created_at.slice(0, 7);
+    monthMap[m] = (monthMap[m] || 0) + 1;
+  });
+  const sorted = Object.entries(monthMap).sort((a,b) => a[0].localeCompare(b[0])).slice(-8);
+  const labels = sorted.map(e => { const [y, m] = e[0].split('-'); return new Date(y, m-1).toLocaleString('en', {month:'short', year:'2-digit'}); });
+  const data = sorted.map(e => e[1]);
+  if (labels.length === 0) { labels.push('No Data'); data.push(0); }
+
+  const ctx = document.getElementById('chart-fraud-timeline').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Flags Raised',
+        data,
+        backgroundColor: makeGradient(ctx, PALETTE.red),
+        borderColor: PALETTE.red + '1)',
+        borderWidth: 1.5,
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false }, ticks: { color: '#8b7d72' } },
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Fraud types donut — pitched no longer carry analysis, use status counts
+function buildFraudTypes() {
+  let spam=0, scam=0, fake=0, low=0;
+  // Use status as proxy since analysis field not loaded in admin list
+  spam = STATS.flagged || 0;
+  low  = STATS.rejected || 0;
+  if (spam+scam+fake+low === 0) { spam=0; scam=0; fake=0; low=1; }
+  const ctx = document.getElementById('chart-fraud-types').getContext('2d');
+  new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Spam', 'Scam', 'Fake Info', 'Low Quality'],
+      datasets: [{
+        data: [spam, scam, fake, low],
+        backgroundColor: [PALETTE.red+'0.85)', PALETTE.orange+'0.85)', PALETTE.purple+'0.85)', PALETTE.gold+'0.85)'],
+        borderWidth: 2, borderColor: '#fff', hoverOffset: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      cutout: '60%',
+      plugins: { legend: { position: 'bottom', labels: { color: '#4a3f35', font:{size:11} } } }
+    }
+  });
+}
+
+// Category scores chart — uses pre-aggregated stats
+function buildCatScoresChart() {
+  const cats = (STATS.category_counts || []).slice(0, 8);
+  const labels = cats.map(e => (e.category||'Other').length > 12 ? (e.category||'Other').slice(0,12)+'…' : (e.category||'Other'));
+  const data = cats.map(e => parseFloat(e.avg_score) || 0);
+  const colors = [PALETTE.red, PALETTE.orange, PALETTE.green, PALETTE.blue, PALETTE.purple, PALETTE.gold, 'rgba(127,140,141,', 'rgba(52,73,94,'].map(c => c + '0.8)');
+
+  const ctx = document.getElementById('chart-cat-scores').getContext('2d');
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Avg Score',
+        data,
+        backgroundColor: PALETTE.blue + '0.15)',
+        borderColor: PALETTE.blue + '0.9)',
+        borderWidth: 2,
+        pointBackgroundColor: PALETTE.blue + '1)',
+        pointRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          beginAtZero: true, max: 100,
+          grid: { color: 'rgba(0,0,0,0.06)' },
+          pointLabels: { font: { size: 10 }, color: '#4a3f35' },
+          ticks: { display: false }
+        }
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
+// Category bar — uses pre-aggregated stats
+function buildCatBar() {
+  const cats = (STATS.category_counts || []).slice(0, 8);
+  const labels = cats.map(e => (e.category||'Other').length > 14 ? (e.category||'Other').slice(0,14)+'…' : (e.category||'Other'));
+  const data = cats.map(e => e.cnt || 0);
+
+  const ctx = document.getElementById('chart-cat-bar').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data,
+        backgroundColor: [PALETTE.red, PALETTE.orange, PALETTE.green, PALETTE.blue, PALETTE.purple, PALETTE.gold, 'rgba(127,140,141,', 'rgba(52,73,94,'].map(c => c + '0.8)'),
+        borderRadius: 8,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72', font:{size:10} }, beginAtZero: true },
+        y: { grid: { display: false }, ticks: { color: '#4a3f35', font:{size:10} } }
+      }
+    }
+  });
+}
+
+// Revenue chart — uses paymentsData already in memory
+function buildRevenueChart() {
+  const monthMap = {};
+  paymentsData.filter(p=>p.status==='SUCCESS').forEach(p => {
+    if (!p.created_at) return;
+    const m = p.created_at.slice(0,7);
+    monthMap[m] = (monthMap[m]||0) + (p.amount||0);
+  });
+  const sorted = Object.entries(monthMap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-8);
+  const labels = sorted.length > 0 ? sorted.map(e => { const [y,m]=e[0].split('-'); return new Date(y,m-1).toLocaleString('en',{month:'short',year:'2-digit'}); }) : ['No Data'];
+  const data = sorted.length > 0 ? sorted.map(e=>e[1]) : [0];
+
+  const ctx = document.getElementById('chart-revenue').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Revenue (₹)',
+        data,
+        fill: true,
+        backgroundColor: makeGradient(ctx, PALETTE.green),
+        borderColor: PALETTE.green + '1)',
+        borderWidth: 2.5,
+        tension: 0.45,
+        pointBackgroundColor: PALETTE.green + '1)',
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72' } },
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72', callback: v => '₹'+v.toLocaleString('en-IN') }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// User growth — uses usersData already in memory
+function buildUserGrowthChart() {
+  const monthMap = {};
+  usersData.forEach(u => {
+    if (!u.created_at) return;
+    const m = u.created_at.slice(0,7);
+    monthMap[m] = (monthMap[m]||0)+1;
+  });
+  const sorted = Object.entries(monthMap).sort((a,b)=>a[0].localeCompare(b[0])).slice(-8);
+  let cumulative = 0;
+  const labels = sorted.map(e=>{const[y,m]=e[0].split('-');return new Date(y,m-1).toLocaleString('en',{month:'short',year:'2-digit'});});
+  const data = sorted.map(e=>{ cumulative+=e[1]; return cumulative; });
+  if (labels.length===0) { labels.push('No Data'); data.push(0); }
+
+  const ctx = document.getElementById('chart-user-growth').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Total Users',
+        data,
+        fill: true,
+        backgroundColor: makeGradient(ctx, PALETTE.purple),
+        borderColor: PALETTE.purple + '1)',
+        borderWidth: 2.5,
+        tension: 0.45,
+        pointBackgroundColor: PALETTE.purple + '1)',
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72' } },
+        y: { grid: { color: 'rgba(0,0,0,0.04)' }, ticks: { color: '#8b7d72' }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// Heatmap activity chart — uses pre-aggregated stats
+function buildHeatmapChart() {
+  const sorted = [...(STATS.monthly_submissions || [])].reverse();
+  const labels = sorted.map(e => {
+    const [y,m] = (e.month||'').split('-');
+    return y ? new Date(y,m-1).toLocaleString('en',{month:'short',year:'2-digit'}) : '?';
+  });
+  const data = sorted.map(e => e.cnt || 0);
+  if (labels.length===0) { labels.push('No Data'); data.push(0); }
+
+  const ctx = document.getElementById('chart-heatmap').getContext('2d');
+  const maxVal = Math.max(...data) || 1;
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Activity',
+        data,
+        backgroundColor: data.map(v => {
+          const intensity = v / maxVal;
+          return `rgba(41,128,185,${0.2 + intensity * 0.75})`;
+        }),
+        borderRadius: 6,
+        borderSkipped: false,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display:false }, ticks: { color:'#8b7d72', font:{size:10} } },
+        y: { grid: { color:'rgba(0,0,0,0.04)' }, ticks: { color:'#8b7d72', font:{size:10} }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+// ══ TABLE RENDERERS ══
+// Re-use the already-parsed constants above (no double serialization / JSON.parse)
+const pitchesData = PITCHES;
+const usersData   = USERS;
+const paymentsData = PAYMENTS;
+
+function statusPill(s) {
+  const map = {
+    ACTIVE: 'active', FLAGGED: 'flagged', REJECTED: 'rejected',
+    PENDING: 'pending', SUCCESS: 'success'
+  };
+  const icons = { ACTIVE:'✅', FLAGGED:'🚨', REJECTED:'❌', PENDING:'⏳', SUCCESS:'💚' };
+  return `<span class="status-pill ${map[s]||'pending'}">${icons[s]||'•'} ${s||'—'}</span>`;
+}
+
+function scoreBar(s) {
+  const pct = Math.min(100, s||0);
+  const cls = pct < 40 ? 'low' : pct < 70 ? 'mid' : '';
+  return `<div class="score-bar-wrap">
+    <div class="score-bar"><div class="score-fill ${cls}" style="width:${pct}%"></div></div>
+    <span class="score-num">${pct}</span>
+  </div>`;
+}
+
+function renderRecentPitches(data) {
+  const tbody = document.getElementById('recent-pitches-body');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-soft);padding:32px">No pitches yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.slice(0, 20).map(p => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-soft)">#${p.id}</span></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${escHtml(p.title||p.raw_text?.slice(0,50)||'Untitled')}</td>
+      <td>${escHtml(p.author_name||'—')}</td>
+      <td><span style="font-size:12px;background:var(--warm-gray);padding:2px 8px;border-radius:100px">${escHtml(p.category||'—')}</span></td>
+      <td>${scoreBar(p.score)}</td>
+      <td>${statusPill(p.status)}</td>
+      <td style="font-size:12px;color:var(--text-soft)">${formatDate(p.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="action-btn primary" onclick="viewPitchDetails(${p.id})">View</button>
+          ${p.status !== 'FLAGGED' ? `<button class="action-btn danger" onclick="updatePitchStatus(${p.id},'FLAGGED')">Flag</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+// renderAllPitches — paginated version below
+
+// renderFraudTable — paginated version defined later
+
+function renderFraudCards() {
+  const flagged = pitchesData.filter(p => p.status === 'FLAGGED' || p.status === 'REJECTED');
+  const container = document.getElementById('fraud-cards-grid');
+  if (!flagged.length) {
+    container.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:48px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius)">
+        <div style="font-size:48px;margin-bottom:12px">✅</div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700;color:var(--accent3)">All Clear!</div>
+        <div style="font-size:13px;color:var(--text-soft);margin-top:6px">No flagged or rejected pitches found. Platform looks clean.</div>
+      </div>`;
+    return;
+  }
+  container.innerHTML = flagged.map(p => {
+    const riskLevel = p.status === 'FLAGGED' ? 'high' : p.status === 'REJECTED' ? 'medium' : 'low';
+    const riskLabel = riskLevel === 'high' ? 'HIGH RISK' : riskLevel === 'medium' ? 'MEDIUM RISK' : 'LOW RISK';
+    const reason = p.status === 'REJECTED' ? 'Manually rejected by admin' : 'Flagged for review — run Gemini scan for details';
+    const tags = [p.status === 'FLAGGED' && 'FLAGGED', p.status === 'REJECTED' && 'REJECTED'].filter(Boolean);
+
+    return `
+      <div class="fraud-card ${riskLevel}">
+        <div class="fraud-card-header">
+          <div class="fraud-card-title">${escHtml(p.title||p.raw_text?.slice(0,50)||'Untitled')}</div>
+          <span class="fraud-risk-badge ${riskLevel}">${riskLabel}</span>
+        </div>
+        <div class="fraud-card-body">
+          <strong>Author:</strong> ${escHtml(p.author_name||'Unknown')} &nbsp;|&nbsp;
+          <strong>Score:</strong> ${p.score||0}/100<br/>
+          <strong>Reason:</strong> ${escHtml(reason)}
+        </div>
+        ${tags.length ? `<div class="fraud-tags">${tags.map(t=>`<span class="fraud-tag">${t}</span>`).join('')}</div>` : ''}
+        <div class="fraud-card-actions">
+          <button class="action-btn primary" onclick="viewPitchDetails(${p.id})">View Details</button>
+          <button class="action-btn success" onclick="updatePitchStatus(${p.id},'ACTIVE')">Restore</button>
+          <button class="action-btn danger" onclick="updatePitchStatus(${p.id},'REJECTED')">Reject</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// renderUsers — paginated version below
+
+// renderPayments — paginated version below
+
+// ══ FILTERING ══
+function filterRecent(q) {
+  const low = q.toLowerCase();
+  const filtered = pitchesData.filter(p =>
+    (p.title||'').toLowerCase().includes(low) ||
+    (p.author_name||'').toLowerCase().includes(low) ||
+    (p.category||'').toLowerCase().includes(low)
+  );
+  renderRecentPitches(filtered);
+}
+
+function filterPitches(q) {
+  const searchQ = (typeof q === 'string' ? q : document.getElementById('pitches-search').value).toLowerCase();
+  const statusF = document.getElementById('pitches-status-filter').value;
+  let filtered = pitchesData;
+  if (searchQ) filtered = filtered.filter(p => (p.title||'').toLowerCase().includes(searchQ) || (p.author_name||'').toLowerCase().includes(searchQ));
+  if (statusF) filtered = filtered.filter(p => p.status === statusF);
+  renderAllPitches(filtered, 0);
+}
+
+function filterFraudTable() { renderFraudTable(pitchesData); }
+
+function filterUsers(q) {
+  const searchQ = (typeof q === 'string' ? q : document.getElementById('users-search').value).toLowerCase();
+  const roleF = document.getElementById('users-role-filter').value;
+  let filtered = usersData;
+  if (searchQ) filtered = filtered.filter(u => (u.name||'').toLowerCase().includes(searchQ) || (u.email||'').toLowerCase().includes(searchQ));
+  if (roleF) filtered = filtered.filter(u => u.role === roleF);
+  renderUsers(filtered, 0);
+}
+
+function filterPayments(q) {
+  const low = (q||'').toLowerCase();
+  const filtered = paymentsData.filter(p => (p.investor_name||'').toLowerCase().includes(low));
+  renderPayments(filtered, 0);
+}
+
+// ══ ACTIONS ══
+function updatePitchStatus(pid, status) {
+  fetch(`/admin/update_pitch/${pid}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+    body: `status=${status}`
+  })
+  .then(r => r.json())
+  .then(data => {
+    if (data.ok) {
+      const idx = pitchesData.findIndex(p => p.id === pid);
+      if (idx >= 0) pitchesData[idx].status = status;
+      toast(`Pitch #${pid} → ${status}`, 'success');
+      renderRecentPitches(pitchesData);
+      renderAllPitches(pitchesData);
+      renderFraudTable(pitchesData);
+      renderFraudCards();
+    }
+  })
+  .catch(() => toast('Action failed', 'error'));
+}
+
+function viewPitchDetails(pid) {
+  openModal('<div class="modal-title">Loading pitch #' + pid + '\u2026</div><div style="display:flex;align-items:center;justify-content:center;padding:48px"><div class="spinner" style="width:32px;height:32px;border-width:3px;border-color:var(--border);border-top-color:var(--accent4)"></div></div>');
+  fetch('/api/admin/pitch/' + pid)
+    .then(function(r){ return r.json(); })
+    .then(function(pitch) {
+      var n2 = pitch.n2 || {};
+      var n26 = pitch.n26 || {};
+      var analysisHtml = '';
+      if (n2.total_score) {
+        analysisHtml += '<div style="background:var(--warm-gray);border-radius:12px;padding:16px;margin-bottom:14px">'
+          + '<div style="font-size:11px;font-family:JetBrains Mono,monospace;color:var(--text-soft);letter-spacing:1px;margin-bottom:8px">PITCH SCORE</div>'
+          + '<div style="font-family:Syne,sans-serif;font-size:32px;font-weight:800;color:var(--text-dark)">' + n2.total_score + '<span style="font-size:18px;color:var(--text-soft)">/100</span></div>'
+          + '<div style="font-size:13px;color:var(--text-mid);margin-top:6px">' + escHtml(n2.investor_verdict||n2.summary||'') + '</div></div>';
+      }
+      if (n26.is_spam || n26.is_scam) {
+        analysisHtml += '<div style="background:#fee2e2;border:1px solid #fecaca;border-radius:12px;padding:14px;margin-bottom:14px">'
+          + '<div style="font-weight:700;color:#991b1b;font-size:13px">&#x1F6A8; ' + [n26.is_spam&&'SPAM',n26.is_scam&&'SCAM'].filter(Boolean).join(' | ') + '</div>'
+          + '<div style="font-size:12px;color:#7f1d1d;margin-top:4px">' + escHtml(n26.reason||n26.spam_reason||'') + '</div></div>';
+      }
+      document.getElementById('modal-content').innerHTML =
+        '<div class="modal-title">#' + pid + ' \u2014 ' + escHtml(pitch.title||'Untitled') + '</div>'
+        + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">'
+        + '<div style="font-size:13px"><span style="color:var(--text-soft)">Author:</span> <strong>' + escHtml(pitch.author_name||'\u2014') + '</strong></div>'
+        + '<div style="font-size:13px"><span style="color:var(--text-soft)">Category:</span> <strong>' + escHtml(pitch.category||'\u2014') + '</strong></div>'
+        + '<div style="font-size:13px"><span style="color:var(--text-soft)">Status:</span> ' + statusPill(pitch.status) + '</div>'
+        + '<div style="font-size:13px"><span style="color:var(--text-soft)">Created:</span> <strong>' + formatDate(pitch.created_at) + '</strong></div>'
+        + '</div>'
+        + analysisHtml
+        + '<div style="font-size:12px;color:var(--text-soft);font-family:JetBrains Mono,monospace;margin-bottom:6px">RAW PITCH TEXT</div>'
+        + '<div style="background:var(--cream);border:1px solid var(--border);border-radius:10px;padding:14px;font-size:13px;line-height:1.6;max-height:200px;overflow-y:auto;color:var(--text-mid)">' + escHtml(pitch.raw_text||'No text') + '</div>'
+        + '<div style="display:flex;gap:10px;margin-top:20px">'
+        + '<button class="action-btn success" onclick="updatePitchStatus(' + pid + ',\'ACTIVE\');closeModal()">&#x2705; Activate</button>'
+        + '<button class="action-btn danger" onclick="updatePitchStatus(' + pid + ',\'FLAGGED\');closeModal()">&#x1F6A8; Flag</button>'
+        + '<button class="action-btn danger" style="background:#fef3c7;color:#92400e;border-color:#fde68a" onclick="updatePitchStatus(' + pid + ',\'REJECTED\');closeModal()">&#x274C; Reject</button>'
+        + '</div>';
+    })
+    .catch(function() {
+      document.getElementById('modal-content').innerHTML = '<div class="modal-title">Error</div><p style="color:var(--accent)">Could not load pitch details.</p>';
+    });
+}
+
+// ══ SPAM SCAN ══
+function runSpamScan() {
+  toast('🤖 Running Gemini fraud scan on latest 10 pitches…', 'info');
+  document.getElementById('fraud-last-scan').textContent = 'Scanning…';
+
+  fetch('/api/admin/spam_scan', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const flagCount = data.results.filter(r => r.result?.is_spam || r.result?.is_scam).length;
+        toast(`✅ Scan complete — ${flagCount} suspicious pitches found`, 'success');
+        document.getElementById('fraud-last-scan').textContent = new Date().toLocaleTimeString('en-IN');
+        setTimeout(() => location.reload(), 1500);
+      } else {
+        toast('Scan failed: ' + (data.error || 'Unknown error'), 'error');
+        document.getElementById('fraud-last-scan').textContent = 'Failed';
+      }
+    })
+    .catch(err => {
+      toast('Network error during scan', 'error');
+      document.getElementById('fraud-last-scan').textContent = 'Error';
+    });
+}
+
+// ══ AI TRENDS ══
+function runTrends() {
+  const btn = document.getElementById('trends-run-btn');
+  if (!btn) return;
+  const orig = btn.innerHTML;
+  btn.innerHTML = '<span class="spinner"></span> Analysing with Gemini…';
+  btn.disabled = true;
+
+  fetch('/api/admin/trends', { method: 'POST' })
+    .then(r => r.json())
+    .then(data => {
+      btn.innerHTML = orig;
+      btn.disabled = false;
+      if (data.success) {
+        renderTrendsOutput(data.data);
+        toast('✅ AI analysis complete!', 'success');
+      } else {
+        toast('Trends analysis failed: ' + (data.error || ''), 'error');
+      }
+    })
+    .catch(err => {
+      btn.innerHTML = orig;
+      btn.disabled = false;
+      toast('Network error', 'error');
+    });
+}
+
+function renderTrendsOutput(d) {
+  if (!d) return;
+  const container = document.getElementById('trends-output');
+  container.classList.add('visible');
+
+  const insights = [
+    { label: 'Platform Trend', value: d.platform_trend || d.trend || 'N/A' },
+    { label: 'Top Category', value: d.top_category || d.hot_sector || 'N/A' },
+    { label: 'Quality Signal', value: d.quality_signal || d.insight || 'N/A' },
+    { label: 'Risk Alert', value: d.risk_alert || d.warning || 'N/A' },
+    { label: 'Growth Forecast', value: d.growth_forecast || d.forecast || 'N/A' },
+    { label: 'Recommendation', value: d.recommendation || d.action || 'N/A' },
+  ];
+
+  container.innerHTML = `
+    <h3 style="font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:#fff;margin-bottom:4px">AI Analysis Complete</h3>
+    <p style="font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:16px">${escHtml(d.summary || d.overview || 'Gemini analysis ready.')}</p>
+    <div class="insight-grid">
+      ${insights.filter(i => i.value && i.value !== 'N/A').slice(0,6).map(i => `
+        <div class="insight-card">
+          <div class="insight-label">${i.label}</div>
+          <div class="insight-value">${escHtml(String(i.value))}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+// ══ PAGINATION STATE ══
+const PAGE_SIZE = 25;
+const pageState = { pitches: 0, users: 0, payments: 0, fraud: 0 };
+
+// Paginated renderers — only render PAGE_SIZE rows at a time
+function renderRecentPitches(data) {
+  const tbody = document.getElementById('recent-pitches-body');
+  if (!data || !data.length) {
+    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-soft);padding:32px">No pitches yet.</td></tr>';
+    return;
+  }
+  const slice = data.slice(0, 20); // overview always shows latest 20
+  tbody.innerHTML = slice.map(p => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-soft)">#${p.id}</span></td>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${escHtml(p.title||p.raw_text?.slice(0,50)||'Untitled')}</td>
+      <td>${escHtml(p.author_name||'—')}</td>
+      <td><span style="font-size:12px;background:var(--warm-gray);padding:2px 8px;border-radius:100px">${escHtml(p.category||'—')}</span></td>
+      <td>${scoreBar(p.score)}</td>
+      <td>${statusPill(p.status)}</td>
+      <td style="font-size:12px;color:var(--text-soft)">${formatDate(p.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="action-btn primary" onclick="viewPitchDetails(${p.id})">View</button>
+          ${p.status !== 'FLAGGED' ? `<button class="action-btn danger" onclick="updatePitchStatus(${p.id},'FLAGGED')">Flag</button>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderAllPitches(data, page) {
+  page = page || 0;
+  pageState.pitches = page;
+  const tbody = document.getElementById('all-pitches-body');
+  const slice = data.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-soft);padding:32px">No pitches.</td></tr>';
+    renderPagination('pitches-pagination', data.length, page, (p) => renderAllPitches(data, p));
+    return;
+  }
+  tbody.innerHTML = slice.map(p => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-soft)">#${p.id}</span></td>
+      <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${escHtml(p.title||'Untitled')}</td>
+      <td>${escHtml(p.author_name||'—')}</td>
+      <td style="font-size:12px;color:var(--text-soft)">${escHtml(p.author_email||'—')}</td>
+      <td><span style="font-size:11px;background:var(--warm-gray);padding:2px 8px;border-radius:100px">${escHtml(p.category||'—')}</span></td>
+      <td>${scoreBar(p.score)}</td>
+      <td>${statusPill(p.status)}</td>
+      <td style="font-size:12px;color:var(--text-soft)">${formatDate(p.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:5px;flex-wrap:wrap">
+          <button class="action-btn primary" onclick="viewPitchDetails(${p.id})">View</button>
+          <button class="action-btn success" onclick="updatePitchStatus(${p.id},'ACTIVE')">Activate</button>
+          <button class="action-btn danger" onclick="updatePitchStatus(${p.id},'FLAGGED')">Flag</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+  renderPagination('pitches-pagination', data.length, page, (p) => renderAllPitches(data, p));
+}
+
+function renderFraudTable(data, page) {
+  page = page || 0;
+  pageState.fraud = page;
+  const filter = document.getElementById('fraud-status-filter').value;
+  let filtered = filter ? data.filter(p => p.status === filter) : data;
+  const tbody = document.getElementById('fraud-table-body');
+  const slice = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-soft);padding:32px">No pitches match filter.</td></tr>';
+    renderPagination('fraud-pagination', filtered.length, page, (p) => renderFraudTable(data, p));
+    return;
+  }
+  tbody.innerHTML = slice.map(p => {
+    // analysis not loaded in lean list — show status-based info
+    const analysisInfo = p.status === 'FLAGGED'
+      ? '<span style="color:var(--accent);font-size:11px;font-weight:600">⚠️ FLAGGED</span>'
+      : p.status === 'REJECTED'
+      ? '<span style="color:var(--accent2);font-size:11px;font-weight:600">❌ REJECTED</span>'
+      : '<span style="color:var(--accent3);font-size:11px">✅ Clean</span>';
+    return `
+      <tr>
+        <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-soft)">#${p.id}</span></td>
+        <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600">${escHtml(p.title||'Untitled')}</td>
+        <td>${escHtml(p.author_name||'—')}</td>
+        <td>${scoreBar(p.score)}</td>
+        <td>${statusPill(p.status)}</td>
+        <td>${analysisInfo}</td>
+        <td>
+          <div style="display:flex;gap:5px">
+            <button class="action-btn primary" onclick="viewPitchDetails(${p.id})">View</button>
+            ${p.status === 'FLAGGED' ? `<button class="action-btn success" onclick="updatePitchStatus(${p.id},'ACTIVE')">Restore</button>` : ''}
+            ${p.status !== 'FLAGGED' ? `<button class="action-btn danger" onclick="updatePitchStatus(${p.id},'FLAGGED')">Flag</button>` : ''}
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+  renderPagination('fraud-pagination', filtered.length, page, (p) => renderFraudTable(data, p));
+}
+
+function renderUsers(data, page) {
+  page = page || 0;
+  pageState.users = page;
+  const tbody = document.getElementById('all-users-body');
+  const slice = data.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-soft);padding:32px">No users.</td></tr>';
+    renderPagination('users-pagination', data.length, page, (p) => renderUsers(data, p));
+    return;
+  }
+  const roleIcon = { innovator:'💡', investor:'💰', admin:'🛡️' };
+  tbody.innerHTML = slice.map(u => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-soft)">#${u.id}</span></td>
+      <td style="font-weight:600">${escHtml(u.name||'—')}</td>
+      <td style="font-size:12px;color:var(--text-soft)">${escHtml(u.email||'—')}</td>
+      <td><span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;background:var(--warm-gray);padding:3px 10px;border-radius:100px;font-weight:600">${roleIcon[u.role]||'•'} ${u.role||'—'}</span></td>
+      <td style="font-size:12px;color:var(--text-soft)">${formatDate(u.created_at)}</td>
+    </tr>`).join('');
+  renderPagination('users-pagination', data.length, page, (p) => renderUsers(data, p));
+}
+
+function renderPayments(data, page) {
+  page = page || 0;
+  pageState.payments = page;
+  const tbody = document.getElementById('all-payments-body');
+  const slice = data.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+  if (!slice.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-soft);padding:32px">No payments.</td></tr>';
+    renderPagination('payments-pagination', data.length, page, (p) => renderPayments(data, p));
+    return;
+  }
+  tbody.innerHTML = slice.map(p => `
+    <tr>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-soft)">#${p.id}</span></td>
+      <td style="font-weight:600">${escHtml(p.investor_name||'—')}</td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:12px">#${p.pitch_id}</span></td>
+      <td><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-soft)">${(p.order_id||'').slice(0,16)}…</span></td>
+      <td style="font-weight:700;color:var(--accent3)">₹${(p.amount||0).toLocaleString('en-IN')}</td>
+      <td>${statusPill(p.status)}</td>
+    </tr>`).join('');
+  renderPagination('payments-pagination', data.length, page, (p) => renderPayments(data, p));
+}
+
+// ══ PAGINATION WIDGET ══
+function renderPagination(containerId, total, currentPage, onPageChange) {
+  let container = document.getElementById(containerId);
+  if (!container) return;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
+  if (totalPages <= 1) { container.innerHTML = ''; return; }
+  const pages = [];
+  for (let i = 0; i < totalPages; i++) {
+    const active = i === currentPage;
+    pages.push(`<button onclick="(${onPageChange.toString()})(${i})" style="
+      padding:5px 12px;border-radius:8px;border:1px solid ${active ? 'var(--accent4)' : 'var(--border)'};
+      background:${active ? 'var(--accent4)' : 'var(--white)'};
+      color:${active ? '#fff' : 'var(--text-mid)'};
+      font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;font-weight:${active ? '700':'400'}
+    ">${i + 1}</button>`);
+  }
+  container.innerHTML = `
+    <div style="display:flex;align-items:center;gap:8px;padding:14px 20px;border-top:1px solid var(--border);flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--text-soft);margin-right:4px">${total} total</span>
+      ${pages.join('')}
+    </div>`;
+}
+
+// ══ LAZY CHART REGISTRY ══
+const chartBuilt = {};
+
+function buildChartsForTab(tabId) {
+  if (chartBuilt[tabId]) return;
+  chartBuilt[tabId] = true;
+
+  // Use requestIdleCallback so UI stays responsive
+  const schedule = window.requestIdleCallback || ((fn) => setTimeout(fn, 16));
+
+  if (tabId === 'overview') {
+    schedule(() => buildMonthlyChart());
+    schedule(() => buildCategoryChart());
+    schedule(() => buildScoresChart());
+    schedule(() => buildRolesChart('chart-roles'));
+    schedule(() => buildStatusChart());
+  }
+  if (tabId === 'fraud') {
+    schedule(() => buildFraudTimeline());
+    schedule(() => buildFraudTypes());
+  }
+  if (tabId === 'users') {
+    schedule(() => buildUserGrowthChart());
+    schedule(() => buildRolesChart('chart-user-roles'));
+  }
+  if (tabId === 'payments') {
+    schedule(() => buildRevenueChart());
+  }
+  if (tabId === 'trends') {
+    schedule(() => buildCatScoresChart());
+    schedule(() => buildCatBar());
+    schedule(() => buildHeatmapChart());
+  }
+}
+
+// ══ TAB SWITCHING ══
+function switchTab(id, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  el.classList.add('active');
+  buildChartsForTab(id);
+}
+
+// ══ MODAL ══
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('main-modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('main-modal').classList.remove('open');
+}
+
+// ══ TOAST ══
+function toast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${msg}</span>`;
+  container.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(40px)'; el.style.transition='all 0.3s'; setTimeout(() => el.remove(), 300); }, 3500);
+}
+
+// ══ UTILS ══
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str || '')));
+  return div.innerHTML;
+}
+
+function formatDate(d) {
+  if (!d) return '—';
+  try {
+    return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+  } catch { return d; }
+}
+
+// ══ BOOT — only load what's immediately visible ══
+window.addEventListener('DOMContentLoaded', () => {
+  // Step 1: KPIs and badges — instant, no DOM heavy lifting
+  loadKPIs();
+
+  // Step 2: Overview table (latest 20 only) — fast
+  renderRecentPitches(pitchesData);
+
+  // Step 3: Overview charts — lazy via idle callback
+  buildChartsForTab('overview');
+
+  // Step 4: All other tabs — deferred until user clicks them
+  // Tables for non-visible tabs rendered on first tab switch
+  const schedule = window.requestIdleCallback || ((fn) => setTimeout(fn, 50));
+  schedule(() => renderAllPitches(pitchesData, 0));
+  schedule(() => renderFraudTable(pitchesData, 0));
+  schedule(() => renderFraudCards());
+  schedule(() => renderUsers(usersData, 0));
+  schedule(() => renderPayments(paymentsData, 0));
+});
+</script>
+</body>
+</html>

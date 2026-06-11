@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Submit Pitch · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ivory:#fdf8f0;--ivory2:#f7f0e4;
+  --gold:#b8860b;--gold2:#d4a017;--goldg:rgba(184,134,11,.09);
+  --navy:#0d1b2a;--navy2:#1a2d42;
+  --text:#1a1208;--muted:#7a6a50;--border:rgba(184,134,11,.2);--border2:rgba(184,134,11,.1);
+  --sh:0 2px 14px rgba(26,18,8,.08);--shl:0 20px 60px rgba(26,18,8,.15)
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--ivory);color:var(--text);font-family:'Outfit',sans-serif;display:grid;grid-template-columns:1fr 1fr}
+
+.left{position:relative;overflow:hidden}
+.left-bg{position:absolute;inset:0;background:url('https://images.pexels.com/photos/3184632/pexels-photo-3184632.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover}
+.left-ov{position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,27,42,.9) 0%,rgba(13,27,42,.65) 100%)}
+.left-content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:2.75rem}
+.back-link{display:inline-flex;align-items:center;gap:.45rem;color:rgba(255,255,255,.45);text-decoration:none;font-size:.84rem;font-weight:500;transition:color .2s}
+.back-link:hover{color:#fff}
+.left-mid{flex:1;display:flex;flex-direction:column;justify-content:center}
+.left-badge{display:inline-block;background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.25);color:#f0c040;padding:.28rem .85rem;border-radius:100px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:1.75rem}
+.left-mid h2{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:#fff;line-height:1.08;margin-bottom:1rem;letter-spacing:-.01em}
+.left-mid h2 em{font-style:italic;color:#f0c040}
+.left-mid p{color:rgba(255,255,255,.45);font-size:.9rem;line-height:1.75;font-weight:300;max-width:360px;margin-bottom:2rem}
+.feature-list{display:flex;flex-direction:column;gap:.85rem}
+.feature-item{display:flex;align-items:flex-start;gap:.85rem}
+.feature-icon{width:40px;height:40px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+.feature-text strong{display:block;font-size:.86rem;font-weight:600;color:rgba(255,255,255,.85);margin-bottom:.1rem}
+.feature-text span{font-size:.78rem;color:rgba(255,255,255,.38);font-weight:300}
+.left-foot{color:rgba(255,255,255,.18);font-size:.72rem;font-weight:300}
+
+.right{display:flex;align-items:center;justify-content:center;padding:2.5rem;background:var(--ivory);overflow-y:auto;position:relative}
+#particles-submit{position:absolute;inset:0}
+.submit-box{width:100%;max-width:560px;position:relative;z-index:2}
+.form-header{margin-bottom:1.75rem}
+.form-tag{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--gold);margin-bottom:.65rem;display:flex;align-items:center;gap:.4rem}
+.form-tag::before{content:'◆';font-size:.55rem}
+.form-header h1{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--navy);letter-spacing:-.02em;line-height:1.08;margin-bottom:.5rem}
+.form-header p{font-size:.88rem;color:var(--muted);line-height:1.65;font-weight:300}
+
+.field-label{display:block;font-size:.7rem;font-weight:700;color:var(--muted);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.08em}
+textarea{width:100%;background:#fff;border:1.5px solid var(--border2);color:var(--text);border-radius:12px;padding:1.1rem 1.25rem;font-size:.9rem;font-family:'Outfit',sans-serif;resize:none;height:260px;transition:border-color .2s,box-shadow .2s;outline:none;line-height:1.7;box-shadow:0 1px 4px rgba(26,18,8,.04)}
+textarea:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(184,134,11,.1)}
+textarea::placeholder{color:rgba(122,106,80,.45)}
+.char-row{display:flex;align-items:center;justify-content:space-between;margin-top:.55rem;margin-bottom:1.25rem}
+.char-count{font-size:.74rem;color:var(--muted);font-weight:300}
+.hints{display:flex;gap:.4rem;flex-wrap:wrap}
+.hint{background:var(--goldg);color:var(--gold);border:1px solid rgba(184,134,11,.15);padding:.22rem .65rem;border-radius:100px;font-size:.72rem;font-weight:500;cursor:pointer;transition:background .2s;font-family:'Outfit',sans-serif}
+.hint:hover{background:rgba(184,134,11,.15)}
+.submit-btn{width:100%;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none;padding:1.05rem;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .25s;display:flex;align-items:center;justify-content:center;gap:.65rem;letter-spacing:.01em}
+.submit-btn:hover{box-shadow:0 10px 30px rgba(13,27,42,.3);transform:translateY(-1.5px)}
+.security-note{text-align:center;font-size:.72rem;color:rgba(122,106,80,.5);margin-top:1rem;font-weight:300}
+
+@media(max-width:800px){
+  body{grid-template-columns:1fr;overflow:auto}
+  .left{display:none}
+  .right{min-height:100vh}
+}
+</style>
+</head>
+<body>
+
+<div class="left">
+  <div class="left-bg"></div>
+  <div class="left-ov"></div>
+  <div class="left-content">
+    <a href="/innovator" class="back-link">← Back to Dashboard</a>
+    <div class="left-mid">
+      <div class="left-badge">Neural Engine Onboarding</div>
+      <h2>Feed the<br><em>Intelligence.</em></h2>
+      <p>Our 30-function AI reads your pitch the way a seasoned VC partner does — in seconds.</p>
+      <div class="feature-list">
+        <div class="feature-item">
+          <div class="feature-icon">🧠</div>
+          <div class="feature-text">
+            <strong>30 Parallel AI Analyses</strong>
+            <span>Score, SWOC, competitors, financials, deck — all at once</span>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">📄</div>
+          <div class="feature-text">
+            <strong>Investment Memo Generated</strong>
+            <span>2000-word professional memo ready in 60 seconds</span>
+          </div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text">
+            <strong>Matched to Real Investors</strong>
+            <span>Semantic thesis matching surfaces the right VCs</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="left-foot">Gemini 2.5 Flash · Industry-standard due diligence protocols</div>
+  </div>
+</div>
+
+<div class="right">
+  <div id="particles-submit"></div>
+  <div class="submit-box">
+    <div class="form-header">
+      <div class="form-tag">New Pitch</div>
+      <h1>Submit Your<br>Pitch</h1>
+      <p>Describe your startup in detail. The richer the context, the sharper the AI intelligence.</p>
+    </div>
+    <form action="/submit" method="POST">
+      <label class="field-label" for="pitchArea">Pitch Manuscript</label>
+      <textarea id="pitchArea" name="pitch_text" required maxlength="5000" oninput="updateCount()" placeholder="Our startup, EcoSync, solves the problem of... 
+
+Include: problem, solution, target market, revenue model, team background, traction (if any), and funding ask."></textarea>
+      <div class="char-row">
+        <div class="hints">
+          <span class="hint" onclick="fillHint('healthtech')">HealthTech</span>
+          <span class="hint" onclick="fillHint('fintech')">FinTech</span>
+          <span class="hint" onclick="fillHint('saas')">SaaS</span>
+          <span class="hint" onclick="fillHint('agri')">AgriTech</span>
+        </div>
+        <span class="char-count" id="charCount">0 / 5,000</span>
+      </div>
+      <button type="submit" class="submit-btn">
+        ◆ Deploy Neural Analysis
+        <span style="opacity:.65;font-size:.8rem;font-weight:400">→</span>
+      </button>
+    </form>
+    <div class="security-note">🔒 Encrypted · Confidential · Your IP is protected</div>
+  </div>
+</div>
+
+<script>
+function updateCount(){
+  const v = document.getElementById('pitchArea').value.length;
+  document.getElementById('charCount').textContent = v.toLocaleString() + ' / 5,000';
+}
+const hints = {
+  healthtech: 'MedSync solves the fragmented patient health records problem in rural India. We build a cloud platform aggregating data from 50+ hospital systems for instant medical history access. Target: 800M rural Indians. Revenue: ₹99/month per doctor. Team: 3 ex-Practo IIT engineers. Raising ₹2Cr seed for 18-month runway.',
+  fintech: 'PayEase cuts remittance fees for Indian migrant workers from 3-5% to 0.5% via RBI-compliant peer-to-peer corridors. TAM: $80B Indian remittance market. Revenue: Transaction + subscription fees. Team: ex-Razorpay and Wise. Traction: ₹50L MRR, 12K users. Raising ₹5Cr Series A.',
+  saas: 'AutoBooks automates GST compliance and bookkeeping for 63M Indian SMEs. Saves 40 hours/month per business. Pricing ₹599/month. TAM: ₹12,000Cr Indian accounting software market. Revenue: SaaS + CA marketplace. Team: ex-Zoho and KPMG. ARR: ₹80L, 1,400 customers. Raising ₹2.5Cr seed.',
+  agri: 'FarmIQ connects 120M smallholder farmers to real-time market prices and direct buyers, eliminating 40% margin lost to middlemen. AI crop advisory in 12 regional languages via WhatsApp. TAM: ₹6 lakh crore agri market. Revenue: 2% commission + SaaS. Pilot: 3K farmers, ₹2Cr transactions. Raising ₹3Cr.'
+};
+function fillHint(type){
+  const ta = document.getElementById('pitchArea');
+  if(hints[type]){ ta.value = hints[type]; updateCount(); }
+}
+particlesJS("particles-submit", {
+  particles: {
+    number: { value: 20 },
+    color: { value: "#b8860b" },
+    shape: { type: "circle" },
+    opacity: { value: 0.1, random: true },
+    size: { value: 2.5 },
+    line_linked: { enable: true, distance: 160, color: "#b8860b", opacity: 0.05, width: 1 },
+    move: { enable: true, speed: 0.6 }
+  }
+});
+</script>
+</body>
+</html>

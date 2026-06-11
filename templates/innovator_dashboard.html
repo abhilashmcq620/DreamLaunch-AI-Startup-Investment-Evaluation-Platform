@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Innovator Dashboard · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ivory:#fdf8f0;--ivory2:#f7f0e4;--ivory3:#efe6d4;
+  --gold:#b8860b;--gold2:#d4a017;--gold3:#f0c040;
+  --goldg:rgba(184,134,11,.09);--goldg2:rgba(184,134,11,.17);
+  --navy:#0d1b2a;--navy2:#1a2d42;--navy3:#243d58;
+  --surf:#fff;--border:rgba(184,134,11,.18);--border2:rgba(184,134,11,.08);
+  --text:#1a1208;--text2:#3d2e18;--muted:#7a6a50;--muted2:#a08060;
+  --green:#166534;--gG:rgba(22,101,52,.1);--gB:rgba(22,101,52,.22);
+  --yel:#92400e;--yG:rgba(146,64,14,.1);
+  --red:#991b1b;--rG:rgba(153,27,27,.09);--rB:rgba(153,27,27,.22);
+  --teal:#0d9488;--tG:rgba(13,148,136,.1);
+  --sh:0 1px 6px rgba(26,18,8,.06);--shm:0 4px 18px rgba(26,18,8,.1);--shl:0 8px 32px rgba(26,18,8,.15)
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--ivory);color:var(--text);font-family:'Outfit',sans-serif;display:grid;grid-template-columns:236px 1fr}
+/* ── SIDEBAR ── */
+aside{background:var(--surf);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;box-shadow:2px 0 16px rgba(26,18,8,.05);z-index:10}
+.logo-wrap{padding:1.2rem 1.4rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.5rem}
+.logo-gem{width:28px;height:28px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.8rem;color:#fff;font-weight:700;flex-shrink:0}
+.logo-txt{font-family:'Cormorant Garamond',serif;font-size:1.12rem;font-weight:700;color:var(--gold)}
+.logo-txt span{color:var(--navy)}
+.user-wrap{padding:.8rem 1.4rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.65rem}
+.av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;flex-shrink:0;box-shadow:0 2px 8px rgba(184,134,11,.3)}
+.un{font-size:.81rem;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ur{font-size:.62rem;color:var(--gold);font-weight:700;text-transform:uppercase;letter-spacing:.07em}
+.side-nav{flex:1;padding:.55rem 0;overflow-y:auto}
+.ng{padding:.26rem 1.4rem;font-size:.57rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.14em;margin-top:.45rem}
+.ni{display:flex;align-items:center;gap:.52rem;padding:.52rem 1.4rem;color:var(--muted);font-size:.83rem;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;border-left:2.5px solid transparent;transition:all .15s;text-decoration:none}
+.ni:hover{color:var(--gold);background:var(--goldg)}
+.ni.active{color:var(--gold);background:var(--goldg);border-left-color:var(--gold2);font-weight:600}
+.ni .ic{width:16px;text-align:center;flex-shrink:0;font-size:.9rem}
+.nb{margin-left:auto;background:var(--red);color:#fff;border-radius:100px;font-size:.56rem;font-weight:700;padding:.05rem .3rem;min-width:16px;text-align:center}
+.side-foot{padding:.8rem 1.4rem;border-top:1px solid var(--border2)}
+.logout{display:flex;align-items:center;gap:.45rem;color:var(--muted);text-decoration:none;font-size:.79rem;font-weight:500;transition:color .18s}
+.logout:hover{color:var(--red)}
+/* ── MAIN ── */
+main{display:flex;flex-direction:column;overflow:hidden}
+.topbar{padding:.78rem 1.75rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--surf);flex-shrink:0;box-shadow:var(--sh)}
+.pt{font-family:'Cormorant Garamond',serif;font-size:1.28rem;font-weight:700;color:var(--navy)}
+.ps{font-size:.67rem;color:var(--muted);font-weight:300;margin-top:.04rem}
+.tb-r{display:flex;align-items:center;gap:.55rem}
+.alive{display:flex;align-items:center;gap:.3rem;background:var(--gG);border:1px solid var(--gB);color:var(--green);padding:.22rem .6rem;border-radius:100px;font-size:.65rem;font-weight:700}
+.dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:blink 2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.btn-g{display:inline-flex;align-items:center;gap:.3rem;padding:.38rem .88rem;border-radius:8px;font-size:.75rem;font-weight:600;cursor:pointer;border:none;font-family:'Outfit',sans-serif;transition:all .18s;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;box-shadow:0 2px 8px rgba(184,134,11,.22)}
+.btn-g:hover{box-shadow:0 5px 16px rgba(184,134,11,.38);transform:translateY(-1px)}
+/* ── CONTENT ── */
+.content{flex:1;overflow-y:auto;padding:1.45rem 1.75rem;display:flex;flex-direction:column;gap:1.2rem}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+.sec{display:none;flex-direction:column;gap:1.2rem}.sec.active{display:flex}
+/* ── STAT CARDS ── */
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:.85rem}
+.sc{background:var(--surf);border:1px solid var(--border2);border-radius:12px;padding:1.05rem 1.15rem;position:relative;overflow:hidden;transition:all .2s;box-shadow:var(--sh)}
+.sc:hover{box-shadow:var(--shm);transform:translateY(-2px)}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.sc.c1::before{background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.sc.c2::before{background:linear-gradient(90deg,var(--teal),#14b8a6)}
+.sc.c3::before{background:linear-gradient(90deg,var(--green),#22c55e)}
+.sc.c4::before{background:linear-gradient(90deg,var(--navy),var(--navy2))}
+.si{font-size:1.2rem;margin-bottom:.38rem}
+.sv{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;line-height:1;color:var(--navy)}
+.sl{font-size:.64rem;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.06em;margin-top:.18rem}
+.sd{font-size:.63rem;color:var(--green);font-weight:600;margin-top:.12rem}
+/* ── CARD ── */
+.card{background:var(--surf);border:1px solid var(--border2);border-radius:12px;padding:1.3rem;box-shadow:var(--sh)}
+.ch{display:flex;align-items:center;justify-content:space-between;margin-bottom:.95rem;padding-bottom:.72rem;border-bottom:1px solid var(--border2)}
+.ct{font-size:.64rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.13em;display:flex;align-items:center;gap:.36rem}
+/* ── HERO BANNER ── */
+.hero-banner{position:relative;border-radius:14px;overflow:hidden;height:148px;background:linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%)}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.18}
+.hero-body{position:relative;z-index:2;padding:1.25rem 1.5rem;height:100%;display:flex;flex-direction:column;justify-content:space-between}
+.hero-tag{font-size:.6rem;font-weight:700;color:var(--gold3);text-transform:uppercase;letter-spacing:.14em;display:flex;align-items:center;gap:.35rem}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#fff;line-height:1.2}
+.hero-sub{font-size:.74rem;color:rgba(255,255,255,.5);font-weight:300}
+/* ── PITCH FORM ── */
+textarea{width:100%;background:var(--ivory2);border:1.5px solid var(--border2);color:var(--text);border-radius:10px;padding:.85rem 1rem;font-size:.87rem;font-family:'Outfit',sans-serif;resize:vertical;min-height:110px;transition:border-color .2s,box-shadow .2s;outline:none;line-height:1.68}
+textarea:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(184,134,11,.1);background:#fff}
+textarea::placeholder{color:var(--muted2);opacity:.55}
+.hints{display:flex;gap:.36rem;flex-wrap:wrap;margin-bottom:.7rem}
+.hint{background:var(--goldg);color:var(--gold);border:1px solid rgba(184,134,11,.15);padding:.19rem .58rem;border-radius:100px;font-size:.67rem;font-weight:600;cursor:pointer;transition:background .16s;font-family:'Outfit',sans-serif}
+.hint:hover{background:var(--goldg2)}
+.ff{display:flex;align-items:center;justify-content:space-between;margin-top:.75rem;gap:.55rem;flex-wrap:wrap}
+.cc{font-size:.7rem;color:var(--muted2);font-weight:300}
+.btn-sub{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none;padding:.62rem 1.5rem;border-radius:9px;font-size:.83rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;display:flex;align-items:center;gap:.4rem}
+.btn-sub:hover{box-shadow:0 7px 22px rgba(13,27,42,.3);transform:translateY(-1px)}
+.btn-sub:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.sub-loader{display:none;align-items:center;gap:.38rem;font-size:.72rem;color:var(--muted);font-weight:300}
+.sub-loader.show{display:flex}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin{width:12px;height:12px;border:2px solid var(--border);border-top-color:var(--gold2);border-radius:50%;animation:spin .75s linear infinite;flex-shrink:0}
+/* ── PITCH CARDS ── */
+.plist{display:flex;flex-direction:column;gap:.7rem}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:.62rem}
+.ph h3{font-size:.64rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.13em}
+.ftabs{display:flex;gap:.3rem}
+.ftab{padding:.21rem .62rem;border-radius:100px;font-size:.68rem;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid var(--border2);background:transparent;color:var(--muted);font-family:'Outfit',sans-serif}
+.ftab.active{background:var(--goldg);color:var(--gold);border-color:rgba(184,134,11,.24)}
+.pc{background:var(--surf);border:1px solid var(--border2);border-radius:12px;padding:1.05rem;cursor:pointer;transition:all .2s;box-shadow:var(--sh)}
+.pc:hover{border-color:rgba(184,134,11,.25);box-shadow:var(--shm);transform:translateY(-1px)}
+.pc.sel{border-color:var(--gold2);box-shadow:0 0 0 2px rgba(184,134,11,.15),var(--shm)}
+.pc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.65rem}
+.pc-cat{display:inline-flex;align-items:center;background:var(--goldg);color:var(--gold);border:1px solid rgba(184,134,11,.2);padding:.17rem .55rem;border-radius:100px;font-size:.64rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.sring{position:relative;width:42px;height:42px;flex-shrink:0}
+.sr-s{transform:rotate(-90deg)}
+.sr-bg{fill:none;stroke:var(--border2);stroke-width:3.5}
+.sr-fg{fill:none;stroke-width:3.5;stroke-linecap:round;transition:stroke-dashoffset .9s ease}
+.sr-fg.hi{stroke:#22c55e}.sr-fg.mid{stroke:var(--gold2)}.sr-fg.lo{stroke:var(--red)}
+.sr-n{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:700;color:var(--gold)}
+.pc-ex{font-size:.79rem;color:var(--muted);line-height:1.56;margin-bottom:.65rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-weight:300}
+.pc-meta{display:flex;align-items:center;gap:.75rem}
+.mc{display:flex;align-items:center;gap:.26rem;font-size:.67rem;color:var(--muted2)}
+.sdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.sdot.active{background:var(--green)}.sdot.flagged{background:var(--red)}.sdot.processing{background:var(--yel);animation:blink 1.5s infinite}
+.nbar{display:flex;gap:2px;margin-top:.5rem}
+.np{width:13px;height:3px;border-radius:2px;background:var(--border2)}
+.np.done{background:var(--gold2)}.np.err{background:var(--red)}
+/* ── DETAIL PANEL ── */
+.dp{background:var(--surf);border:1px solid var(--border2);border-radius:12px;overflow:hidden;box-shadow:var(--sh);display:flex;flex-direction:column;height:100%}
+.dp-hd{padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.06);background:linear-gradient(135deg,var(--navy) 0%,var(--navy2) 60%,var(--navy3) 100%);flex-shrink:0;position:relative;overflow:hidden}
+.dp-hd-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.08}
+.dp-hd-body{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between}
+.dp-title{font-family:'Cormorant Garamond',serif;font-size:1.08rem;font-weight:700;color:#fff}
+.dp-sub{font-size:.65rem;color:rgba(255,255,255,.38);font-weight:300;margin-top:.1rem}
+.dp-score-big{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--gold3);line-height:1}
+.dp-body{padding:1.05rem 1.25rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:1rem}
+.score-strip{display:flex;align-items:center;gap:1.1rem;background:var(--ivory2);border:1px solid var(--border2);border-radius:9px;padding:.85rem 1rem}
+.ss-score{font-family:'Cormorant Garamond',serif;font-size:2.6rem;font-weight:700;color:var(--navy);line-height:1}
+.ss-grade{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:700;color:var(--gold)}
+.ss-verdict{font-size:.78rem;color:var(--muted);line-height:1.62;font-weight:300;flex:1}
+/* ── CHARTS ── */
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:.85rem}
+.chart-card{background:var(--ivory);border:1px solid var(--border2);border-radius:10px;padding:.9rem}
+.chart-lbl{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.65rem;display:flex;align-items:center;justify-content:space-between}
+.chart-wrap{height:130px;position:relative}
+/* ── NODE GRID ── */
+.node-section-lbl{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.ng2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+/* Node cards — click to open modal */
+.nc{background:var(--ivory);border:1px solid var(--border2);border-radius:9px;padding:.85rem;cursor:pointer;transition:all .2s;position:relative}
+.nc:hover{border-color:var(--border);box-shadow:var(--sh);transform:translateY(-1px)}
+.nc.hd{border-left:3px solid var(--gold2)}.nc.he{border-left:3px solid var(--red);opacity:.75}.nc.pend{border-left:3px solid var(--border)}
+.nc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.45rem}
+.nc-nm{font-size:.69rem;font-weight:700;color:var(--navy);display:flex;align-items:center;gap:.3rem}
+.nc-no{font-size:.57rem;color:var(--muted2);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.nc-preview{font-size:.74rem;color:var(--muted);line-height:1.52;font-weight:300;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:.55rem}
+.nc-cta{font-size:.64rem;color:var(--gold);font-weight:600}
+.btn-run{background:var(--goldg);color:var(--gold);border:1px solid rgba(184,134,11,.2);padding:.22rem .56rem;border-radius:7px;font-size:.67rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .14s;display:flex;align-items:center;gap:.22rem}
+.btn-run:hover{background:var(--goldg2)}
+.btn-run:disabled{opacity:.38;cursor:not-allowed}
+.pill{display:inline-block;padding:.1rem .38rem;border-radius:100px;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.pg{background:var(--gG);color:var(--green)}.py{background:var(--yG);color:var(--yel)}.pr{background:var(--rG);color:var(--red)}
+/* ── NO PITCH ── */
+.no-pitch{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2.8rem 1.5rem;color:var(--muted);text-align:center;flex:1}
+/* ── MODAL OVERLAY ── */
+.modal-bg{position:fixed;inset:0;background:rgba(13,27,42,.55);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:1.5rem}
+.modal-bg.open{display:flex}
+.modal{background:var(--surf);border-radius:16px;width:100%;max-width:680px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(13,27,42,.35);overflow:hidden}
+.modal-hd{padding:1.1rem 1.5rem;background:linear-gradient(135deg,var(--navy),var(--navy2));display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;overflow:hidden}
+.modal-hd-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.07}
+.modal-hd-body{position:relative;z-index:2;flex:1;min-width:0}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:#fff}
+.modal-node{font-size:.62rem;color:var(--gold3);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.25rem}
+.modal-close{position:relative;z-index:2;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.1);border:none;color:#fff;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.2)}
+.modal-body{padding:1.3rem 1.5rem;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:1rem}
+.modal-section{background:var(--ivory);border:1px solid var(--border2);border-radius:10px;padding:1rem}
+.modal-section-title{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.7rem;display:flex;align-items:center;gap:.3rem}
+.kv-row{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--border2)}
+.kv-row:last-child{border-bottom:none}
+.kv-key{color:var(--muted);font-size:.74rem;font-weight:500;flex-shrink:0;max-width:40%}
+.kv-val{color:var(--text2);font-size:.74rem;font-weight:600;text-align:right;word-break:break-word}
+.list-item{display:flex;align-items:flex-start;gap:.5rem;padding:.3rem 0;border-bottom:1px solid var(--border2);font-size:.8rem;color:var(--text2);line-height:1.55}
+.list-item:last-child{border-bottom:none}
+.list-bullet{width:6px;height:6px;border-radius:50%;background:var(--gold2);flex-shrink:0;margin-top:.42rem}
+.score-bar-row{display:flex;align-items:center;gap:.65rem;padding:.28rem 0}
+.sbl{font-size:.72rem;color:var(--muted);font-weight:500;width:120px;flex-shrink:0}
+.sbtrack{flex:1;height:7px;background:var(--border2);border-radius:100px;overflow:hidden}
+.sbfill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--gold),var(--gold2))}
+.sbnum{font-size:.72rem;font-weight:700;color:var(--navy);width:28px;text-align:right}
+.modal-run-btn{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border:none;padding:.62rem 1.5rem;border-radius:9px;font-size:.82rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;display:flex;align-items:center;gap:.38rem;margin-top:.5rem;align-self:flex-start}
+.modal-run-btn:hover{box-shadow:0 6px 20px rgba(13,27,42,.28);transform:translateY(-1px)}
+.modal-run-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+/* ── MESSAGES ── */
+.msg-layout{display:grid;grid-template-columns:280px 1fr;gap:0;height:calc(100vh - 112px);overflow:hidden;background:var(--surf);border:1px solid var(--border2);border-radius:12px;box-shadow:var(--sh)}
+.msg-sidebar{border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden}
+.msg-sb-hd{padding:.85rem 1rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between}
+.msg-sb-title{font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.msg-list{flex:1;overflow-y:auto}
+.msg-conv{padding:.75rem 1rem;cursor:pointer;border-bottom:1px solid var(--border2);transition:background .15s;display:flex;align-items:flex-start;gap:.65rem}
+.msg-conv:hover{background:var(--ivory)}
+.msg-conv.active-conv{background:var(--goldg)}
+.msg-conv-av{width:36px;height:36px;border-radius:10px;flex-shrink:0;overflow:hidden}
+.msg-conv-av img{width:100%;height:100%;object-fit:cover}
+.msg-conv-av-placeholder{width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff}
+.msg-conv-name{font-size:.8rem;font-weight:600;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msg-conv-prev{font-size:.7rem;color:var(--muted2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.1rem;font-weight:300}
+.unread-badge{background:var(--gold2);color:#fff;border-radius:100px;font-size:.56rem;font-weight:700;padding:.05rem .3rem;margin-left:auto;flex-shrink:0}
+.msg-main{display:flex;flex-direction:column;overflow:hidden}
+.msg-chat-hd{padding:.8rem 1.15rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.7rem;flex-shrink:0;background:var(--ivory2)}
+.msg-chat-hd-img{width:38px;height:38px;border-radius:9px;overflow:hidden;flex-shrink:0}
+.msg-chat-hd-img img{width:100%;height:100%;object-fit:cover}
+.msg-chat-name{font-size:.85rem;font-weight:700;color:var(--navy)}
+.msg-chat-sub{font-size:.67rem;color:var(--muted2);font-weight:300}
+.msg-enc{display:flex;align-items:center;gap:.28rem;font-size:.62rem;font-weight:700;color:var(--green);background:var(--gG);border:1px solid var(--gB);padding:.18rem .5rem;border-radius:100px;margin-left:auto}
+.msg-body{flex:1;overflow-y:auto;padding:.9rem 1.15rem;display:flex;flex-direction:column;gap:.55rem}
+.msg-date-sep{text-align:center;font-size:.62rem;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:.08em;padding:.3rem 0}
+.msg-bubble-wrap{display:flex;align-items:flex-end;gap:.5rem}
+.msg-bubble-wrap.mine{flex-direction:row-reverse}
+.msg-bav{width:26px;height:26px;border-radius:50%;overflow:hidden;flex-shrink:0}
+.msg-bav img{width:100%;height:100%;object-fit:cover}
+.msg-bav-ph{width:100%;height:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;color:#fff}
+.bubble{max-width:72%;padding:.55rem .8rem;border-radius:12px;font-size:.82rem;line-height:1.55;word-break:break-word}
+.bubble.theirs{background:var(--ivory2);border:1px solid var(--border2);color:var(--text);border-bottom-left-radius:3px}
+.bubble.mine{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;border-bottom-right-radius:3px}
+.bubble-time{font-size:.6rem;color:var(--muted2);margin-top:.2rem;text-align:right}
+.bubble-time.mine{color:rgba(255,255,255,.45)}
+.msg-input-area{padding:.75rem 1.15rem;border-top:1px solid var(--border2);display:flex;align-items:center;gap:.65rem;background:var(--surf);flex-shrink:0}
+.msg-input{flex:1;background:var(--ivory2);border:1.5px solid var(--border2);border-radius:10px;padding:.55rem .85rem;font-size:.85rem;font-family:'Outfit',sans-serif;outline:none;color:var(--text);transition:border-color .18s}
+.msg-input:focus{border-color:var(--gold2);background:#fff}
+.msg-send-btn{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#fff;border:none;padding:.55rem 1.1rem;border-radius:9px;font-size:.8rem;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .18s;display:flex;align-items:center;gap:.3rem}
+.msg-send-btn:hover{box-shadow:0 4px 14px rgba(184,134,11,.35);transform:translateY(-1px)}
+.no-conv{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted2);gap:.5rem}
+/* ── FN GRID ── */
+.fn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.fn-card{background:var(--surf);border:1px solid var(--border2);border-radius:11px;padding:.9rem 1rem;transition:all .2s;box-shadow:var(--sh);cursor:pointer;display:flex;flex-direction:column;gap:.22rem}
+.fn-card:hover{box-shadow:var(--shm);border-color:var(--border);transform:translateY(-1px)}
+.fn-ic{font-size:1.25rem;margin-bottom:.4rem}
+.fn-nm{font-size:.78rem;font-weight:700;color:var(--navy)}
+.fn-ds{font-size:.7rem;color:var(--muted);line-height:1.5;font-weight:300;flex:1}
+.fn-no{font-size:.6rem;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:.07em;margin-top:.35rem}
+/* ── HISTORY ── */
+.hi{background:var(--surf);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem;display:flex;align-items:flex-start;gap:.75rem;box-shadow:var(--sh)}
+.hi-ic{width:30px;height:30px;border-radius:8px;background:var(--goldg);display:flex;align-items:center;justify-content:center;font-size:.88rem;flex-shrink:0}
+.hi-nm{font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.1rem}
+.hi-tm{font-size:.64rem;color:var(--muted2);font-weight:300}
+.hi-pv{font-size:.72rem;color:var(--muted);line-height:1.5;margin-top:.2rem;font-weight:300}
+/* ── PEXELS IMAGE GRID ── */
+.img-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;border-radius:10px;overflow:hidden}
+.img-grid img{width:100%;height:72px;object-fit:cover;transition:opacity .2s}
+.img-grid img:hover{opacity:.88}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ SIDEBAR ═══════════ -->
+<aside>
+  <div class="logo-wrap">
+    <div class="logo-gem">✦</div>
+    <div class="logo-txt">Dream<span>Launch</span></div>
+  </div>
+  <div class="user-wrap">
+    <div class="av" id="uInit">F</div>
+    <div>
+      <div class="un">{{ user_name }}</div>
+      <div class="ur">Innovator</div>
+    </div>
+  </div>
+  <nav class="side-nav">
+    <div class="ng">Workspace</div>
+    <button class="ni active" onclick="goSec(this,'dashboard')"><span class="ic">◈</span> Dashboard</button>
+    <button class="ni" onclick="goSec(this,'pitches')"><span class="ic">◉</span> My Pitches <span class="nb" id="pBadge" style="display:none">0</span></button>
+    <button class="ni" onclick="goSec(this,'analysis')"><span class="ic">◎</span> AI Analysis</button>
+    <div class="ng">Tools</div>
+    <button class="ni" onclick="goSec(this,'functions')"><span class="ic">⚡</span> AI Functions</button>
+    <button class="ni" onclick="goSec(this,'messages')"><span class="ic">◻</span> Messages <span class="nb" id="mBadge" style="display:none">0</span></button>
+    <button class="ni" onclick="goSec(this,'history')"><span class="ic">◷</span> History</button>
+  </nav>
+  <div class="side-foot"><a href="/logout" class="logout">⟵ Sign Out</a></div>
+</aside>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main>
+  <div class="topbar">
+    <div>
+      <div class="pt" id="pgTitle">Dashboard</div>
+      <div class="ps">Welcome back, {{ user_name }} · DreamLaunch AI</div>
+    </div>
+    <div class="tb-r">
+      <div class="alive"><span class="dot"></span> AI Online</div>
+      <button class="btn-g" onclick="focusForm()">✦ New Pitch</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ─── DASHBOARD ─── -->
+    <div id="sec-dashboard" class="sec active">
+
+      <!-- Hero Banner with Pexels image -->
+      <div class="hero-banner">
+        <img class="hero-img" src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop" alt="" loading="lazy">
+        <div class="hero-body">
+          <div class="hero-tag"><span class="dot"></span> Gemini 2.5 Flash · 12 AI Nodes Active</div>
+          <div>
+            <div class="hero-title">Your Founder Command Centre</div>
+            <div class="hero-sub">Submit a pitch — get full VC-grade analysis in under 60 seconds</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stat-row">
+        <div class="sc c1"><div class="si">✦</div><div class="sv" id="stP">0</div><div class="sl">Total Pitches</div><div class="sd" id="stPN">—</div></div>
+        <div class="sc c2"><div class="si">◎</div><div class="sv" id="stB">—</div><div class="sl">Best Score</div><div class="sd">VC rubric / 100</div></div>
+        <div class="sc c3"><div class="si">◆</div><div class="sv" id="stN">0</div><div class="sl">AI Nodes Run</div><div class="sd" id="stNN">analyses done</div></div>
+        <div class="sc c4"><div class="si">◉</div><div class="sv" id="stA">—</div><div class="sl">Avg Score</div><div class="sd">Platform benchmark</div></div>
+      </div>
+
+      <!-- Form + Pitch list -->
+      <div style="display:grid;grid-template-columns:1fr 1.08fr;gap:1.05rem;align-items:start">
+        <div class="card">
+          <div class="ch">
+            <div class="ct">✦ Submit New Pitch</div>
+            <span style="font-size:.64rem;color:var(--muted2);font-weight:300">12 nodes · ~45s</span>
+          </div>
+          <div class="hints">
+            <span class="hint" onclick="fillHint('HealthTech')">🏥 HealthTech</span>
+            <span class="hint" onclick="fillHint('FinTech')">💳 FinTech</span>
+            <span class="hint" onclick="fillHint('AgriTech')">🌾 AgriTech</span>
+            <span class="hint" onclick="fillHint('EdTech')">📚 EdTech</span>
+            <span class="hint" onclick="fillHint('SaaS')">☁️ SaaS</span>
+          </div>
+          <form method="POST" action="/innovator" id="pitchForm" onsubmit="onSub()">
+            <textarea name="pitch" id="pitchArea" required maxlength="5000" oninput="updCC()"
+              placeholder="Describe your startup: the problem you solve, your solution, target market, revenue model, team background, traction, and funding ask. The more detail, the sharper the AI analysis."></textarea>
+            <div class="ff">
+              <div>
+                <div class="sub-loader" id="subLdr"><div class="spin"></div> Running 12 AI nodes… 30–60s</div>
+                <div class="cc" id="cc">0 / 5,000</div>
+              </div>
+              <button type="submit" class="btn-sub" id="subBtn">✦ Deploy Analysis</button>
+            </div>
+          </form>
+        </div>
+        <div>
+          <div class="ph">
+            <h3>Recent Pitches</h3>
+            <div class="ftabs">
+              <button class="ftab active" onclick="filt('all',this)">All</button>
+              <button class="ftab" onclick="filt('ACTIVE',this)">Active</button>
+              <button class="ftab" onclick="filt('FLAGGED',this)">Flagged</button>
+            </div>
+          </div>
+          <div class="plist" id="listDash"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MY PITCHES ─── -->
+    <div id="sec-pitches" class="sec">
+      <div style="display:grid;grid-template-columns:310px 1fr;gap:1.05rem;height:calc(100vh - 115px);overflow:hidden">
+        <div style="overflow-y:auto">
+          <div class="ph"><h3>All Pitches</h3><span style="font-size:.66rem;color:var(--muted2)" id="plCnt">—</span></div>
+          <div class="plist" id="listFull"></div>
+        </div>
+        <div class="dp" id="detailPanel">
+          <div class="no-pitch">
+            <img src="https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop" style="width:72px;height:72px;border-radius:50%;object-fit:cover;margin-bottom:.9rem;opacity:.55" alt="">
+            <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--navy);margin-bottom:.35rem">Select a Pitch</div>
+            <p style="font-size:.78rem;font-weight:300;max-width:220px">Click any pitch on the left to view its full AI analysis</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── AI ANALYSIS ─── -->
+    <div id="sec-analysis" class="sec">
+      <div style="display:grid;grid-template-columns:260px 1fr;gap:1.05rem;height:calc(100vh - 115px);overflow:hidden">
+        <div style="overflow-y:auto">
+          <div class="ph"><h3>Select Pitch</h3></div>
+          <div class="plist" id="listAnalysis"></div>
+        </div>
+        <div style="overflow-y:auto;display:flex;flex-direction:column;gap:.9rem">
+          <div id="analysisHdr" class="card" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-color:transparent;padding:1.05rem 1.25rem">
+            <p style="color:rgba(255,255,255,.38);font-size:.8rem;font-weight:300">Select a pitch to explore 12 AI analysis nodes. Click any node card to view the full result.</p>
+          </div>
+          <div id="analysisChart" style="display:none" class="chart-row"></div>
+          <div class="ng2" id="analysisNodes"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── MESSAGES ─── -->
+    <div id="sec-messages" class="sec">
+      <div class="msg-layout">
+        <div class="msg-sidebar">
+          <div class="msg-sb-hd">
+            <div class="msg-sb-title">Conversations</div>
+          </div>
+          <div class="msg-list" id="convList"></div>
+        </div>
+        <div class="msg-main" id="msgMain">
+          <div class="no-conv">
+            <img src="https://images.pexels.com/photos/6457521/pexels-photo-6457521.jpeg?auto=compress&cs=tinysrgb&w=200&h=200&fit=crop" style="width:68px;height:68px;border-radius:50%;object-fit:cover;opacity:.5" alt="">
+            <div style="font-size:.85rem;font-weight:600;color:var(--navy);margin-top:.6rem">Select a conversation</div>
+            <div style="font-size:.75rem;font-weight:300;color:var(--muted2)">Choose a pitch thread to start messaging</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── AI FUNCTIONS ─── -->
+    <div id="sec-functions" class="sec">
+      <div style="font-size:.68rem;color:var(--muted2);font-weight:300;margin-bottom:.1rem">Select a pitch first via My Pitches, then click any function card below to run it on that pitch.</div>
+      <!-- Pexels image strip -->
+      <div class="img-grid">
+        <img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=300&h=150&fit=crop" alt="" loading="lazy">
+        <img src="https://images.pexels.com/photos/7947541/pexels-photo-7947541.jpeg?auto=compress&cs=tinysrgb&w=300&h=150&fit=crop" alt="" loading="lazy">
+        <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=300&h=150&fit=crop" alt="" loading="lazy">
+      </div>
+      <div class="fn-grid" id="fnGrid"></div>
+    </div>
+
+    <!-- ─── HISTORY ─── -->
+    <div id="sec-history" class="sec">
+      <div style="font-size:.66rem;color:var(--muted2);font-weight:300;margin-bottom:.1rem">Last 30 AI function runs across all pitches.</div>
+      <div id="histList" style="display:flex;flex-direction:column;gap:.58rem"></div>
+    </div>
+
+  </div><!-- /content -->
+</main>
+
+<!-- ═══════════ NODE DETAIL MODAL ═══════════ -->
+<div class="modal-bg" id="nodeModal" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-hd">
+      <img class="modal-hd-img" id="modalImg" src="" alt="">
+      <div class="modal-hd-body">
+        <div class="modal-node" id="modalNodeLabel">Node 1</div>
+        <div class="modal-title" id="modalTitle">Result</div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody">Loading…</div>
+  </div>
+</div>
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// ── Data from Flask ──
+const PITCHES = {{ pitches_json|safe }};
+const HISTORY = {{ history_json|safe }};
+const FN_META = {{ fn_meta|safe }};
+const UID     = {{ user_id }};
+// Messages data — loaded via AJAX when tab opens
+const CONVS   = [];
+const CIRC    = 119.38; // 2πr, r=19
+
+const HINTS = {
+  HealthTech:'MedSync solves fragmented patient records in rural India. We aggregate data from 50+ hospitals so doctors get complete histories in seconds. Target: 800M rural Indians. Revenue: ₹99/month per doctor. Team: 3 ex-Practo IIT engineers. Raising ₹2Cr seed for 18-month runway.',
+  FinTech:   'PayEase cuts remittance fees from 3-5% to 0.5% for Indian migrant workers via RBI-compliant P2P corridors. TAM: $80B Indian remittance market. Revenue: Transaction fee + subscription. Team: ex-Razorpay and Wise. Traction: ₹50L MRR, 12K users. Raising ₹5Cr Series A.',
+  AgriTech:  'FarmIQ connects 120M smallholder farmers to real-time prices and direct buyers, cutting 40% middleman margins. AI crop advisory in 12 regional languages via WhatsApp. TAM: ₹6 lakh crore. Revenue: 2% commission + SaaS. Pilot: 3K farmers, ₹2Cr GMV in 6 months. Raising ₹3Cr seed.',
+  EdTech:    "SkillBridge delivers AI-personalized 30-day job-skill sprints with 94% placement rate vs 40% industry average. Target: 15M annual graduates. Revenue: ₹4,999 course fee + employer commission. Team: ex-BYJU'S, LinkedIn Learning. Traction: ₹1.2Cr ARR. Raising ₹4Cr.",
+  SaaS:      'AutoBooks automates GST compliance for 63M Indian SMEs. Saves 40 hours/month. Price: ₹599/month. TAM: ₹12,000Cr accounting software market. Revenue: SaaS + CA marketplace. Team: ex-Zoho and KPMG. ARR: ₹80L, 1,400 customers. Raising ₹2.5Cr seed.'
+};
+
+// Node pexels images
+const NODE_IMGS = {
+  1:'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  2:'https://images.pexels.com/photos/7947541/pexels-photo-7947541.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  3:'https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  4:'https://images.pexels.com/photos/6457521/pexels-photo-6457521.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  5:'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  6:'https://images.pexels.com/photos/7688336/pexels-photo-7688336.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  7:'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  8:'https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  9:'https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  10:'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  11:'https://images.pexels.com/photos/6457567/pexels-photo-6457567.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop',
+  12:'https://images.pexels.com/photos/3184325/pexels-photo-3184325.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop'
+};
+
+let selPitch = null;
+let chartInstances = {};
+let activePitchForModal = null;
+
+// ── BOOT ──
+window.addEventListener('DOMContentLoaded', () => {
+  const name = '{{ user_name }}';
+  document.getElementById('uInit').textContent = (name||'F')[0].toUpperCase();
+  initStats();
+  renderList('listDash', PITCHES.slice(0,8));
+  renderList('listFull',  PITCHES);
+  renderList('listAnalysis', PITCHES);
+  renderFunctions();
+  renderHistory();
+  if(PITCHES.length){ const b=document.getElementById('pBadge'); b.style.display='inline'; b.textContent=PITCHES.length; }
+  document.getElementById('plCnt').textContent = PITCHES.length + ' pitch' + (PITCHES.length!==1?'es':'');
+  initMessages();
+});
+
+// ── STATS ──
+function initStats(){
+  document.getElementById('stP').textContent = PITCHES.length;
+  document.getElementById('stPN').textContent = PITCHES.length===1?'1 pitch submitted':`${PITCHES.length} pitches`;
+  if(PITCHES.length){
+    const best=Math.max(...PITCHES.map(p=>p.score||0));
+    const avg=Math.round(PITCHES.reduce((a,p)=>a+(p.score||0),0)/PITCHES.length);
+    document.getElementById('stB').textContent=best||'—';
+    document.getElementById('stA').textContent=avg||'—';
+  }
+  const n=PITCHES.reduce((a,p)=>{try{return a+Object.keys(JSON.parse(p.analysis||'{}')).length;}catch(e){return a;}},0);
+  document.getElementById('stN').textContent=n;
+  document.getElementById('stNN').textContent=`${n} analyses done`;
+}
+
+// ── NAV ──
+function goSec(btn,sec){
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.sec').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById('sec-'+sec);
+  if(el) el.classList.add('active');
+  const titles={dashboard:'Dashboard',pitches:'My Pitches',analysis:'AI Analysis',functions:'AI Functions',messages:'Messages',history:'Function History'};
+  document.getElementById('pgTitle').textContent=titles[sec]||sec;
+  if(sec==='messages') loadConversations();
+}
+function focusForm(){
+  goSec(document.querySelectorAll('.ni')[0],'dashboard');
+  setTimeout(()=>document.getElementById('pitchArea').focus(),80);
+}
+
+// ── PITCH LIST ──
+function renderList(cid,list){
+  const c=document.getElementById(cid);if(!c)return;
+  if(!list||!list.length){
+    c.innerHTML=`<div style="text-align:center;padding:2rem .5rem;color:var(--muted2)"><div style="font-size:1.7rem;margin-bottom:.45rem">✦</div><div style="font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:.2rem">No pitches yet</div><div style="font-size:.73rem;font-weight:300">Submit a pitch above to get started</div></div>`;
+    return;
+  }
+  c.innerHTML=list.map(pitchCard).join('');
+}
+function pitchCard(p){
+  let an={};try{an=JSON.parse(p.analysis||'{}');}catch(e){}
+  const sc=p.score||0;
+  const off=CIRC-(sc/100)*CIRC;
+  const fgCls=sc>=70?'hi':sc>=40?'mid':'lo';
+  const nd=Object.keys(an).filter(k=>k.startsWith('node_')&&!an[k]?.error).length;
+  const st=p.status||'ACTIVE';
+  const dc=st==='ACTIVE'?'active':st==='FLAGGED'?'flagged':'processing';
+  const bars=Array.from({length:12},(_,i)=>`<div class="np${an[`node_${i+1}`]?(an[`node_${i+1}`].error?' err':' done'):''}" title="Node ${i+1}"></div>`).join('');
+  return `<div class="pc" data-id="${p.id}" data-status="${st}" onclick="selP(${p.id})">
+    <div class="pc-top">
+      <div><div class="pc-cat">${p.category||'Startup'}</div><div style="font-size:.64rem;color:var(--muted2);margin-top:.18rem;font-weight:300">${nd}/12 nodes · ${(p.created_at||'').slice(0,10)||'Recent'}</div></div>
+      <div class="sring"><svg class="sr-s" width="42" height="42" viewBox="0 0 42 42"><circle class="sr-bg" cx="21" cy="21" r="17"/><circle class="sr-fg ${fgCls}" cx="21" cy="21" r="17" stroke-dasharray="${CIRC}" stroke-dashoffset="${off}"/></svg><div class="sr-n">${sc||'—'}</div></div>
+    </div>
+    <div class="pc-ex">${(p.raw_text||'').slice(0,140)}...</div>
+    <div class="pc-meta"><span class="mc"><span class="sdot ${dc}"></span>${st}</span><span class="mc">◷ ${(p.created_at||'').slice(0,10)||'Recent'}</span></div>
+    <div class="nbar">${bars}</div>
+  </div>`;
+}
+
+// ── SELECT PITCH ──
+function selP(id){
+  selPitch=id;
+  document.querySelectorAll('.pc').forEach(c=>c.classList.toggle('sel',parseInt(c.dataset.id)===id));
+  const p=PITCHES.find(x=>x.id===id);if(!p)return;
+  const cur=document.querySelector('.sec.active');
+  if(cur&&cur.id==='sec-dashboard') goSec(document.querySelectorAll('.ni')[1],'pitches');
+  loadDetail(p);
+  loadAnalysis(p);
+  activePitchForModal=p;
+}
+
+// ── DETAIL PANEL ──
+function loadDetail(p){
+  let an={};try{an=JSON.parse(p.analysis||'{}');}catch(e){}
+  const n2=an.node_2||{};
+  const sc=p.score||0;
+  const panel=document.getElementById('detailPanel');if(!panel)return;
+  panel.innerHTML=`
+    <div class="dp-hd">
+      <img class="dp-hd-img" src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=800&h=300&fit=crop" alt="">
+      <div class="dp-hd-body">
+        <div><div class="dp-title">${p.category||'Startup'} · Pitch #${p.id}</div><div class="dp-sub">${(p.created_at||'').slice(0,10)||'Recent'} · ${p.status}</div></div>
+        <div style="text-align:right"><div class="dp-score-big">${sc}</div><div style="font-size:.58rem;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.08em">/ 100</div></div>
+      </div>
+    </div>
+    <div class="dp-body">
+      <div class="score-strip">
+        <div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.18rem">Venture Score</div><div class="ss-score">${sc}<span style="font-size:.9rem;color:var(--muted)">/100</span></div></div>
+        ${n2.grade?`<div><div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.18rem">Grade</div><div class="ss-grade">${n2.grade}</div></div>`:''}
+        <div class="ss-verdict">${n2.investor_verdict||n2.summary||'Run Node 2 (Quality Score) to get a full VC verdict on this pitch.'}</div>
+      </div>
+      ${renderScoreBreakdownChart(n2, p.id)}
+      <div>
+        <div style="font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.65rem">◆ AI Nodes — Click to View Full Result</div>
+        <div class="ng2" id="dpNodes-${p.id}"></div>
+      </div>
+    </div>`;
+  renderNodes(p, an, `dpNodes-${p.id}`);
+  // init chart after DOM
+  setTimeout(()=>initScoreChart(n2, p.id), 80);
+}
+
+// ── SCORE BREAKDOWN CHART ──
+function renderScoreBreakdownChart(n2, pid){
+  if(!n2||!n2.breakdown) return '';
+  return `<div class="chart-row">
+    <div class="chart-card">
+      <div class="chart-lbl">Score Breakdown <span style="font-weight:700;color:var(--navy)">${n2.total_score||0}/100</span></div>
+      <div class="chart-wrap"><canvas id="chart-radar-${pid}"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-lbl">Category Scores</div>
+      <div class="chart-wrap"><canvas id="chart-bar-${pid}"></canvas></div>
+    </div>
+  </div>`;
+}
+function initScoreChart(n2, pid){
+  if(!n2||!n2.breakdown) return;
+  const bd=n2.breakdown;
+  const labels=Object.keys(bd).map(k=>k.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()));
+  const vals=Object.values(bd);
+  const gold='rgba(212,160,23,';
+  // Radar
+  const rCtx=document.getElementById(`chart-radar-${pid}`);
+  if(rCtx){
+    if(chartInstances[`radar-${pid}`]) chartInstances[`radar-${pid}`].destroy();
+    chartInstances[`radar-${pid}`]=new Chart(rCtx,{type:'radar',data:{labels,datasets:[{data:vals,backgroundColor:gold+'0.15)',borderColor:gold+'0.8)',pointBackgroundColor:gold+'1)',pointRadius:3,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{beginAtZero:true,ticks:{display:false,maxTicksLimit:4},grid:{color:'rgba(184,134,11,.1)'},angleLines:{color:'rgba(184,134,11,.1)'},pointLabels:{font:{size:9,family:'Outfit'},color:'#7a6a50'}}},plugins:{legend:{display:false}}}});
+  }
+  // Bar
+  const bCtx=document.getElementById(`chart-bar-${pid}`);
+  if(bCtx){
+    if(chartInstances[`bar-${pid}`]) chartInstances[`bar-${pid}`].destroy();
+    const colors=vals.map(v=>v>=20?'rgba(22,101,52,.7)':v>=12?'rgba(212,160,23,.75)':'rgba(153,27,27,.65)');
+    chartInstances[`bar-${pid}`]=new Chart(bCtx,{type:'bar',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{font:{size:8},color:'#a08060'},grid:{color:'rgba(184,134,11,.07)'}},y:{ticks:{font:{size:8},color:'#7a6a50'},grid:{display:false}}},plugins:{legend:{display:false}}}});
+  }
+}
+
+// ── ANALYSIS TAB ──
+function loadAnalysis(p){
+  let an={};try{an=JSON.parse(p.analysis||'{}');}catch(e){}
+  const n2=an.node_2||{};
+  const sc=p.score||0;
+  const hdr=document.getElementById('analysisHdr');
+  if(hdr) hdr.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-size:.6rem;color:rgba(255,255,255,.3);font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.28rem">Selected Pitch</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:#fff">${p.category||'Startup'} · Pitch #${p.id}</div>
+      <div style="font-size:.68rem;color:rgba(255,255,255,.35);font-weight:300;margin-top:.15rem">Score: ${sc}/100 · ${p.status}</div></div>
+      <div style="text-align:right"><div style="font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:700;color:var(--gold3);line-height:1">${sc}</div><div style="font-size:.58rem;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.08em">VC Score</div></div>
+    </div>`;
+
+  // Show charts
+  const ac=document.getElementById('analysisChart');
+  if(n2.breakdown){
+    ac.style.display='grid';
+    ac.innerHTML=`
+      <div class="chart-card"><div class="chart-lbl">Score Breakdown <span style="font-weight:700;color:var(--navy)">${n2.total_score||0}/100</span></div><div class="chart-wrap"><canvas id="achart-radar-${p.id}"></canvas></div></div>
+      <div class="chart-card"><div class="chart-lbl">Category Scores</div><div class="chart-wrap"><canvas id="achart-bar-${p.id}"></canvas></div></div>`;
+    setTimeout(()=>initScoreChart2(n2,p.id),80);
+  } else { ac.style.display='none'; }
+
+  renderNodes(p, an, 'analysisNodes');
+  activePitchForModal=p;
+}
+function initScoreChart2(n2,pid){
+  const bd=n2.breakdown;
+  const labels=Object.keys(bd).map(k=>k.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()));
+  const vals=Object.values(bd);
+  const gold='rgba(212,160,23,';
+  const rCtx=document.getElementById(`achart-radar-${pid}`);
+  if(rCtx){if(chartInstances[`ar-${pid}`])chartInstances[`ar-${pid}`].destroy();chartInstances[`ar-${pid}`]=new Chart(rCtx,{type:'radar',data:{labels,datasets:[{data:vals,backgroundColor:gold+'0.15)',borderColor:gold+'0.8)',pointBackgroundColor:gold+'1)',pointRadius:3,borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,scales:{r:{beginAtZero:true,ticks:{display:false},grid:{color:'rgba(184,134,11,.1)'},angleLines:{color:'rgba(184,134,11,.1)'},pointLabels:{font:{size:9,family:'Outfit'},color:'#7a6a50'}}},plugins:{legend:{display:false}}}});}
+  const bCtx=document.getElementById(`achart-bar-${pid}`);
+  if(bCtx){if(chartInstances[`ab-${pid}`])chartInstances[`ab-${pid}`].destroy();const colors=vals.map(v=>v>=20?'rgba(22,101,52,.7)':v>=12?'rgba(212,160,23,.75)':'rgba(153,27,27,.65)');chartInstances[`ab-${pid}`]=new Chart(bCtx,{type:'bar',data:{labels,datasets:[{data:vals,backgroundColor:colors,borderRadius:5,borderSkipped:false}]},options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',scales:{x:{beginAtZero:true,ticks:{font:{size:8},color:'#a08060'},grid:{color:'rgba(184,134,11,.07)'}},y:{ticks:{font:{size:8},color:'#7a6a50'},grid:{display:false}}},plugins:{legend:{display:false}}}});}
+}
+
+// ── RENDER NODE CARDS (click to open modal) ──
+function renderNodes(pitch, an, cid){
+  const c=document.getElementById(cid);if(!c)return;
+  c.innerHTML=[1,2,3,4,5,6,7,8,9,10,11,12].map(n=>{
+    const meta=FN_META[n]||{};
+    const data=an[`node_${n}`];
+    const hasData=data&&!data.error;
+    const hasErr=data&&data.error;
+    const cls=hasData?'hd':hasErr?'he':'pend';
+    const preview=hasData?nodePreview(n,data):(hasErr?'Error — click Re-run':'Click ▷ Run to generate this analysis');
+    const pillHtml=hasData?'<span class="pill pg">✓ Done</span>':hasErr?'<span class="pill pr">Error</span>':'<span class="pill py">Pending</span>';
+    return `<div class="nc ${cls}" onclick="nodeClick(${n},${pitch.id})">
+      <div class="nc-top"><div class="nc-nm">${meta.icon||'◉'} ${meta.name||'Node '+n}</div><span class="nc-no">N${n}</span></div>
+      <div class="nc-preview">${preview}</div>
+      <div class="nc-footer">
+        <span class="nc-cta">${hasData?'◉ View Details':'◉ Open'}</span>
+        <button class="btn-run" id="rb-${cid}-${n}" onclick="event.stopPropagation();runNodeBtn(${pitch.id},${n},'${cid}')">
+          <div class="spin" id="rs-${cid}-${n}" style="display:none;width:10px;height:10px;border-width:1.5px"></div>
+          ${hasData?'↺ Re-run':'▷ Run'}
+        </button>
+        ${pillHtml}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function nodePreview(n,d){
+  if(!d||typeof d!=='object') return String(d).slice(0,90);
+  switch(n){
+    case 1:return `Problem: ${d.problem||'—'} · Market: ${d.target_market||'—'}`;
+    case 2:return `${d.total_score||'—'}/100 · Grade: ${d.grade||'—'} · ${(d.summary||'').slice(0,70)}`;
+    case 3:return `${(d.strengths||[]).slice(0,2).join(' / ')} · Strat Score: ${d.strategic_score||'—'}`;
+    case 4:return `Grade: ${d.overall_pitch_grade||'—'} · Biggest gap: ${d.biggest_gap||'—'}`;
+    case 5:return `${(d.headline||d.executive_summary||'').slice(0,100)}`;
+    case 6:return `Risk: ${d.risk_level||'—'} · ${d.overall_flag_count||0} red flags · Investability: ${d.investability_score||'—'}`;
+    case 7:return `${d.primary_category||'—'} · ${d.business_model||'—'} · Stage: ${d.stage_guess||'—'}`;
+    case 8:return `Moat: ${d.competitive_moat_score||'—'}/10 · ${(d.direct_competitors||[]).length} direct rivals identified`;
+    case 9:return `Readiness: ${d.fundraising_readiness||'—'}% · Valuation: ${d.valuation_benchmark||'—'}`;
+    case 10:return `Deck score: ${d.deck_score||'—'}/100 · Missing: ${d.biggest_missing_slide||'—'}`;
+    case 11:return `Credibility score: ${d.overall_credibility_score||'—'}/100`;
+    case 12:return `${(d.questions||[]).length} tough VC questions generated`;
+    default:return Object.entries(d).slice(0,2).map(([k,v])=>`${k}: ${String(v).slice(0,35)}`).join(' · ');
+  }
+}
+
+// ── NODE CLICK → MODAL ──
+function nodeClick(nodeNum, pitchId){
+  const p = PITCHES.find(x=>x.id===pitchId)||activePitchForModal;
+  if(!p) return;
+  let an={};try{an=JSON.parse(p.analysis||'{}');}catch(e){}
+  const data=an[`node_${nodeNum}`];
+  const meta=FN_META[nodeNum]||{};
+  document.getElementById('modalNodeLabel').textContent=`Node ${nodeNum} · ${meta.name||''}`;
+  document.getElementById('modalTitle').textContent=meta.name||'Analysis';
+  document.getElementById('modalImg').src=NODE_IMGS[nodeNum]||NODE_IMGS[1];
+  const body=document.getElementById('modalBody');
+  if(!data){
+    body.innerHTML=`<div style="text-align:center;padding:2.5rem;color:var(--muted2)">
+      <div style="font-size:1.8rem;margin-bottom:.65rem">${meta.icon||'◉'}</div>
+      <div style="font-size:.85rem;font-weight:600;color:var(--navy);margin-bottom:.35rem">Not Run Yet</div>
+      <div style="font-size:.78rem;font-weight:300;margin-bottom:1.2rem">${meta.desc||''}</div>
+      <button class="modal-run-btn" onclick="modalRunNode(${pitchId},${nodeNum})">▷ Run ${meta.name}</button>
+    </div>`;
+  } else if(data.error){
+    body.innerHTML=`<div class="modal-section"><div style="color:var(--red);font-size:.82rem;margin-bottom:1rem">⚠ Error running this node</div><div style="font-size:.78rem;color:var(--muted);margin-bottom:1rem">${data.error}</div><button class="modal-run-btn" onclick="modalRunNode(${pitchId},${nodeNum})">↺ Retry ${meta.name}</button></div>`;
+  } else {
+    body.innerHTML=buildModalContent(nodeNum, data, pitchId);
+  }
+  document.getElementById('nodeModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function buildModalContent(n, d, pid){
+  const meta=FN_META[n]||{};
+  let html='';
+  switch(n){
+    case 1: html=sectionKV('Extracted Pitch Data',d,['problem','solution','target_market','market_size','competitive_advantage','team','funding_ask','product_stage','revenue_model','traction']); break;
+    case 2: html=scoreBreakdownModal(d); break;
+    case 3: html=swocModal(d); break;
+    case 4: html=suggestionsModal(d); break;
+    case 5: html=execSummaryModal(d); break;
+    case 6: html=redFlagModal(d); break;
+    case 7: html=sectionKV('Industry Tagging',d,['primary_category','business_model','stage_guess','secondary_tags','tech_stack','market_type','revenue_streams']); break;
+    case 8: html=competitorModal(d); break;
+    case 9: html=investorProfileModal(d); break;
+    case 10: html=deckModal(d); break;
+    case 11: html=financeModal(d); break;
+    case 12: html=questionsModal(d); break;
+    default: html=genericModal(d);
+  }
+  return html + `<button class="modal-run-btn" id="mRunBtn" onclick="modalRunNode(${pid},${n})">↺ Re-run ${meta.name}</button>`;
+}
+
+function sectionKV(title, d, keys){
+  const rows=keys.filter(k=>d[k]).map(k=>`<div class="kv-row"><span class="kv-key">${k.replace(/_/g,' ')}</span><span class="kv-val">${Array.isArray(d[k])?d[k].join(', '):d[k]}</span></div>`).join('');
+  return `<div class="modal-section"><div class="modal-section-title">${title}</div>${rows}</div>`;
+}
+function scoreBreakdownModal(d){
+  const bd=d.breakdown||{};
+  const bars=Object.entries(bd).map(([k,v])=>`<div class="score-bar-row"><div class="sbl">${k.replace(/_/g,' ')}</div><div class="sbtrack"><div class="sbfill" style="width:${Math.min(100,(v/30)*100)}%"></div></div><div class="sbnum">${v}</div></div>`).join('');
+  return `<div class="modal-section">
+    <div class="modal-section-title">Score Breakdown</div>
+    <div style="display:flex;align-items:center;gap:1.25rem;margin-bottom:1rem">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:700;color:var(--navy);line-height:1">${d.total_score||'—'}</div>
+      <div><div style="font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;color:var(--gold)">${d.grade||'—'}</div><div style="font-size:.72rem;color:var(--muted);font-weight:300">${d.summary||''}</div></div>
+    </div>
+    ${bars}
+  </div>
+  <div class="modal-section"><div class="modal-section-title">Investor Verdict</div><p style="font-size:.82rem;color:var(--text2);line-height:1.65">${d.investor_verdict||'—'}</p></div>`;
+}
+function swocModal(d){
+  const sec=(title,items,col)=>`<div class="modal-section"><div class="modal-section-title" style="color:${col}">${title}</div>${(items||[]).map(i=>`<div class="list-item"><div class="list-bullet" style="background:${col}"></div>${i}</div>`).join('')}</div>`;
+  return sec('Strengths',d.strengths,'var(--green)')+sec('Weaknesses',d.weaknesses,'var(--yel)')+sec('Opportunities',d.opportunities,'var(--teal)')+sec('Challenges',d.challenges,'var(--red)')+
+  `<div class="modal-section"><div class="kv-row"><span class="kv-key">Strategic Score</span><span class="kv-val">${d.strategic_score||'—'}/100</span></div><div class="kv-row"><span class="kv-key">Summary</span><span class="kv-val" style="text-align:left">${d.summary||'—'}</span></div></div>`;
+}
+function suggestionsModal(d){
+  const items=(d.suggestions||[]).map(s=>`<div class="modal-section" style="margin-bottom:.5rem">
+    <div class="modal-section-title">${s.issue||'Suggestion'} <span class="pill ${s.priority==='High'?'pr':'py'}">${s.priority||''}</span></div>
+    <div class="kv-row"><span class="kv-key">Why it matters</span><span class="kv-val" style="text-align:left">${s.why_it_matters||'—'}</span></div>
+    <div class="kv-row"><span class="kv-key">Action</span><span class="kv-val" style="text-align:left;color:var(--green)">${s.action||'—'}</span></div>
+    <div class="kv-row"><span class="kv-key">Impact Score</span><span class="kv-val">${s.impact_score||'—'}/10</span></div>
+  </div>`).join('');
+  return items+`<div class="modal-section"><div class="kv-row"><span class="kv-key">Overall Grade</span><span class="kv-val">${d.overall_pitch_grade||'—'}</span></div><div class="kv-row"><span class="kv-key">Biggest Gap</span><span class="kv-val">${d.biggest_gap||'—'}</span></div></div>`;
+}
+function execSummaryModal(d){
+  return `<div class="modal-section"><div class="modal-section-title">Headline</div><p style="font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--navy);line-height:1.4">${d.headline||'—'}</p></div>
+  <div class="modal-section"><div class="modal-section-title">Executive Summary</div><p style="font-size:.82rem;color:var(--text2);line-height:1.7;font-weight:300">${d.executive_summary||'—'}</p></div>
+  <div class="modal-section"><div class="modal-section-title">Key Metrics</div>${(d.key_metrics||[]).map(m=>`<div class="list-item"><div class="list-bullet"></div>${m}</div>`).join('')}</div>
+  <div class="modal-section"><div class="modal-section-title">Investment Hook</div><p style="font-size:.84rem;color:var(--gold);font-weight:600">${d.investment_hook||'—'}</p></div>`;
+}
+function redFlagModal(d){
+  const flags=(d.red_flags||[]).map(f=>`<div class="modal-section" style="margin-bottom:.5rem;border-left:3px solid var(--red)">
+    <div style="font-size:.78rem;font-weight:700;color:var(--red);margin-bottom:.3rem">${f.flag||f}</div>
+    ${f.explanation?`<div style="font-size:.74rem;color:var(--muted);font-weight:300">${f.explanation}</div>`:''}
+    ${f.severity?`<span class="pill pr">${f.severity}</span>`:''}
+  </div>`).join('');
+  return `<div class="modal-section"><div class="kv-row"><span class="kv-key">Risk Level</span><span class="kv-val" style="color:var(--red)">${d.risk_level||'—'}</span></div><div class="kv-row"><span class="kv-key">Total Flags</span><span class="kv-val">${d.overall_flag_count||0}</span></div><div class="kv-row"><span class="kv-key">Investability Score</span><span class="kv-val">${d.investability_score||'—'}</span></div></div>${flags}`;
+}
+function competitorModal(d){
+  const comps=(d.direct_competitors||[]).map(c=>`<div class="modal-section" style="margin-bottom:.5rem">
+    <div style="font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:.35rem">${c.name||c}</div>
+    ${c.weakness?`<div class="kv-row"><span class="kv-key">Weakness</span><span class="kv-val" style="text-align:left;color:var(--green)">${c.weakness}</span></div>`:''}
+    ${c.market_share?`<div class="kv-row"><span class="kv-key">Market Share</span><span class="kv-val">${c.market_share}</span></div>`:''}
+  </div>`).join('');
+  return `<div class="modal-section"><div class="kv-row"><span class="kv-key">Competitive Moat</span><span class="kv-val">${d.competitive_moat_score||'—'}/10</span></div><div class="kv-row"><span class="kv-key">Unique Edge</span><span class="kv-val" style="text-align:left">${d.unique_differentiator||'—'}</span></div></div>${comps}`;
+}
+function investorProfileModal(d){
+  return sectionKV('Investor Profile',d,['ideal_investor_type','fundraising_strategy','fundraising_readiness','valuation_benchmark','recommended_round','target_geography','pitch_timing']);
+}
+function deckModal(d){
+  const slides=(d.slides||[]).map(s=>`<div class="kv-row"><span class="kv-key">${s.slide_number||''} ${s.title||''}</span><span class="kv-val" style="text-align:left">${s.key_content||s.notes||''}</span></div>`).join('');
+  return `<div class="modal-section"><div class="kv-row"><span class="kv-key">Deck Score</span><span class="kv-val">${d.deck_score||'—'}/100</span></div><div class="kv-row"><span class="kv-key">Missing Slide</span><span class="kv-val">${d.biggest_missing_slide||'—'}</span></div></div><div class="modal-section"><div class="modal-section-title">Slide Structure</div>${slides}</div>`;
+}
+function financeModal(d){
+  return `<div class="modal-section"><div class="kv-row"><span class="kv-key">Overall Credibility</span><span class="kv-val">${d.overall_credibility_score||'—'}/100</span></div></div>`+genericModal(d,['revenue_model_validity','burn_rate_assessment','unit_economics','funding_ask_justification','projection_realism']);
+}
+function questionsModal(d){
+  const qs=(d.questions||[]).map((q,i)=>`<div class="list-item"><div class="list-bullet"></div><div>${q.question||q}</div></div>`).join('');
+  return `<div class="modal-section"><div class="modal-section-title">${(d.questions||[]).length} Tough VC Questions</div>${qs}</div>`;
+}
+function genericModal(d, keys){
+  const useKeys=keys||Object.keys(d).slice(0,20);
+  const rows=useKeys.filter(k=>d[k]).map(k=>{
+    const v=d[k];
+    if(Array.isArray(v)) return `<div class="kv-row"><span class="kv-key">${k.replace(/_/g,' ')}</span><span class="kv-val" style="text-align:left">${v.join(', ')}</span></div>`;
+    if(typeof v==='object') return '';
+    return `<div class="kv-row"><span class="kv-key">${k.replace(/_/g,' ')}</span><span class="kv-val">${String(v).slice(0,120)}</span></div>`;
+  }).join('');
+  return `<div class="modal-section">${rows}</div>`;
+}
+
+// ── MODAL CLOSE ──
+function closeModal(e){
+  if(e&&e.target!==document.getElementById('nodeModal')) return;
+  document.getElementById('nodeModal').classList.remove('open');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal({target:document.getElementById('nodeModal')});});
+
+// ── MODAL RUN NODE ──
+async function modalRunNode(pid, node){
+  const btn=document.getElementById('mRunBtn');
+  if(btn){btn.disabled=true;btn.innerHTML='<div class="spin" style="display:inline-block;border-color:rgba(255,255,255,.3);border-top-color:#fff;width:12px;height:12px;border-radius:50%;border-width:2px;animation:spin .75s linear infinite"></div> Running…';}
+  await runNodeCore(pid, node);
+  // Re-open modal with fresh data
+  setTimeout(()=>nodeClick(node, pid), 300);
+}
+
+// ── RUN NODE (button in grid) ──
+async function runNodeBtn(pid,node,cid){
+  const rb=document.getElementById(`rb-${cid}-${node}`);
+  const rs=document.getElementById(`rs-${cid}-${node}`);
+  if(rb){rb.disabled=true;rb.childNodes[rb.childNodes.length-1].textContent=' Running…';}
+  if(rs) rs.style.display='block';
+  await runNodeCore(pid, node);
+  const p=PITCHES.find(x=>x.id===pid);
+  if(p){
+    let an={};try{an=JSON.parse(p.analysis||'{}');}catch(e){}
+    renderNodes(p,an,cid);
+    renderList('listDash',PITCHES.slice(0,8));
+    renderList('listFull',PITCHES);
+    renderList('listAnalysis',PITCHES);
+    initStats();
+    if(cid.startsWith('dpNodes')) loadDetail(p);
+    else loadAnalysis(p);
+  }
+}
+
+async function runNodeCore(pid, node){
+  try{
+    const r=await fetch(`/api/run_node/${pid}/${node}`,{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'});
+    const j=await r.json();
+    if(j.success){
+      const p=PITCHES.find(x=>x.id===pid);
+      if(p){
+        let an={};try{an=JSON.parse(p.analysis||'{}');}catch(e){}
+        an[`node_${node}`]=j.data;
+        p.analysis=JSON.stringify(an);
+        if(node===2&&j.data.total_score) p.score=j.data.total_score;
+      }
+    } else { alert(`Node ${node} error: ${j.error||'Unknown'}`); }
+  }catch(e){ alert('Network error: '+e.message); }
+}
+
+// ── FUNCTIONS TAB ──
+function renderFunctions(){
+  const g=document.getElementById('fnGrid');if(!g)return;
+  g.innerHTML=Object.entries(FN_META).filter(([n])=>parseInt(n)<=12).map(([n,m])=>
+    `<div class="fn-card" onclick="fnClick(${n})">
+      <div class="fn-ic">${m.icon||'◉'}</div>
+      <div class="fn-nm">${m.name}</div>
+      <div class="fn-ds">${m.desc}</div>
+      <div class="fn-no">Node ${n}</div>
+    </div>`).join('');
+}
+function fnClick(node){
+  if(!selPitch){alert('Please select a pitch first by clicking on it in My Pitches.');return;}
+  goSec(document.querySelectorAll('.ni')[1],'pitches');
+  const p=PITCHES.find(x=>x.id===selPitch);
+  if(p){loadDetail(p);}
+  setTimeout(()=>nodeClick(node, selPitch),200);
+}
+
+// ── HISTORY ──
+function renderHistory(){
+  const c=document.getElementById('histList');if(!c)return;
+  if(!HISTORY||!HISTORY.length){c.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted2)"><div style="font-size:1.5rem;margin-bottom:.4rem">◷</div><p style="font-size:.76rem;font-weight:300">No history yet.</p></div>';return;}
+  c.innerHTML=HISTORY.slice(0,30).map(h=>{
+    const m=FN_META[h.function_num]||{};
+    let pv='';try{const r=typeof h.result_json==='string'?JSON.parse(h.result_json):h.result_json;pv=nodePreview(h.function_num,r);}catch(e){pv='Result available';}
+    return `<div class="hi"><div class="hi-ic">${m.icon||'◉'}</div><div style="flex:1;min-width:0"><div class="hi-nm">${m.name||'Node '+h.function_num} · Pitch #${h.pitch_id}</div><div class="hi-tm">${(h.created_at||'').slice(0,16)||'Recent'}</div><div class="hi-pv">${pv.slice(0,120)}</div></div><span class="pill pg">✓</span></div>`;
+  }).join('');
+}
+
+// ── MESSAGES ──
+let activeConvPid = null;
+let msgPollTimer  = null;
+
+function initMessages(){
+  // Load conversations count for badge from CONVS via API (only when Messages tab opens)
+}
+
+async function loadConversations(){
+  try{
+    const r=await fetch('/api/messages/convs_dummy',{method:'GET'}).catch(()=>null);
+    // Fallback: use pitches as conversations
+    const c=document.getElementById('convList');if(!c)return;
+    if(!PITCHES.length){
+      c.innerHTML='<div style="padding:1.5rem;text-align:center;color:var(--muted2);font-size:.75rem;font-weight:300">No conversations yet.<br>Investors will message you here once they view your pitch.</div>';
+      return;
+    }
+    c.innerHTML=PITCHES.map((p,i)=>{
+      const imgs=['https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop',
+        'https://images.pexels.com/photos/3183197/pexels-photo-3183197.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop',
+        'https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop'];
+      return `<div class="msg-conv" data-pid="${p.id}" onclick="openConv(${p.id},'${(p.category||'Startup').replace(/'/g,"\\'")}')">
+        <div class="msg-conv-av"><img src="${imgs[i%3]}" alt=""></div>
+        <div style="flex:1;min-width:0">
+          <div class="msg-conv-name">${p.category||'Startup'} — Pitch #${p.id}</div>
+          <div class="msg-conv-prev">${(p.raw_text||'').slice(0,55)}…</div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){}
+}
+
+async function openConv(pid, title){
+  activeConvPid=pid;
+  document.querySelectorAll('.msg-conv').forEach(c=>c.classList.toggle('active-conv',parseInt(c.dataset.pid)===pid));
+  const main=document.getElementById('msgMain');
+  main.innerHTML=`
+    <div class="msg-chat-hd">
+      <div class="msg-chat-hd-img"><img src="https://images.pexels.com/photos/3184292/pexels-photo-3184292.jpeg?auto=compress&cs=tinysrgb&w=80&h=80&fit=crop" alt=""></div>
+      <div><div class="msg-chat-name">${title} · Pitch #${pid}</div><div class="msg-chat-sub">Investor conversation thread</div></div>
+      <div class="msg-enc">🔒 Encrypted</div>
+    </div>
+    <div class="msg-body" id="msgBody"></div>
+    <div class="msg-input-area">
+      <input class="msg-input" id="msgInput" placeholder="Type a message…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg(${pid});}">
+      <button class="msg-send-btn" onclick="sendMsg(${pid})">Send ▸</button>
+    </div>`;
+  await loadMsgs(pid);
+  if(msgPollTimer) clearInterval(msgPollTimer);
+  msgPollTimer=setInterval(()=>loadMsgs(pid),4000);
+}
+
+async function loadMsgs(pid){
+  try{
+    const r=await fetch(`/api/messages/${pid}`);
+    const msgs=await r.json();
+    const body=document.getElementById('msgBody');if(!body)return;
+    if(!msgs.length){
+      body.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted2);font-size:.78rem;font-weight:300">No messages yet — start the conversation below.</div>';
+      return;
+    }
+    let lastDate='';
+    body.innerHTML=msgs.map(m=>{
+      const mine=m.sender_id===UID;
+      const d=new Date(m.timestamp||'');
+      const ds=isNaN(d)?'':d.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      const ts=isNaN(d)?'':d.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:true});
+      let sep='';
+      if(ds&&ds!==lastDate){sep=`<div class="msg-date-sep">${ds}</div>`;lastDate=ds;}
+      const avImg=mine
+        ?`<div class="msg-bav"><div class="msg-bav-ph">${(m.sender_name||'?')[0].toUpperCase()}</div></div>`
+        :`<div class="msg-bav"><img src="https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=50&h=50&fit=crop" alt=""></div>`;
+      return `${sep}<div class="msg-bubble-wrap${mine?' mine':''}">
+        ${!mine?avImg:''}
+        <div>
+          ${!mine?`<div style="font-size:.62rem;color:var(--muted2);font-weight:600;margin-bottom:.15rem">${m.sender_name||'Investor'}</div>`:''}
+          <div class="bubble ${mine?'mine':'theirs'}">${m.message}</div>
+          <div class="bubble-time${mine?' mine':''}">${ts}</div>
+        </div>
+        ${mine?avImg:''}
+      </div>`;
+    }).join('');
+    body.scrollTop=body.scrollHeight;
+  }catch(e){}
+}
+
+async function sendMsg(pid){
+  const inp=document.getElementById('msgInput');if(!inp)return;
+  const msg=inp.value.trim();if(!msg)return;
+  inp.value='';
+  try{
+    await fetch(`/api/messages/${pid}/send`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:msg})});
+    await loadMsgs(pid);
+  }catch(e){ inp.value=msg; alert('Send failed: '+e.message); }
+}
+
+// ── FILTER ──
+function filt(status,btn){
+  document.querySelectorAll('.ftab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.pc').forEach(c=>{c.style.display=(status==='all'||c.dataset.status===status)?'':'none';});
+}
+
+// ── FORM ──
+function updCC(){const v=document.getElementById('pitchArea').value.length;document.getElementById('cc').textContent=`${v.toLocaleString()} / 5,000`;}
+function fillHint(s){const ta=document.getElementById('pitchArea');if(ta&&HINTS[s]){ta.value=HINTS[s];updCC();ta.focus();}}
+function onSub(){
+  const btn=document.getElementById('subBtn');
+  const ldr=document.getElementById('subLdr');
+  const cc=document.getElementById('cc');
+  btn.disabled=true;
+  btn.innerHTML='<div class="spin" style="display:inline-block;width:12px;height:12px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .75s linear infinite"></div> Analysing…';
+  if(ldr) ldr.classList.add('show');
+  if(cc) cc.style.display='none';
+}
+</script>
+</body>
+</html>

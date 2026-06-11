@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In · {{ role }} · DreamLaunch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --ivory:#fdf8f0;--ivory2:#f7f0e4;
+      --gold:#b8860b;--gold2:#d4a017;--goldg:rgba(184,134,11,.09);
+      --navy:#0d1b2a;--navy2:#1a2d42;
+      --text:#1a1208;--muted:#7a6a50;--border:rgba(184,134,11,.2);--border2:rgba(184,134,11,.1)
+    }
+    body{font-family:'Outfit',sans-serif;background:var(--ivory);min-height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+    .left{position:relative;overflow:hidden;background:url('https://images.pexels.com/photos/3183153/pexels-photo-3183153.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover}
+    .left::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,27,42,.88),rgba(13,27,42,.6))}
+    .left-inner{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:3rem}
+    .left-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#f0c040;margin-bottom:2.5rem;letter-spacing:.02em}
+    .left-inner h2{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:#fff;line-height:1.08;margin-bottom:1rem;letter-spacing:-.01em}
+    .left-inner h2 span{color:#f0c040;font-style:italic}
+    .left-inner p{font-size:.9rem;color:rgba(255,255,255,.45);line-height:1.75;font-weight:300;max-width:340px}
+    .right{background:var(--ivory);display:flex;align-items:center;justify-content:center;padding:3rem;position:relative}
+    #particles-form{position:absolute;inset:0}
+    .form-box{width:100%;max-width:400px;position:relative;z-index:2}
+    .role-chip{display:inline-flex;align-items:center;gap:.4rem;background:var(--goldg);border:1px solid var(--border);color:var(--gold);padding:.24rem .75rem;border-radius:100px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:1.5rem}
+    h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--navy);margin-bottom:.35rem;letter-spacing:-.01em}
+    .sub{font-size:.87rem;color:var(--muted);margin-bottom:2rem;font-weight:300}
+    .field{margin-bottom:1.2rem}
+    label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.45rem}
+    input[type=email],input[type=password],input[type=text]{width:100%;background:#fff;border:1.5px solid var(--border2);border-radius:10px;padding:.8rem 1.1rem;font-size:.9rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 4px rgba(26,18,8,.04)}
+    input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(184,134,11,.1)}
+    input::placeholder{color:rgba(122,106,80,.4)}
+    .btn{width:100%;padding:.88rem;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;transition:all .22s;letter-spacing:.01em;margin-top:.5rem}
+    .btn:hover{box-shadow:0 8px 24px rgba(13,27,42,.28);transform:translateY(-1px)}
+    .otp-box{display:flex;gap:.6rem;justify-content:center;margin:1.25rem 0}
+    .otp-box input{width:50px;height:54px;text-align:center;font-size:1.35rem;font-weight:700;padding:0}
+    .otp-timer{text-align:center;font-size:.8rem;color:var(--muted);margin-bottom:1rem}
+    .otp-timer strong{color:var(--gold)}
+    .error{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;border-radius:9px;padding:.7rem .95rem;font-size:.83rem;margin-bottom:1.2rem;font-weight:500}
+    .locked-msg{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;border-radius:9px;padding:.7rem;text-align:center;font-size:.83rem;margin-bottom:1rem;font-weight:500}
+    .divider{display:flex;align-items:center;gap:.85rem;margin:1.35rem 0}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+    .divider span{color:var(--muted);font-size:.73rem;font-weight:500}
+    .link-row{text-align:center;font-size:.84rem;color:var(--muted);font-weight:300}
+    .link-row a{color:var(--gold);font-weight:600;text-decoration:none}
+    .link-row a:hover{text-decoration:underline}
+    .back-link{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:1.35rem;font-size:.82rem;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
+    .back-link:hover{color:var(--gold)}
+    @media(max-width:768px){body{grid-template-columns:1fr;overflow:auto}.left{display:none}.right{min-height:100vh}}
+    </style>
+</head>
+<body>
+<div class="left">
+  <div class="left-inner">
+    <div class="left-logo">◆ DreamLaunch</div>
+    <h2>Your Round<br><span>Starts Here</span></h2>
+    <p>AI-powered venture intelligence for founders and investors — from pitch to close in the fastest way possible.</p>
+  </div>
+</div>
+<div class="right">
+  <div id="particles-form"></div>
+  <div class="form-box">
+    <div class="role-chip">◆ {{ role }} Sign In</div>
+    <h1>Welcome Back</h1>
+    <div class="sub">Access your {{ role }} dashboard</div>
+
+    <form method="POST" action="{% if role == 'Investor' and step == 'otp' %}/verify_login_otp{% else %}/login/{{ role.lower() }}{% endif %}">
+      {% if role != 'Admin' and step != 'otp' %}
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" name="email" value="{{ email or '' }}" placeholder="you@company.com" required>
+      </div>
+      {% endif %}
+
+      {% if role == 'Investor' and step == 'otp' %}
+      {% if error %}<div class="error">{{ error }}</div>{% endif %}
+      {% if locked %}<div class="locked-msg" id="lockTimer">🔒 Retry in {{ remaining }}s</div>{% endif %}
+      <div class="field">
+        <label>One-Time Password</label>
+        <input type="text" name="otp" placeholder="Enter 6-digit OTP" required>
+      </div>
+      <div class="otp-timer">Code expires in <strong id="timerStr">10:00</strong></div>
+      <button type="submit" class="btn" {% if locked %}disabled{% endif %}>Verify OTP →</button>
+
+      {% else %}
+      <div class="field">
+        <label>{{ 'Admin Password' if role == 'Admin' else 'Password' }}</label>
+        <input type="password" name="password" placeholder="••••••••" required>
+      </div>
+      {% if error %}<div class="error">{{ error }}</div>{% endif %}
+      <button type="submit" class="btn">
+        {% if role == 'Investor' %}Continue → OTP Verification{% else %}Sign In →{% endif %}
+      </button>
+      {% endif %}
+    </form>
+
+    {% if role != 'Admin' and step != 'otp' %}
+    <div class="divider"><span>New to DreamLaunch?</span></div>
+    <div class="link-row"><a href="/register/{{ role.lower() }}">Create a {{ role }} account →</a></div>
+    {% endif %}
+    <a href="/" class="back-link">← Return to Home</a>
+  </div>
+</div>
+<script>
+if(document.getElementById('timerStr')){
+  let s=600;
+  const el=document.getElementById('timerStr');
+  setInterval(()=>{s--;const m=Math.floor(s/60),sec=s%60;el.textContent=`${m}:${String(sec).padStart(2,'0')}`;if(s<=0)el.textContent='Expired';},1000);
+}
+if(document.getElementById('lockTimer')&&{{ locked|int if locked else 0 }}>0){
+  let t={{ remaining|default(0) }};
+  const el=document.getElementById('lockTimer');
+  const iv=setInterval(()=>{t--;el.textContent='🔒 Retry in '+t+'s';if(t<=0){clearInterval(iv);el.textContent='You can retry now';}},1000);
+}
+particlesJS("particles-form",{particles:{number:{value:20},color:{value:"#b8860b"},shape:{type:"circle"},opacity:{value:.1,random:true},size:{value:2.5},line_linked:{enable:true,distance:140,color:"#b8860b",opacity:.05,width:1},move:{enable:true,speed:.7}}});
+</script>
+</body>
+</html>

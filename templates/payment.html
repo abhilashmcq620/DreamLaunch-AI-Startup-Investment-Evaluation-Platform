@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unlock Pitch · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sand:#faf5ec;--sand2:#f2e9d8;--sand3:#e8dcc8;
+  --teal:#0d6e6e;--teal2:#0f8585;--teal3:#14a8a8;--tealg:rgba(13,110,110,.09);
+  --emerald:#065f46;--emerald2:#047857;--emerald3:#10b981;
+  --text:#1a150a;--muted:#7a6a50;--muted2:#a09078;
+  --border:rgba(13,110,110,.18);--border2:rgba(13,110,110,.1);--border3:rgba(212,196,168,.5);
+  --sh:0 2px 12px rgba(13,110,110,.08);
+  --shm:0 8px 32px rgba(13,110,110,.14);
+  --shl:0 24px 70px rgba(13,110,110,.2)
+}
+body{
+  background:var(--sand);color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;
+  position:relative;overflow:hidden
+}
+
+/* Full-page background with Pexels image */
+.page-bg{
+  position:fixed;inset:0;z-index:-2;
+  background:url('https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=1920')
+    center/cover no-repeat;
+  transform:scale(1.04);
+  animation:bgSlowZoom 20s ease-in-out infinite alternate
+}
+@keyframes bgSlowZoom{from{transform:scale(1.04)}to{transform:scale(1.1)}}
+
+.page-ov{
+  position:fixed;inset:0;z-index:-1;
+  background:rgba(250,245,236,.92)
+}
+
+/* Floating orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:-1;animation:orbFloat 14s ease-in-out infinite}
+.orb1{width:400px;height:400px;background:rgba(13,110,110,.1);top:-100px;left:-100px;animation-delay:0s}
+.orb2{width:300px;height:300px;background:rgba(6,95,70,.12);bottom:-80px;right:-80px;animation-delay:-5s}
+.orb3{width:250px;height:250px;background:rgba(212,196,168,.25);top:50%;left:50%;animation-delay:-9s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0)}33%{transform:translate(30px,-40px)}66%{transform:translate(-20px,25px)}}
+
+/* ─── CARD ─── */
+.pay-card{
+  background:var(--sand);
+  border:1px solid var(--border);
+  border-radius:24px;padding:0;
+  max-width:520px;width:100%;
+  position:relative;z-index:1;
+  box-shadow:var(--shl);
+  overflow:hidden;
+  animation:cardIn .6s cubic-bezier(.22,1,.36,1) both
+}
+@keyframes cardIn{from{opacity:0;transform:translateY(30px) scale(.97)}to{opacity:1;transform:none}}
+
+/* Top image strip */
+.card-hero{
+  height:130px;position:relative;overflow:hidden
+}
+.card-hero img{width:100%;height:100%;object-fit:cover;object-position:center 40%}
+.card-hero-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(13,110,110,.88),rgba(6,95,70,.7))
+}
+.card-hero-content{
+  position:absolute;inset:0;
+  padding:1.25rem 1.75rem;
+  display:flex;align-items:flex-end;gap:.85rem
+}
+.card-hero-icon{
+  width:44px;height:44px;border-radius:13px;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;backdrop-filter:blur(6px)
+}
+.card-hero-text h2{
+  font-family:'Playfair Display',serif;
+  font-size:1.35rem;font-weight:700;color:#fff;margin-bottom:.1rem
+}
+.card-hero-text p{
+  font-size:.75rem;color:rgba(255,255,255,.55);font-weight:300
+}
+
+.card-body{padding:1.75rem}
+
+.pay-sub{
+  color:var(--muted);font-size:.88rem;
+  margin-bottom:1.5rem;font-weight:300;line-height:1.72
+}
+
+/* Amount display */
+.amount-display{
+  background:linear-gradient(135deg,var(--tealg),rgba(212,196,168,.15));
+  border:1px solid var(--border);
+  border-radius:16px;padding:1.5rem;
+  margin-bottom:1.5rem;
+  display:flex;align-items:center;justify-content:space-between;
+  position:relative;overflow:hidden
+}
+.amount-display::before{
+  content:'◆';position:absolute;right:1rem;top:50%;transform:translateY(-50%);
+  font-size:4rem;color:rgba(13,110,110,.06);line-height:1;font-weight:900
+}
+.amount-left{}
+.amount-big{
+  font-family:'Playfair Display',serif;
+  font-size:3.2rem;font-weight:900;color:var(--teal);line-height:1
+}
+.amount-note{
+  font-size:.76rem;color:var(--muted);margin-top:.35rem;font-weight:300
+}
+.amount-badge{
+  background:var(--emerald);color:#fff;
+  padding:.35rem .85rem;border-radius:100px;
+  font-size:.7rem;font-weight:700;
+  box-shadow:0 3px 10px rgba(6,95,70,.3)
+}
+
+/* Features grid */
+.features{
+  list-style:none;display:grid;
+  grid-template-columns:1fr 1fr;gap:.45rem;
+  margin-bottom:1.65rem
+}
+.features li{
+  display:flex;align-items:flex-start;gap:.55rem;
+  font-size:.79rem;color:var(--text);
+  padding:.52rem .65rem;
+  background:var(--sand2);border-radius:10px;
+  border:1px solid var(--border3);
+  line-height:1.45;
+  transition:all .18s
+}
+.features li:hover{background:var(--tealg);border-color:var(--border2)}
+.features li .f-icon{
+  width:18px;height:18px;border-radius:5px;
+  background:linear-gradient(135deg,var(--teal),var(--emerald2));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:.55rem;font-weight:800;flex-shrink:0;margin-top:.05rem;
+  box-shadow:0 2px 6px rgba(13,110,110,.25)
+}
+
+/* Trust row */
+.trust-row{
+  display:flex;align-items:center;justify-content:center;gap:1.5rem;
+  margin:.9rem 0;padding:.9rem 0;
+  border-top:1px solid var(--border3);
+  border-bottom:1px solid var(--border3)
+}
+.trust-item{
+  display:flex;align-items:center;gap:.4rem;
+  font-size:.71rem;color:var(--muted);font-weight:500
+}
+.trust-item .ti-icon{
+  width:20px;height:20px;border-radius:6px;
+  background:var(--tealg);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;font-size:.65rem
+}
+
+/* CTA */
+.btn-pay{
+  width:100%;
+  background:linear-gradient(135deg,var(--teal),var(--emerald));
+  color:#fff;border:none;padding:1.1rem;
+  border-radius:14px;font-size:.97rem;font-weight:700;
+  cursor:pointer;font-family:'DM Sans',sans-serif;
+  transition:all .25s;margin-bottom:.85rem;
+  letter-spacing:.01em;text-decoration:none;
+  display:block;text-align:center;
+  box-shadow:0 6px 24px rgba(13,110,110,.3);
+  position:relative;overflow:hidden
+}
+.btn-pay::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.12),transparent);
+  opacity:0;transition:opacity .25s
+}
+.btn-pay:hover{
+  box-shadow:0 10px 36px rgba(13,110,110,.42);
+  transform:translateY(-2px)
+}
+.btn-pay:hover::before{opacity:1}
+.btn-pay:active{transform:translateY(0)}
+.btn-pay-icon{margin-right:.5rem}
+
+.btn-back{
+  display:block;text-align:center;
+  color:var(--muted);text-decoration:none;
+  font-size:.83rem;transition:color .2s;font-weight:500;
+  padding:.35rem
+}
+.btn-back:hover{color:var(--teal)}
+
+.order-info{
+  font-size:.68rem;color:rgba(122,106,80,.38);
+  margin-top:1.25rem;text-align:center;font-weight:300;
+  border-top:1px solid var(--border3);padding-top:.85rem
+}
+.order-info span{color:var(--muted2);font-weight:500}
+
+/* Progress steps */
+.progress-steps{
+  display:flex;align-items:center;justify-content:center;
+  gap:.5rem;margin-bottom:1.5rem
+}
+.ps{
+  display:flex;align-items:center;gap:.5rem;
+  font-size:.7rem;color:var(--muted2);font-weight:500
+}
+.ps.active{color:var(--teal);font-weight:700}
+.ps .ps-dot{
+  width:20px;height:20px;border-radius:6px;
+  background:var(--sand3);border:1px solid var(--border3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.6rem;font-weight:800;color:var(--muted2)
+}
+.ps.active .ps-dot{
+  background:linear-gradient(135deg,var(--teal),var(--emerald));
+  color:#fff;border-color:transparent;
+  box-shadow:0 2px 8px rgba(13,110,110,.25)
+}
+.ps-line{width:24px;height:1px;background:var(--border3)}
+</style>
+</head>
+<body>
+
+<div class="page-bg"></div>
+<div class="page-ov"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="pay-card">
+  <div class="card-hero">
+    <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Unlock">
+    <div class="card-hero-ov"></div>
+    <div class="card-hero-content">
+      <div class="card-hero-icon">🔓</div>
+      <div class="card-hero-text">
+        <h2>Unlock Full Intelligence</h2>
+        <p>AI-powered due diligence suite · Lifetime access</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body">
+
+    <!-- Progress Steps -->
+    <div class="progress-steps">
+      <div class="ps"><div class="ps-dot">✓</div> Browse</div>
+      <div class="ps-line"></div>
+      <div class="ps active"><div class="ps-dot">2</div> Unlock</div>
+      <div class="ps-line"></div>
+      <div class="ps"><div class="ps-dot">3</div> Invest</div>
+    </div>
+
+    <p class="pay-sub">Get the complete AI analysis package — due diligence reports, investment memo, ROI projections, and direct messaging with the founder.</p>
+
+    <div class="amount-display">
+      <div class="amount-left">
+        <div class="amount-big">₹5,000</div>
+        <div class="amount-note">One-time unlock · Lifetime access to this pitch</div>
+      </div>
+      <div class="amount-badge">Best Value</div>
+    </div>
+
+    <ul class="features">
+      <li><span class="f-icon">✓</span>Full AI due diligence checklist</li>
+      <li><span class="f-icon">✓</span>Competitive intelligence & Porter's 5 Forces</li>
+      <li><span class="f-icon">✓</span>Market sizing validation</li>
+      <li><span class="f-icon">✓</span>2000-word investment memo</li>
+      <li><span class="f-icon">✓</span>ROI exit scenario modeling</li>
+      <li><span class="f-icon">✓</span>Term sheet recommendations</li>
+      <li><span class="f-icon">✓</span>Direct founder messaging</li>
+      <li><span class="f-icon">✓</span>4 investor email templates</li>
+    </ul>
+
+    <div class="trust-row">
+      <div class="trust-item"><div class="ti-icon">🔒</div> SSL Encrypted</div>
+      <div class="trust-item"><div class="ti-icon">⚡</div> Instant Access</div>
+      <div class="trust-item"><div class="ti-icon">◆</div> Lifetime Unlock</div>
+    </div>
+
+    <a href="/payment/success/{{ order }}" class="btn-pay">
+      <span class="btn-pay-icon">◆</span>Confirm Payment · ₹{{ amount or '5,000' }}
+    </a>
+    <a href="/investor" class="btn-back">← Back to Dashboard</a>
+
+    <div class="order-info">
+      Order ID: <span>{{ order }}</span> &nbsp;·&nbsp; Secured by DreamLaunch Payments
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

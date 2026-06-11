@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ mode|title if mode else 'Login' }} · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ── BASE VARIABLES ── */
+:root{
+  --sand:#fefaf4;--sand2:#f8f2e6;--sand3:#ede4d0;
+  --ink:#100c04;--ink2:#2a1f08;--ink3:#4a3818;
+  --muted:#7a6040;--muted2:#9a8060;
+  --border3:rgba(210,190,150,.45);
+  --danger:#b91c1c;--success:#065f46;
+}
+
+/* ── ROLE THEMING ── */
+{% if role == 'Innovator' %}
+:root{
+  --accent:#0d6e6e;--accent2:#14a8a8;--accentg:rgba(13,110,110,.08);
+  --border:rgba(13,110,110,.18);--border2:rgba(13,110,110,.09);
+  --panel-a:#051414;--panel-b:#0a4848;--panel-c:#083838;
+  --orb1:rgba(20,168,168,.22);--orb2:rgba(6,95,70,.18);
+  --img:url('https://images.pexels.com/photos/3184339/pexels-photo-3184339.jpeg?auto=compress&cs=tinysrgb&w=1400');
+  --ptcl-l:"#14a8a8";--ptcl-r:"#0d6e6e"
+}
+{% elif role == 'Investor' %}
+:root{
+  --accent:#065f46;--accent2:#10b981;--accentg:rgba(6,95,70,.08);
+  --border:rgba(6,95,70,.18);--border2:rgba(6,95,70,.09);
+  --panel-a:#020c08;--panel-b:#082e1c;--panel-c:#062418;
+  --orb1:rgba(16,185,129,.2);--orb2:rgba(6,95,70,.16);
+  --img:url('https://images.pexels.com/photos/7567554/pexels-photo-7567554.jpeg?auto=compress&cs=tinysrgb&w=1400');
+  --ptcl-l:"#10b981";--ptcl-r:"#065f46"
+}
+{% elif role == 'Admin' %}
+:root{
+  --accent:#b8860b;--accent2:#f0c040;--accentg:rgba(184,134,11,.1);
+  --border:rgba(184,134,11,.22);--border2:rgba(184,134,11,.11);
+  --panel-a:#080601;--panel-b:#1a1206;--panel-c:#100e03;
+  --orb1:rgba(240,192,64,.2);--orb2:rgba(184,134,11,.14);
+  --img:url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400');
+  --ptcl-l:"#f0c040";--ptcl-r:"#b8860b"
+}
+{% else %}
+:root{
+  --accent:#0d6e6e;--accent2:#14a8a8;--accentg:rgba(13,110,110,.08);
+  --border:rgba(13,110,110,.18);--border2:rgba(13,110,110,.09);
+  --panel-a:#051414;--panel-b:#0a4848;--panel-c:#083838;
+  --orb1:rgba(20,168,168,.22);--orb2:rgba(6,95,70,.18);
+  --img:url('https://images.pexels.com/photos/590022/pexels-photo-590022.jpeg?auto=compress&cs=tinysrgb&w=1400');
+  --ptcl-l:"#14a8a8";--ptcl-r:"#0d6e6e"
+}
+{% endif %}
+
+html,body{height:100%;overflow:hidden}
+body{
+  background:var(--sand);color:var(--ink);
+  font-family:'Outfit',sans-serif;
+  display:grid;grid-template-columns:1fr 1fr
+}
+
+/* ════════════ LEFT PANEL ════════════ */
+.left{position:relative;overflow:hidden;min-height:100vh}
+
+.l-photo{
+  position:absolute;inset:0;
+  background:var(--img) center/cover no-repeat;
+  animation:bgZoom 18s ease-in-out infinite alternate
+}
+@keyframes bgZoom{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+
+.l-ov{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--panel-a) 0%,var(--panel-c) 48%,var(--panel-b) 100%);
+  opacity:.94
+}
+.l-noise{
+  position:absolute;inset:0;pointer-events:none;opacity:.55;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E")
+}
+.l-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
+  background-size:42px 42px
+}
+
+/* orbs */
+.orb{position:absolute;border-radius:50%;filter:blur(65px);animation:orbFloat 13s ease-in-out infinite;pointer-events:none}
+.orb1{width:300px;height:300px;background:var(--orb1);top:-80px;left:-90px;animation-delay:0s}
+.orb2{width:220px;height:220px;background:var(--orb2);bottom:-55px;right:-65px;animation-delay:-4.5s}
+.orb3{width:160px;height:160px;background:rgba(255,255,255,.04);top:44%;left:58%;animation-delay:-8.5s}
+@keyframes orbFloat{
+  0%,100%{transform:translate(0,0) scale(1)}
+  33%{transform:translate(18px,-28px) scale(1.05)}
+  66%{transform:translate(-14px,18px) scale(.95)}
+}
+
+#ptcl-left{position:absolute;inset:0;z-index:2;pointer-events:none}
+.l-content{
+  position:relative;z-index:5;
+  height:100%;display:flex;flex-direction:column;
+  justify-content:space-between;padding:2.6rem 2.6rem
+}
+
+.back-link{
+  display:inline-flex;align-items:center;gap:.46rem;
+  color:rgba(255,255,255,.38);text-decoration:none;
+  font-size:.79rem;font-weight:500;transition:all .22s;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  padding:.32rem .82rem;border-radius:100px;width:fit-content;
+  backdrop-filter:blur(5px)
+}
+.back-link:hover{color:#fff;background:rgba(255,255,255,.13)}
+
+.l-mid{flex:1;display:flex;flex-direction:column;justify-content:center}
+.l-brand{
+  display:flex;align-items:center;gap:.6rem;
+  font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;
+  color:#fff;letter-spacing:.01em;margin-bottom:2.6rem
+}
+.l-gem{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;box-shadow:0 4px 14px rgba(0,0,0,.28)
+}
+
+/* admin badge on left */
+.admin-crown{
+  display:inline-flex;align-items:center;gap:.5rem;
+  background:rgba(240,192,64,.12);border:1px solid rgba(240,192,64,.28);
+  color:#f0c040;padding:.35rem 1rem;border-radius:100px;
+  font-size:.68rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:1.4rem;
+  box-shadow:0 2px 10px rgba(184,134,11,.15)
+}
+
+.l-mid h2{
+  font-family:'Cormorant Garamond',serif;
+  font-size:3.15rem;font-weight:700;line-height:1.04;
+  margin-bottom:1rem;color:#fff;letter-spacing:-.02em
+}
+.l-mid h2 em{font-style:italic;color:var(--accent2)}
+.l-sub{
+  color:rgba(255,255,255,.44);font-size:.87rem;
+  line-height:1.82;font-weight:300;max-width:350px;margin-bottom:2rem
+}
+.l-feats{list-style:none;display:flex;flex-direction:column;gap:.58rem}
+.l-feats li{
+  display:flex;align-items:center;gap:.7rem;
+  font-size:.81rem;color:rgba(255,255,255,.52);
+  padding:.36rem 0;border-bottom:1px solid rgba(255,255,255,.04)
+}
+.l-feats li:last-child{border:none}
+.lck{
+  width:22px;height:22px;border-radius:7px;
+  background:linear-gradient(135deg,var(--accent2),var(--accent));
+  color:#fff;display:flex;align-items:center;
+  justify-content:center;font-size:.58rem;font-weight:800;flex-shrink:0;
+  box-shadow:0 2px 8px rgba(0,0,0,.22)
+}
+.l-foot{
+  display:flex;align-items:center;gap:.7rem;
+  color:rgba(255,255,255,.17);font-size:.69rem;font-weight:300
+}
+.l-foot::before{content:'';flex:1;height:1px;background:rgba(255,255,255,.07)}
+
+/* ════════════ RIGHT PANEL ════════════ */
+.right{
+  display:flex;align-items:center;justify-content:center;
+  padding:3rem 2.5rem;
+  background:var(--sand);
+  position:relative;overflow:hidden
+}
+#ptcl-right{position:absolute;inset:0;z-index:0}
+.r-deco{
+  position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 70% 58% at 100% 0%,rgba(184,134,11,.055) 0%,transparent 55%),
+    radial-gradient(ellipse 60% 50% at 0% 100%,rgba(184,134,11,.04) 0%,transparent 52%)
+}
+.r-grid{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(rgba(184,134,11,.024) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(184,134,11,.024) 1px,transparent 1px);
+  background-size:44px 44px
+}
+.auth-box{
+  width:100%;max-width:420px;
+  position:relative;z-index:2;
+  animation:slideUp .55s cubic-bezier(.22,1,.36,1) both
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+/* role badge */
+.role-badge{
+  display:inline-flex;align-items:center;gap:.44rem;
+  background:var(--accentg);border:1px solid var(--border);
+  color:var(--accent);padding:.27rem .8rem;border-radius:100px;
+  font-size:.66rem;font-weight:800;text-transform:uppercase;
+  letter-spacing:.1em;margin-bottom:1.7rem
+}
+.pdot{width:6px;height:6px;border-radius:50%;background:var(--accent2);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.75)}}
+
+/* ── ADMIN WARNING BOX ── */
+.admin-warn{
+  background:linear-gradient(135deg,rgba(184,134,11,.07),rgba(240,192,64,.04));
+  border:1px solid rgba(184,134,11,.2);
+  border-radius:13px;padding:.88rem 1.05rem;
+  display:flex;align-items:flex-start;gap:.65rem;
+  margin-bottom:1.55rem
+}
+.admin-warn-ico{font-size:.96rem;flex-shrink:0;margin-top:.06rem}
+.admin-warn-txt{font-size:.79rem;color:var(--muted);line-height:1.55}
+.admin-warn-txt strong{color:#b8860b;display:block;font-size:.73rem;margin-bottom:.14rem;text-transform:uppercase;letter-spacing:.06em;font-weight:800}
+
+.auth-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.15rem;font-weight:700;
+  color:var(--ink);margin-bottom:.38rem;letter-spacing:-.01em
+}
+.auth-sub{
+  color:var(--muted);font-size:.86rem;
+  margin-bottom:2.2rem;font-weight:300;line-height:1.65
+}
+.form-group{margin-bottom:1.1rem}
+label{
+  display:block;font-size:.67rem;font-weight:800;
+  color:var(--muted);margin-bottom:.42rem;
+  text-transform:uppercase;letter-spacing:.1em
+}
+.iw{position:relative}
+.iico{
+  position:absolute;left:.95rem;top:50%;transform:translateY(-50%);
+  font-size:.88rem;color:var(--muted2);pointer-events:none;transition:color .22s
+}
+input[type=text],input[type=email],input[type=password]{
+  width:100%;background:var(--sand2);
+  border:1.5px solid var(--border3);
+  border-radius:12px;
+  padding:.82rem 1.05rem .82rem 2.75rem;
+  color:var(--ink);font-size:.9rem;
+  font-family:'Outfit',sans-serif;
+  transition:all .22s;outline:none;
+  box-shadow:0 1px 4px rgba(120,80,10,.04)
+}
+input:focus{
+  border-color:var(--accent);
+  background:#fff;
+  box-shadow:0 0 0 3.5px var(--accentg)
+}
+input:focus+.iico,.iw:has(input:focus) .iico{color:var(--accent)}
+input::placeholder{color:rgba(120,94,60,.28)}
+
+.btn-submit{
+  width:100%;padding:.9rem;border-radius:12px;
+  font-size:.92rem;font-weight:700;cursor:pointer;border:none;
+  font-family:'Outfit',sans-serif;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;transition:all .25s;
+  margin-top:.5rem;letter-spacing:.01em;
+  position:relative;overflow:hidden;
+  box-shadow:0 5px 20px rgba(0,0,0,.15)
+}
+{% if role == 'Admin' %}
+.btn-submit{
+  background:linear-gradient(135deg,#8a6508,var(--accent),#d4a017);
+  box-shadow:0 5px 22px rgba(184,134,11,.32)
+}
+.btn-submit:hover{box-shadow:0 10px 32px rgba(184,134,11,.48)}
+{% endif %}
+.btn-submit::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.14),transparent);
+  opacity:0;transition:opacity .25s
+}
+.btn-submit:hover{transform:translateY(-2px)}
+.btn-submit:hover::after{opacity:1}
+.btn-submit:active{transform:translateY(0)}
+
+.auth-switch{text-align:center;margin-top:1.5rem;font-size:.83rem;color:var(--muted);font-weight:300}
+.auth-switch a{color:var(--accent);text-decoration:none;font-weight:700}
+.auth-switch a:hover{text-decoration:underline}
+
+.error-box{
+  background:#fef2f2;border:1px solid #fca5a5;
+  color:#991b1b;border-radius:12px;
+  padding:.72rem 1rem;font-size:.82rem;
+  margin-bottom:1.2rem;
+  display:flex;align-items:center;gap:.58rem;font-weight:500
+}
+.success-msg{
+  background:#f0fdf4;border:1px solid #86efac;
+  color:var(--success);border-radius:12px;
+  padding:.72rem 1rem;font-size:.82rem;
+  margin-bottom:1.2rem;font-weight:500
+}
+.divider{display:flex;align-items:center;gap:.9rem;margin:1.4rem 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(184,134,11,.12)}
+.divider span{color:var(--muted2);font-size:.71rem;font-weight:500}
+
+/* OTP */
+.otp-inputs{display:flex;gap:.58rem;justify-content:center;margin:1.5rem 0}
+.otp-inputs input{
+  width:52px;height:58px;text-align:center;
+  font-size:1.5rem;font-weight:700;
+  border-radius:12px;padding:0!important;
+  transition:all .22s
+}
+.otp-inputs input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accentg);transform:scale(1.05)}
+.otp-inputs input.filled{background:var(--accentg);border-color:var(--accent);color:var(--accent)}
+.timer{text-align:center;color:var(--muted);font-size:.82rem;margin-bottom:1rem}
+.timer strong{color:var(--accent);font-weight:700}
+.timer.expired strong{color:#b91c1c}
+.lock-bar{background:#fef2f2;border:1px solid #fca5a5;border-radius:12px;padding:.72rem;text-align:center;color:#991b1b;font-size:.83rem;margin-bottom:1rem;font-weight:500}
+.otp-success{text-align:center;padding:1rem;background:var(--accentg);border:1px solid var(--border);border-radius:12px;margin:1rem 0;color:var(--accent);font-size:.84rem;font-weight:500}
+.resend-link{display:block;text-align:center;margin-top:.72rem;font-size:.81rem;color:var(--muted2)}
+.resend-link a{color:var(--accent);font-weight:700;text-decoration:none;cursor:pointer}
+.resend-link a:hover{text-decoration:underline}
+
+#pwStrengthBar{margin-top:.42rem;height:3px;background:rgba(184,134,11,.1);border-radius:2px;overflow:hidden;display:none}
+#pwStrengthFill{height:100%;width:0;transition:width .3s,background .3s;border-radius:2px}
+
+@media(max-width:768px){
+  body{grid-template-columns:1fr;overflow:auto}
+  .left{display:none}
+  .right{min-height:100vh;padding:2.5rem 1.5rem}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ LEFT PANEL ═══════════ -->
+<div class="left">
+  <div class="l-photo"></div>
+  <div class="l-ov"></div>
+  <div class="l-noise"></div>
+  <div class="l-grid"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div id="ptcl-left"></div>
+  <div class="l-content">
+    <a href="/" class="back-link">← Back to Home</a>
+    <div class="l-mid">
+      <div class="l-brand">
+        <div class="l-gem">◆</div>
+        DreamLaunch
+      </div>
+
+      {% if role == 'Admin' %}
+        <div class="admin-crown">⚙ Admin Operations Portal</div>
+        <h2>Platform<br><em>Command</em> Centre</h2>
+        <p class="l-sub">Full visibility into platform health, pitch quality, fraud detection, and real-time analytics. Restricted access only.</p>
+        <ul class="l-feats">
+          <li><span class="lck">✓</span>Pitch moderation &amp; quality enforcement</li>
+          <li><span class="lck">✓</span>Fraud &amp; spam detection systems</li>
+          <li><span class="lck">✓</span>Platform trend analytics dashboard</li>
+          <li><span class="lck">✓</span>User &amp; payment management</li>
+          <li><span class="lck">✓</span>Full audit logs &amp; compliance tools</li>
+        </ul>
+      {% elif role == 'Innovator' %}
+        <h2>Built for<br><em>Bold</em> Founders</h2>
+        <p class="l-sub">Submit your rough idea and watch AI transform it into a pitch that investors actually read and fund.</p>
+        <ul class="l-feats">
+          <li><span class="lck">✓</span>AI-scored pitch (0–100 VC rubric)</li>
+          <li><span class="lck">✓</span>SWOC analysis &amp; red flag detection</li>
+          <li><span class="lck">✓</span>Competitor mapping &amp; investor profiling</li>
+          <li><span class="lck">✓</span>12-slide deck outline generated</li>
+          <li><span class="lck">✓</span>Financial projection validation</li>
+        </ul>
+      {% elif role == 'Investor' %}
+        <h2>Find Your<br><em>Next</em> Unicorn</h2>
+        <p class="l-sub">Stop wasting 40 hours a week on bad pitches. AI surfaces only the startups that match your thesis.</p>
+        <ul class="l-feats">
+          <li><span class="lck">✓</span>Semantic match scoring vs your thesis</li>
+          <li><span class="lck">✓</span>Auto-generated due diligence checklist</li>
+          <li><span class="lck">✓</span>Investment memo drafted in seconds</li>
+          <li><span class="lck">✓</span>ROI exit scenario projections</li>
+          <li><span class="lck">✓</span>Two-factor OTP security</li>
+        </ul>
+      {% else %}
+        <h2>Welcome<br><em>Back</em></h2>
+        <p class="l-sub">Sign in to access your DreamLaunch portal.</p>
+      {% endif %}
+    </div>
+    <div class="l-foot">Powered by Gemini 2.5 Flash · 30 AI Functions</div>
+  </div>
+</div>
+
+<!-- ═══════════ RIGHT PANEL ═══════════ -->
+<div class="right">
+  <div id="ptcl-right"></div>
+  <div class="r-deco"></div>
+  <div class="r-grid"></div>
+
+  <div class="auth-box">
+    <div class="role-badge"><span class="pdot"></span>{{ role or 'Admin' }} Portal</div>
+
+    {% if mode == 'otp' %}
+      <div class="auth-title">Verify Identity</div>
+      <div class="auth-sub">We sent a 6-digit code to<br><strong style="color:var(--accent)">{{ email }}</strong></div>
+      {% if error %}<div class="error-box">⚠ {{ error }}</div>{% endif %}
+      {% if locked %}<div class="lock-bar">🔒 Too many attempts. Wait {{ remaining }}s before retrying.</div>{% endif %}
+      <form method="POST" action="/verify_otp" id="otpForm">
+        <input type="hidden" name="email" value="{{ email }}">
+        <label>Enter 6-Digit OTP</label>
+        <div class="otp-inputs" id="otpBox">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]" autocomplete="off" autofocus>
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+          <input type="text" maxlength="1" class="otp-digit" inputmode="numeric" pattern="[0-9]" autocomplete="off">
+        </div>
+        <input type="hidden" name="otp" id="otpHidden">
+        <div class="timer" id="timerEl">Code expires in <strong id="timerCount">10:00</strong></div>
+        <div id="otpStatus"></div>
+        <button type="submit" class="btn-submit" id="otpSubmitBtn" {% if locked %}disabled{% endif %}>Verify & Continue →</button>
+      </form>
+      <div class="resend-link">Didn't receive the code? <a onclick="resendOTP()">Resend OTP</a></div>
+      <div class="auth-switch" style="margin-top:1rem"><a href="/login/investor">← Back to login</a></div>
+
+    {% elif mode == 'forgot' %}
+      <div class="auth-title">Reset Password</div>
+      <div class="auth-sub">Enter your email to receive a password reset link</div>
+      {% if error %}<div class="error-box">⚠ {{ error }}</div>{% endif %}
+      {% if success %}<div class="success-msg">✓ {{ success }}</div>{% endif %}
+      <form method="POST">
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="iw"><input type="email" name="email" placeholder="you@example.com" required><span class="iico">✉</span></div>
+        </div>
+        <button type="submit" class="btn-submit">Send Reset Link →</button>
+      </form>
+      <div class="auth-switch" style="margin-top:1rem"><a href="/login/investor">← Back to login</a></div>
+
+    {% elif mode == 'register' %}
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Join DreamLaunch as a {{ role }}</div>
+      {% if error %}<div class="error-box">⚠ {{ error }}</div>{% endif %}
+      <form method="POST" id="regForm">
+        <div class="form-group">
+          <label>Full Name</label>
+          <div class="iw"><input type="text" name="name" id="nameInput" placeholder="Your full name" required><span class="iico">👤</span></div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <div class="iw"><input type="email" name="email" id="emailInput" placeholder="you@example.com" required><span class="iico">✉</span></div>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <div class="iw"><input type="password" name="password" id="passInput" placeholder="Minimum 8 characters" required minlength="8"><span class="iico">🔒</span></div>
+          <div id="pwStrengthBar"><div id="pwStrengthFill"></div></div>
+        </div>
+        <button type="submit" class="btn-submit">Create Account →</button>
+      </form>
+      <div class="divider"><span>Already have an account?</span></div>
+      <div class="auth-switch"><a href="/login/{{ role|lower }}">Sign in to {{ role }} account →</a></div>
+
+    {% else %}
+      <!-- ── LOGIN FORM ── -->
+      {% if role == 'Admin' %}
+        <div class="auth-title">Admin Sign In</div>
+        <div class="auth-sub">Restricted access — authorised personnel only</div>
+        <div class="admin-warn">
+          <span class="admin-warn-ico">🔐</span>
+          <div class="admin-warn-txt">
+            <strong>Secure Admin Access</strong>
+            This portal is restricted. All login attempts are logged and monitored for security compliance.
+          </div>
+        </div>
+      {% else %}
+        <div class="auth-title">Welcome Back</div>
+        <div class="auth-sub">Sign in to your {{ role }} dashboard</div>
+      {% endif %}
+      {% if error %}<div class="error-box">⚠ {{ error }}</div>{% endif %}
+
+      <form method="POST" id="loginForm">
+        <div class="form-group">
+          <label>{% if role == 'Admin' %}Admin Email{% else %}Email Address{% endif %}</label>
+          <div class="iw">
+            <input type="email" name="email"
+              placeholder="{% if role == 'Admin' %}admin@dreamlaunch.in{% else %}you@example.com{% endif %}"
+              required autocomplete="{% if role == 'Admin' %}off{% else %}email{% endif %}">
+            <span class="iico">{% if role == 'Admin' %}⚙{% else %}✉{% endif %}</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{% if role == 'Admin' %}Admin Password{% else %}Password{% endif %}</label>
+          <div class="iw">
+            <input type="password" name="password" placeholder="••••••••" required
+              autocomplete="{% if role == 'Admin' %}off{% else %}current-password{% endif %}">
+            <span class="iico">{% if role == 'Admin' %}🛡️{% else %}🔒{% endif %}</span>
+          </div>
+        </div>
+        <button type="submit" class="btn-submit">
+          {% if role == 'Admin' %}⚙ Access Admin Portal →{% elif role == 'Investor' %}Continue → OTP Verification{% else %}Sign In →{% endif %}
+        </button>
+      </form>
+
+      {% if role != 'Admin' %}
+      <div class="divider"><span>New to DreamLaunch?</span></div>
+      <div class="auth-switch"><a href="/register/{{ role|lower }}">Create a {{ role }} account →</a></div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<script>
+/* ── OTP logic ── */
+const digits = document.querySelectorAll('.otp-digit');
+digits.forEach((inp, i) => {
+  inp.addEventListener('keydown', e => {
+    if (e.key === 'Backspace') {
+      if (!inp.value && i > 0) { digits[i-1].value=''; digits[i-1].classList.remove('filled'); digits[i-1].focus(); }
+      else { inp.value=''; inp.classList.remove('filled'); }
+      combineOTP(); e.preventDefault();
+    }
+    if (!/^\d$/.test(e.key) && !['Tab','ArrowLeft','ArrowRight','Delete'].includes(e.key))
+      if (!e.metaKey && !e.ctrlKey) e.preventDefault();
+  });
+  inp.addEventListener('input', e => {
+    const v = e.target.value.replace(/\D/g,'');
+    inp.value = v ? v[0] : '';
+    if (inp.value) { inp.classList.add('filled'); if (i < digits.length-1) digits[i+1].focus(); }
+    else inp.classList.remove('filled');
+    combineOTP(); autoSubmit();
+  });
+  inp.addEventListener('paste', e => {
+    e.preventDefault();
+    const p = (e.clipboardData||window.clipboardData).getData('text').replace(/\D/g,'');
+    if (p.length >= 6) {
+      digits.forEach((d,idx) => { d.value=p[idx]||''; d.classList.toggle('filled',!!d.value); });
+      combineOTP(); autoSubmit(); digits[5].focus();
+    }
+  });
+});
+function combineOTP(){const v=[...digits].map(x=>x.value).join('');const h=document.getElementById('otpHidden');if(h)h.value=v;return v;}
+function autoSubmit(){const v=combineOTP();if(v.length===6&&!document.getElementById('otpSubmitBtn')?.disabled){const s=document.getElementById('otpStatus');if(s)s.innerHTML='<div class="otp-success">✓ OTP complete — verifying...</div>';setTimeout(()=>document.getElementById('otpForm')?.submit(),600);}}
+if(document.getElementById('timerEl')){
+  let secs=600;const ce=document.getElementById('timerCount'),te=document.getElementById('timerEl'),sb=document.getElementById('otpSubmitBtn');
+  const t=setInterval(()=>{secs--;const m=Math.floor(secs/60),s=secs%60;if(ce)ce.textContent=`${m}:${String(s).padStart(2,'0')}`;if(secs<=120&&ce)ce.style.color='#b91c1c';if(secs<=0){clearInterval(t);if(ce)ce.textContent='Expired';if(te)te.classList.add('expired');if(sb){sb.disabled=true;sb.textContent='OTP Expired — Request New Code';}digits.forEach(d=>{d.disabled=true;d.style.opacity='.5';});}},1000);
+}
+function resendOTP(){alert('A new OTP has been sent to your email.');}
+
+/* ── Password strength ── */
+const pi=document.getElementById('passInput');
+if(pi){const bar=document.getElementById('pwStrengthBar'),fill=document.getElementById('pwStrengthFill');pi.addEventListener('input',()=>{const pw=pi.value;bar.style.display=pw.length?'block':'none';let s=0;if(pw.length>=8)s++;if(/[A-Z]/.test(pw))s++;if(/[0-9]/.test(pw))s++;if(/[^A-Za-z0-9]/.test(pw))s++;fill.style.width=['25%','50%','75%','100%'][s-1]||'0%';fill.style.background=['#b91c1c','#d97706','#d4a017','#065f46'][s-1]||'transparent';});}
+
+/* ── LEFT PANEL PARTICLES — thick ── */
+if(typeof particlesJS!=='undefined'){
+  particlesJS("ptcl-left",{
+    particles:{
+      number:{value:65,density:{enable:true,value_area:750}},
+      color:{value:["rgba(255,255,255,.9)","rgba(240,192,64,.8)","rgba(255,255,255,.55)"]},
+      shape:{type:"circle"},
+      opacity:{value:.5,random:true,anim:{enable:true,speed:1.1,opacity_min:.1,sync:false}},
+      size:{value:4,random:true,anim:{enable:true,speed:2.2,size_min:1.2,sync:false}},
+      line_linked:{enable:true,distance:128,color:"rgba(255,255,255,.18)",opacity:.32,width:1.4},
+      move:{enable:true,speed:1.2,direction:"none",random:true,straight:false,out_mode:"out"}
+    },
+    interactivity:{
+      events:{onhover:{enable:true,mode:"grab"}},
+      modes:{grab:{distance:145,line_linked:{opacity:.55}}}
+    }
+  });
+}
+
+/* ── RIGHT PANEL PARTICLES — thick ── */
+if(typeof particlesJS!=='undefined'){
+  particlesJS("ptcl-right",{
+    particles:{
+      number:{value:50,density:{enable:true,value_area:850}},
+      color:{value:["#b8860b","#d4a017","#c09520"]},
+      shape:{type:"circle"},
+      opacity:{value:.32,random:true,anim:{enable:true,speed:.9,opacity_min:.08,sync:false}},
+      size:{value:4.2,random:true,anim:{enable:true,speed:1.8,size_min:1.4,sync:false}},
+      line_linked:{enable:true,distance:130,color:"#b8860b",opacity:.18,width:1.5},
+      move:{enable:true,speed:1.0,random:true}
+    },
+    interactivity:{
+      events:{onhover:{enable:true,mode:"grab"},onclick:{enable:true,mode:"push"}},
+      modes:{grab:{distance:130,line_linked:{opacity:.4}},push:{particles_nb:3}}
+    }
+  });
+}
+</script>
+</body>
+</html>

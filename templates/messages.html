@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Messages · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sand:#faf5ec;--sand2:#f2e9d8;--sand3:#e8dcc8;
+  --teal:#0d6e6e;--teal2:#0f8585;--teal3:#14a8a8;--tealg:rgba(13,110,110,.09);--teal-light:rgba(13,110,110,.05);
+  --emerald:#065f46;--emerald3:#10b981;
+  --surf:#fff;
+  --text:#1a150a;--text2:#3d3020;--muted:#7a6a50;--muted2:#a09078;
+  --border:rgba(13,110,110,.14);--border2:rgba(13,110,110,.08);--border3:rgba(212,196,168,.4);
+  --sh:0 1px 6px rgba(13,110,110,.06);--shm:0 4px 20px rgba(13,110,110,.11);
+  --red:#991b1b
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--sand);color:var(--text);font-family:'DM Sans',sans-serif;display:grid;grid-template-columns:280px 1fr}
+
+/* ── LEFT SIDEBAR ── */
+.sidebar{background:var(--surf);border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden;position:relative}
+.sidebar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--emerald3))}
+.sidebar-header{padding:1.1rem 1.25rem .9rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.75rem}
+.back-btn{color:var(--muted);text-decoration:none;font-size:.78rem;font-weight:500;transition:all .2s;display:flex;align-items:center;gap:.35rem;background:var(--teal-light);border:1px solid var(--border2);padding:.28rem .65rem;border-radius:100px;white-space:nowrap}
+.back-btn:hover{color:var(--teal);background:var(--tealg)}
+.sidebar-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:var(--teal)}
+.conv-list{flex:1;overflow-y:auto;padding:.5rem 0}
+.conv-item{padding:.75rem 1.25rem;cursor:pointer;transition:all .18s;border-left:2.5px solid transparent;position:relative}
+.conv-item:hover{background:var(--teal-light)}
+.conv-item.active{background:var(--tealg);border-left-color:var(--teal2)}
+.conv-item-inner{display:flex;align-items:center;gap:.75rem}
+.conv-avatar{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 3px 8px rgba(13,110,110,.2)}
+.conv-info{flex:1;min-width:0}
+.conv-name{font-size:.83rem;font-weight:700;color:var(--teal);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-preview{font-size:.7rem;color:var(--muted);font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.08rem}
+.conv-meta{display:flex;flex-direction:column;align-items:flex-end;gap:.25rem;flex-shrink:0}
+.conv-time{font-size:.65rem;color:var(--muted2);font-weight:300}
+.conv-unread{background:var(--teal);color:#fff;font-size:.6rem;font-weight:800;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.sidebar-empty{padding:2.5rem 1.5rem;text-align:center;color:var(--muted2)}
+.sidebar-empty p{font-size:.82rem;font-weight:300;line-height:1.65}
+.sidebar-foot{padding:.9rem 1.25rem;border-top:1px solid var(--border2);background:var(--teal-light)}
+.sf-info{font-size:.72rem;color:var(--muted);font-weight:300;display:flex;align-items:center;gap:.4rem}
+.sf-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald3)}
+
+/* ── RIGHT CHAT AREA ── */
+.chat-area{display:flex;flex-direction:column;overflow:hidden}
+
+/* Chat header */
+.chat-header{padding:.85rem 1.5rem;border-bottom:1px solid var(--border2);background:var(--surf);display:flex;align-items:center;gap:.9rem;box-shadow:var(--sh);flex-shrink:0;position:relative}
+.chat-header::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--emerald3))}
+.chat-avatar{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-size:.9rem;color:#fff;font-weight:700;flex-shrink:0;box-shadow:0 3px 10px rgba(13,110,110,.25)}
+.chat-title{font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:700;color:var(--teal)}
+.chat-sub{font-size:.68rem;color:var(--muted);margin-top:.04rem;font-weight:300}
+.chat-badge{margin-left:auto;display:flex;align-items:center;gap:.4rem;background:var(--tealg);border:1px solid var(--border);color:var(--teal);padding:.22rem .72rem;border-radius:100px;font-size:.68rem;font-weight:700}
+.enc-dot{width:6px;height:6px;border-radius:50%;background:var(--emerald3);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.chat-header-actions{display:flex;gap:.5rem;margin-left:.75rem}
+.ch-btn{background:var(--tealg);border:1px solid var(--border2);color:var(--teal);padding:.28rem .72rem;border-radius:8px;font-size:.72rem;font-weight:600;cursor:pointer;text-decoration:none;transition:all .18s;font-family:'DM Sans',sans-serif}
+.ch-btn:hover{background:rgba(13,110,110,.15)}
+
+/* Chat body */
+.chat-body{flex:1;overflow-y:auto;padding:1.5rem;display:flex;flex-direction:column;gap:.85rem;background:radial-gradient(ellipse 80% 60% at 10% 90%,rgba(13,110,110,.04) 0%,transparent 60%),radial-gradient(ellipse 60% 60% at 90% 10%,rgba(212,196,168,.15) 0%,transparent 60%)}
+.date-divider{display:flex;align-items:center;gap:1rem;margin:.5rem 0;font-size:.7rem;color:var(--muted2);font-weight:500}
+.date-divider::before,.date-divider::after{content:'';flex:1;height:1px;background:var(--border3)}
+.msg{max-width:72%;display:flex;flex-direction:column;gap:.18rem}
+.msg.me{align-self:flex-end;align-items:flex-end}
+.msg.them{align-self:flex-start;align-items:flex-start}
+.msg-sender{font-size:.68rem;font-weight:700;color:var(--teal);margin-bottom:.15rem;text-transform:uppercase;letter-spacing:.05em}
+.msg.them .msg-sender{color:var(--muted)}
+.msg-bubble{padding:.75rem 1.05rem;border-radius:16px;font-size:.875rem;line-height:1.62;position:relative;animation:msgIn .3s cubic-bezier(.22,1,.36,1) both}
+@keyframes msgIn{from{opacity:0;transform:scale(.95) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.msg.me .msg-bubble{background:linear-gradient(135deg,var(--teal),var(--emerald));color:#fff;border-radius:16px 16px 4px 16px;box-shadow:0 4px 16px rgba(13,110,110,.22)}
+.msg.them .msg-bubble{background:var(--surf);border:1px solid var(--border2);border-radius:16px 16px 16px 4px;color:var(--text);box-shadow:var(--sh)}
+.msg-meta{font-size:.67rem;color:var(--muted2);font-weight:300;display:flex;align-items:center;gap:.35rem}
+.msg-read{font-size:.7rem;color:var(--emerald3)}
+.typing-bubble{display:flex;align-items:center;gap:.3rem;padding:.65rem 1rem}
+.typing-dot{width:6px;height:6px;border-radius:50%;background:var(--muted2);animation:typingBounce 1.2s infinite ease-in-out}
+.typing-dot:nth-child(2){animation-delay:.15s}.typing-dot:nth-child(3){animation-delay:.3s}
+@keyframes typingBounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}
+
+/* Empty/Welcome state */
+.chat-welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem;text-align:center;gap:.85rem;color:var(--muted)}
+.cw-icon{width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,var(--tealg),rgba(212,196,168,.2));border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:2rem;margin-bottom:.4rem}
+.cw-title{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--teal)}
+.cw-sub{font-size:.83rem;font-weight:300;color:var(--muted2);max-width:300px;line-height:1.65}
+
+/* Input bar */
+.chat-input-bar{padding:1rem 1.5rem;border-top:1px solid var(--border2);background:var(--surf);flex-shrink:0}
+.chat-form-row{display:flex;align-items:center;gap:.6rem}
+.chat-attach{width:38px;height:38px;border-radius:10px;background:var(--tealg);border:1px solid var(--border2);color:var(--teal);cursor:pointer;font-size:.95rem;display:flex;align-items:center;justify-content:center;transition:all .18s;flex-shrink:0}
+.chat-attach:hover{background:rgba(13,110,110,.15)}
+.chat-input{flex:1;background:var(--sand2);border:1.5px solid var(--border2);border-radius:12px;padding:.72rem 1.1rem;color:var(--text);font-size:.88rem;font-family:'DM Sans',sans-serif;outline:none;transition:all .22s;resize:none}
+.chat-input:focus{border-color:var(--teal2);background:var(--surf);box-shadow:0 0 0 3px rgba(13,110,110,.09)}
+.chat-input::placeholder{color:var(--muted2);opacity:.7}
+.char-count{font-size:.67rem;color:var(--muted2);font-weight:300;min-width:48px;text-align:right}
+.send-btn{background:linear-gradient(135deg,var(--teal),var(--emerald));color:#fff;border:none;width:42px;height:42px;border-radius:12px;font-size:1rem;cursor:pointer;transition:all .22s;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(13,110,110,.25);flex-shrink:0}
+.send-btn:hover{box-shadow:0 6px 20px rgba(13,110,110,.38);transform:translateY(-1px) scale(1.05)}
+.send-btn:active{transform:scale(.96)}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.input-locked{padding:1rem 1.5rem;background:linear-gradient(90deg,#042f2e,#065f46);display:flex;align-items:center;gap:.9rem;color:rgba(255,255,255,.7);font-size:.82rem}
+.input-locked a{color:#a7f3d0;font-weight:700;text-decoration:none}
+.input-locked a:hover{text-decoration:underline}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border3);border-radius:4px}
+
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--border3);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.4rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<script>
+const CONVS     = JSON.parse('{{ convs_json | safe }}');
+const MSGS_INIT = JSON.parse('{{ messages_json | safe }}');
+const CURRENT_PID = {{ pid | int }};
+const CURRENT_UID = {{ uid | int }};
+const USER_NAME = {{ user_name | tojson }};
+const ROLE      = {{ role | tojson }};
+const PITCH_DATA = {{ pitch | tojson }};
+</script>
+
+<!-- ── LEFT SIDEBAR ── -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <a href="javascript:history.back()" class="back-btn">← Back</a>
+    <div class="sidebar-title">Messages</div>
+  </div>
+
+  <div class="conv-list" id="convList"></div>
+
+  <div class="sidebar-foot">
+    <div class="sf-info"><span class="sf-dot"></span>End-to-end encrypted</div>
+  </div>
+</div>
+
+<!-- ── RIGHT CHAT AREA ── -->
+<div class="chat-area" id="chatArea">
+
+  <!-- Header (updated by JS) -->
+  <div class="chat-header" id="chatHeader">
+    <div class="chat-avatar" id="chatAvatar">✉</div>
+    <div>
+      <div class="chat-title" id="chatTitle">Messages</div>
+      <div class="chat-sub" id="chatSub">Select a conversation</div>
+    </div>
+    <div class="chat-badge"><span class="enc-dot"></span>Encrypted</div>
+    <div class="chat-header-actions" id="chatHeaderActions"></div>
+  </div>
+
+  <!-- Messages body -->
+  <div class="chat-body" id="chatBody">
+    <div class="chat-welcome">
+      <div class="cw-icon">✉</div>
+      <div class="cw-title">Your Messages</div>
+      <div class="cw-sub">Select a conversation from the left to start reading and replying</div>
+    </div>
+  </div>
+
+  <!-- Input bar -->
+  <div id="inputArea">
+    <div class="chat-input-bar" id="chatInputBar" style="display:none">
+      <div class="chat-form-row">
+        <div class="chat-attach" title="Attach file">📎</div>
+        <input type="text" id="msgInput" class="chat-input" placeholder="Type your message…" maxlength="1000" autocomplete="off" oninput="updateCount()">
+        <span class="char-count" id="charCount">0/1000</span>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Send">➤</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let activePid = CURRENT_PID || 0;
+let pollTimer = null;
+let lastMsgId = 0;
+
+/* ── Helpers ── */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtTime(ts){
+  if(!ts) return '';
+  try {
+    const d = new Date(ts);
+    const now = new Date();
+    const diff = Math.floor((now - d)/1000);
+    if(diff < 60) return 'just now';
+    if(diff < 3600) return Math.floor(diff/60)+'m ago';
+    if(diff < 86400) return d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+    return d.toLocaleDateString([],{month:'short',day:'numeric'});
+  } catch { return String(ts).slice(0,16); }
+}
+function updateCount(){
+  const len = document.getElementById('msgInput').value.length;
+  const el = document.getElementById('charCount');
+  el.textContent = `${len}/1000`;
+  el.style.color = len > 900 ? '#b91c1c' : 'var(--muted2)';
+}
+
+/* ── Render conversation list ── */
+function renderConvList(convs) {
+  const el = document.getElementById('convList');
+  if (!convs.length) {
+    el.innerHTML = `<div class="sidebar-empty"><div style="font-size:1.5rem;margin-bottom:.5rem">✉</div><p>No conversations yet.<br>Messages will appear here when investors contact you about your pitches.</p></div>`;
+    return;
+  }
+  el.innerHTML = convs.map(c => {
+    const letter = (c.title||'P').charAt(0).toUpperCase();
+    const preview = c.raw_text ? c.raw_text.slice(0,50)+'…' : 'Pitch conversation';
+    const unread = c.unread || 0;
+    const isActive = c.pitch_id === activePid;
+    return `<div class="conv-item${isActive?' active':''}" onclick="selectConv(${c.pitch_id}, this)">
+      <div class="conv-item-inner">
+        <div class="conv-avatar">${esc(letter)}</div>
+        <div class="conv-info">
+          <div class="conv-name">${esc(c.title||'Pitch #'+c.pitch_id)}</div>
+          <div class="conv-preview">${esc(preview)}</div>
+        </div>
+        <div class="conv-meta">
+          <div class="conv-time">Pitch #${c.pitch_id}</div>
+          ${unread > 0 ? `<div class="conv-unread">${unread}</div>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Select conversation ── */
+async function selectConv(pid, el) {
+  activePid = pid;
+  document.querySelectorAll('.conv-item').forEach(i=>i.classList.remove('active'));
+  if (el) el.classList.add('active');
+  stopPolling();
+
+  // Update header with pitch info
+  const conv = CONVS.find(c=>c.pitch_id===pid) || {};
+  document.getElementById('chatAvatar').textContent = (conv.title||'P').charAt(0).toUpperCase();
+  document.getElementById('chatTitle').textContent = `Pitch Conversation #${pid}`;
+  document.getElementById('chatSub').textContent = conv.raw_text ? conv.raw_text.slice(0,55)+'…' : 'Direct message';
+
+  // Action buttons
+  document.getElementById('chatHeaderActions').innerHTML = `
+    <a class="ch-btn" href="/investor/pitch/${pid}">View Pitch</a>
+    <a class="ch-btn" href="/messages/${pid}">Open Thread</a>
+  `;
+
+  document.getElementById('chatInputBar').style.display = '';
+
+  // Load messages
+  await loadMessages(pid);
+  startPolling(pid);
+}
+
+/* ── Load messages ── */
+async function loadMessages(pid) {
+  const body = document.getElementById('chatBody');
+  body.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted2)"><span class="spinner"></span>Loading messages…</div>`;
+  try {
+    const r = await fetch(`/api/messages/${pid}`);
+    if (!r.ok) throw new Error('Failed');
+    const msgs = await r.json();
+    renderMessages(msgs);
+    if (msgs.length) lastMsgId = msgs[msgs.length-1].id || 0;
+  } catch(e) {
+    body.innerHTML = `<div style="text-align:center;padding:3rem;color:var(--muted2);font-size:.83rem">Failed to load messages. <a href="/messages/${pid}" style="color:var(--teal)">Refresh →</a></div>`;
+  }
+}
+
+/* ── Render messages ── */
+function renderMessages(msgs) {
+  const body = document.getElementById('chatBody');
+  if (!msgs.length) {
+    body.innerHTML = `<div class="chat-welcome">
+      <div class="cw-icon">◆</div>
+      <div class="cw-title">No messages yet</div>
+      <div class="cw-sub">Start the conversation below — messages are end-to-end encrypted</div>
+    </div>`;
+    return;
+  }
+
+  // Group by date
+  const grouped = [];
+  let lastDate = '';
+  msgs.forEach(m => {
+    const d = m.timestamp ? new Date(m.timestamp).toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'}) : 'Today';
+    if (d !== lastDate) { grouped.push({type:'date', label: d}); lastDate = d; }
+    grouped.push({type:'msg', data: m});
+  });
+
+  body.innerHTML = grouped.map(item => {
+    if (item.type === 'date') return `<div class="date-divider">${esc(item.label)}</div>`;
+    const m = item.data;
+    const isMe = m.sender_id === CURRENT_UID;
+    const ts = m.timestamp ? String(m.timestamp).slice(0,16).replace('T',' ') : '';
+    return `<div class="msg ${isMe?'me':'them'}">
+      <div class="msg-sender">${esc(m.sender_name||'User')}</div>
+      <div class="msg-bubble">${esc(m.message)}</div>
+      <div class="msg-meta">
+        ${esc(ts)}
+        ${isMe ? '<span class="msg-read">✓✓</span>' : ''}
+      </div>
+    </div>`;
+  }).join('');
+
+  scrollToBottom();
+}
+
+/* ── Send message ── */
+async function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const btn = document.getElementById('sendBtn');
+  const msg = input.value.trim();
+  if (!msg || !activePid) return;
+
+  input.disabled = true;
+  btn.disabled = true;
+
+  try {
+    const r = await fetch(`/api/messages/${activePid}/send`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({message: msg})
+    });
+    if (r.ok) {
+      input.value = '';
+      updateCount();
+      await loadMessages(activePid);
+    }
+  } catch(e) {
+    console.error('Send failed:', e);
+  }
+  input.disabled = false;
+  btn.disabled = false;
+  input.focus();
+}
+
+/* ── Polling for new messages ── */
+async function pollMessages(pid) {
+  if (activePid !== pid) return;
+  try {
+    const r = await fetch(`/api/messages/${pid}`);
+    if (!r.ok) return;
+    const msgs = await r.json();
+    if (msgs.length && msgs[msgs.length-1].id !== lastMsgId) {
+      renderMessages(msgs);
+      lastMsgId = msgs[msgs.length-1].id || 0;
+    }
+  } catch(_) {}
+}
+function startPolling(pid) {
+  stopPolling();
+  pollTimer = setInterval(() => pollMessages(pid), 4000);
+}
+function stopPolling() {
+  if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+}
+
+function scrollToBottom() {
+  const b = document.getElementById('chatBody');
+  b.scrollTop = b.scrollHeight;
+}
+
+/* ── Enter to send ── */
+document.getElementById('msgInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+/* ── Boot ── */
+document.addEventListener('DOMContentLoaded', () => {
+  renderConvList(CONVS);
+
+  // If we landed on a specific pid, auto-open it
+  if (CURRENT_PID > 0) {
+    const conv = CONVS.find(c=>c.pitch_id===CURRENT_PID);
+    if (conv) {
+      // Update header immediately from server-rendered data
+      document.getElementById('chatAvatar').textContent = (PITCH_DATA.title||PITCH_DATA.raw_text||'P').charAt(0).toUpperCase();
+      document.getElementById('chatTitle').textContent = `Pitch Conversation #${CURRENT_PID}`;
+      document.getElementById('chatSub').textContent = PITCH_DATA.raw_text ? PITCH_DATA.raw_text.slice(0,55)+'…' : 'Direct message';
+      document.getElementById('chatHeaderActions').innerHTML = `
+        <a class="ch-btn" href="/investor/pitch/${CURRENT_PID}">View Pitch</a>
+      `;
+      document.getElementById('chatInputBar').style.display = '';
+
+      // Render initial messages from server
+      if (MSGS_INIT.length) {
+        renderMessages(MSGS_INIT);
+        lastMsgId = MSGS_INIT[MSGS_INIT.length-1].id || 0;
+      } else {
+        document.getElementById('chatBody').innerHTML = `<div class="chat-welcome">
+          <div class="cw-icon">◆</div>
+          <div class="cw-title">No messages yet</div>
+          <div class="cw-sub">Start the conversation below — messages are end-to-end encrypted</div>
+        </div>`;
+      }
+      startPolling(CURRENT_PID);
+    } else {
+      selectConv(CURRENT_PID, null);
+    }
+  }
+});
+
+// Cleanup on page leave
+window.addEventListener('beforeunload', stopPolling);
+</script>
+</body>
+</html>

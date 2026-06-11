@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pitch Detail · DreamLaunch</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --sand:#faf5ec;--sand2:#f2e9d8;--sand3:#e8dcc8;
+  --teal:#0d6e6e;--teal2:#0f8585;--teal3:#14a8a8;--tealg:rgba(13,110,110,.09);--teal-light:rgba(13,110,110,.05);
+  --emerald:#065f46;--emerald2:#047857;--emerald3:#10b981;
+  --surf:#fff;--text:#1a150a;--text2:#3d3020;--muted:#7a6a50;--muted2:#a09078;
+  --border:rgba(13,110,110,.14);--border2:rgba(13,110,110,.08);--border3:rgba(212,196,168,.4);
+  --amber:#92400e;--aG:rgba(146,64,14,.09);--red:#991b1b;--rG:rgba(153,27,27,.09);
+  --sh:0 1px 6px rgba(13,110,110,.06);--shm:0 4px 20px rgba(13,110,110,.11);--shl:0 12px 40px rgba(13,110,110,.16)
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--sand);color:var(--text);font-family:'DM Sans',sans-serif;display:grid;grid-template-columns:260px 1fr}
+
+/* ── SIDEBAR ── */
+aside{background:var(--surf);border-right:1px solid var(--border2);display:flex;flex-direction:column;overflow:hidden;position:relative}
+aside::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--teal),var(--emerald3))}
+.aside-logo{padding:1.4rem 1.5rem 1rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:.7rem}
+.logo-icon{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--emerald));display:flex;align-items:center;justify-content:center;font-size:.75rem;color:#fff;font-weight:700}
+.aside-logo-text{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--teal)}
+.aside-logo-text span{color:var(--text)}
+.pitch-meta-box{margin:.85rem .85rem 0;background:linear-gradient(135deg,#042f2e,#0d6e6e);border-radius:13px;padding:1.1rem;position:relative;overflow:hidden}
+.pitch-meta-box::before{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(20,168,168,.15);filter:blur(30px)}
+.pmb-id{font-size:.62rem;font-weight:700;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.1em;margin-bottom:.35rem}
+.pmb-title{font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;color:#fff;line-height:1.3;margin-bottom:.6rem}
+.pmb-badges{display:flex;gap:.35rem;flex-wrap:wrap}
+.pmb-badge{font-size:.6rem;font-weight:700;padding:.18rem .55rem;border-radius:100px}
+.pmb-badge.cat{background:rgba(20,168,168,.2);border:1px solid rgba(20,168,168,.3);color:#a7f3d0}
+.pmb-badge.score{background:rgba(240,192,64,.15);border:1px solid rgba(240,192,64,.25);color:#fde68a}
+.pmb-badge.stage{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.7)}
+.aside-fn-list{flex:1;overflow-y:auto;padding:.75rem 0}
+.fn-section{padding:.35rem 1.25rem;font-size:.58rem;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:.13em;margin-top:.5rem}
+.fn-btn{display:flex;align-items:center;gap:.6rem;padding:.52rem 1.25rem;width:100%;background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.81rem;font-weight:500;color:var(--muted);transition:all .18s;text-align:left;border-left:2.5px solid transparent;position:relative}
+.fn-btn:hover{color:var(--teal);background:var(--teal-light)}
+.fn-btn.active{color:var(--teal);background:var(--tealg);border-left-color:var(--teal2);font-weight:600}
+.fn-btn.done{color:var(--emerald)}
+.fn-btn.done .fn-icon{background:rgba(6,95,70,.12)}
+.fn-icon{width:26px;height:26px;border-radius:7px;background:var(--tealg);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.fn-check{position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--emerald3);color:#fff;font-size:.6rem;display:flex;align-items:center;justify-content:center;font-weight:800}
+.fn-lock{position:absolute;right:1.1rem;top:50%;transform:translateY(-50%);font-size:.75rem;opacity:.4}
+.aside-foot{padding:.85rem 1.25rem;border-top:1px solid var(--border2)}
+.back-btn{display:flex;align-items:center;gap:.5rem;color:var(--muted);text-decoration:none;font-size:.81rem;font-weight:500;transition:color .2s}
+.back-btn:hover{color:var(--teal)}
+
+/* ── MAIN ── */
+main{display:flex;flex-direction:column;overflow:hidden}
+.topbar{padding:.85rem 1.75rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:1rem;background:var(--surf);flex-shrink:0;box-shadow:var(--sh)}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--teal)}
+.topbar-right{display:flex;align-items:center;gap:.65rem;margin-left:auto}
+.tb-btn{background:var(--tealg);border:1px solid var(--border);color:var(--teal);padding:.32rem .82rem;border-radius:8px;font-size:.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .18s;text-decoration:none}
+.tb-btn:hover{background:rgba(13,110,110,.15)}
+.tb-btn.primary{background:linear-gradient(135deg,var(--teal),var(--emerald));color:#fff;border:none;box-shadow:0 3px 10px rgba(13,110,110,.22)}
+.tb-btn.primary:hover{box-shadow:0 5px 18px rgba(13,110,110,.35);transform:translateY(-1px)}
+.locked-bar{background:linear-gradient(90deg,#042f2e,#065f46);color:#fff;padding:.6rem 1.75rem;font-size:.82rem;font-weight:500;display:flex;align-items:center;gap:1rem;flex-shrink:0}
+.locked-bar a{color:#a7f3d0;font-weight:700;cursor:pointer;text-decoration:none}
+.locked-bar a:hover{text-decoration:underline}
+
+.content{flex:1;overflow-y:auto;padding:1.5rem 1.75rem;display:flex;flex-direction:column;gap:1.25rem}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border3);border-radius:4px}
+
+/* ── PITCH HERO ── */
+.pitch-hero{border-radius:16px;overflow:hidden;position:relative;height:155px;flex-shrink:0;box-shadow:var(--shl)}
+.pitch-hero img{width:100%;height:100%;object-fit:cover;object-position:center 35%}
+.pitch-hero-ov{position:absolute;inset:0;background:linear-gradient(90deg,rgba(4,47,46,.92) 0%,rgba(13,110,110,.7) 55%,transparent 100%)}
+.pitch-hero-content{position:absolute;inset:0;padding:1.5rem 1.75rem;display:flex;align-items:center;gap:1.5rem}
+.pitch-hero-score{width:70px;height:70px;border-radius:50%;background:rgba(255,255,255,.1);border:2px solid rgba(255,255,255,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;backdrop-filter:blur(6px);flex-shrink:0}
+.phs-val{font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:900;color:#fff;line-height:1}
+.phs-label{font-size:.55rem;color:rgba(255,255,255,.5);font-weight:500;text-transform:uppercase;margin-top:.1rem}
+.pitch-hero-text h2{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:900;color:#fff;margin-bottom:.3rem;line-height:1.2}
+.pitch-hero-text p{color:rgba(255,255,255,.5);font-size:.8rem;font-weight:300;line-height:1.55;max-width:520px}
+.pitch-hero-badges{display:flex;gap:.45rem;margin-top:.55rem;flex-wrap:wrap}
+.ph-badge{font-size:.63rem;font-weight:700;padding:.2rem .6rem;border-radius:100px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8)}
+
+/* ── CARDS ── */
+.card{background:var(--surf);border:1px solid var(--border2);border-radius:14px;padding:1.35rem;box-shadow:var(--sh)}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border2)}
+.card-title{font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:flex;align-items:center;gap:.45rem}
+.card-title .dot{width:7px;height:7px;border-radius:50%;background:var(--teal3)}
+
+/* ── PITCH RAW TEXT ── */
+.raw-text-box{background:var(--teal-light);border:1px solid var(--border2);border-radius:10px;padding:1.1rem 1.25rem;font-size:.86rem;line-height:1.75;color:var(--text2);white-space:pre-wrap;max-height:180px;overflow-y:auto}
+
+/* ── DATA GRID ── */
+.data-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.85rem}
+.data-item{background:var(--teal-light);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem}
+.di-label{font-size:.62rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+.di-val{font-size:.88rem;font-weight:600;color:var(--text);line-height:1.45}
+.di-val.empty{color:var(--muted2);font-weight:300;font-style:italic}
+
+/* ── AI RESULT PANEL ── */
+.ai-result{background:var(--surf);border:1px solid var(--border2);border-radius:14px;overflow:hidden;box-shadow:var(--sh)}
+.ai-result-head{padding:.9rem 1.25rem;border-bottom:1px solid var(--border2);display:flex;align-items:center;justify-content:space-between;background:var(--teal-light)}
+.air-title{font-size:.8rem;font-weight:700;color:var(--teal);display:flex;align-items:center;gap:.5rem}
+.air-badge{font-size:.62rem;font-weight:700;padding:.15rem .5rem;border-radius:100px;background:var(--tealg);color:var(--teal);border:1px solid var(--border)}
+.air-body{padding:1.25rem;font-size:.84rem;line-height:1.65;color:var(--text2)}
+.air-run-btn{background:linear-gradient(135deg,var(--teal),var(--emerald));color:#fff;border:none;padding:.38rem .9rem;border-radius:9px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;white-space:nowrap}
+.air-run-btn:hover{box-shadow:0 4px 14px rgba(13,110,110,.3);transform:translateY(-1px)}
+.air-run-btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+
+/* ── KEY-VALUE RESULT ROWS ── */
+.kv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.65rem;margin-bottom:.85rem}
+.kv-item{background:var(--teal-light);border:1px solid var(--border2);border-radius:9px;padding:.7rem .9rem}
+.kv-label{font-size:.61rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.22rem}
+.kv-val{font-size:.85rem;font-weight:600;color:var(--text)}
+.kv-val.score-high{color:var(--emerald)}
+.kv-val.score-mid{color:var(--teal)}
+.kv-val.score-low{color:var(--amber)}
+.tag-list{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:.5rem}
+.tag{font-size:.63rem;font-weight:600;padding:.18rem .55rem;border-radius:100px;background:var(--tealg);color:var(--teal);border:1px solid var(--border)}
+.tag.red{background:var(--rG);color:var(--red);border-color:rgba(153,27,27,.2)}
+.tag.amber{background:var(--aG);color:var(--amber);border-color:rgba(146,64,14,.2)}
+.tag.green{background:rgba(6,95,70,.09);color:var(--emerald);border-color:rgba(6,95,70,.2)}
+.list-clean{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.list-clean li{display:flex;align-items:flex-start;gap:.55rem;font-size:.83rem;color:var(--text2);line-height:1.5}
+.list-clean li::before{content:'◆';font-size:.5rem;color:var(--teal3);margin-top:.28rem;flex-shrink:0}
+.list-clean li.red::before{color:var(--red)}
+.list-clean li.green::before{color:var(--emerald3)}
+.score-circle{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:72px;height:72px;border-radius:50%;font-family:'Playfair Display',serif}
+.sc-high{background:rgba(6,95,70,.08);border:2px solid rgba(6,95,70,.2)}
+.sc-mid{background:var(--tealg);border:2px solid var(--border)}
+.sc-low{background:var(--aG);border:2px solid rgba(146,64,14,.2)}
+.sc-val{font-size:1.5rem;font-weight:900;line-height:1}
+.sc-high .sc-val{color:var(--emerald)}
+.sc-mid .sc-val{color:var(--teal)}
+.sc-low .sc-val{color:var(--amber)}
+.sc-label{font-size:.55rem;color:var(--muted);font-weight:500;text-transform:uppercase;margin-top:.1rem}
+
+/* ── SWOC GRID ── */
+.swoc-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.swoc-box{border-radius:10px;padding:.85rem 1rem}
+.swoc-box.s{background:rgba(6,95,70,.07);border:1px solid rgba(6,95,70,.18)}
+.swoc-box.w{background:var(--rG);border:1px solid rgba(153,27,27,.18)}
+.swoc-box.o{background:var(--tealg);border:1px solid var(--border)}
+.swoc-box.c{background:var(--aG);border:1px solid rgba(146,64,14,.18)}
+.swoc-label{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.5rem}
+.swoc-box.s .swoc-label{color:var(--emerald)}
+.swoc-box.w .swoc-label{color:var(--red)}
+.swoc-box.o .swoc-label{color:var(--teal)}
+.swoc-box.c .swoc-label{color:var(--amber)}
+.swoc-item{font-size:.78rem;color:var(--text2);padding:.2rem 0;border-bottom:1px solid rgba(0,0,0,.04);line-height:1.45}
+.swoc-item:last-child{border:none}
+
+/* ── CHART ── */
+.chart-wrap{height:200px;position:relative;margin-top:.5rem}
+
+/* ── FLAG CARDS ── */
+.flag-card{border-radius:10px;padding:.85rem 1rem;margin-bottom:.6rem}
+.flag-card.high{background:var(--rG);border:1px solid rgba(153,27,27,.2)}
+.flag-card.medium{background:var(--aG);border:1px solid rgba(146,64,14,.2)}
+.flag-card.low{background:var(--tealg);border:1px solid var(--border)}
+.flag-type{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.25rem}
+.flag-card.high .flag-type{color:var(--red)}
+.flag-card.medium .flag-type{color:var(--amber)}
+.flag-card.low .flag-type{color:var(--teal)}
+.flag-issue{font-size:.83rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+.flag-rec{font-size:.77rem;color:var(--muted);line-height:1.5}
+
+/* ── COMPETITOR TABLE ── */
+.comp-table{width:100%;border-collapse:collapse;font-size:.8rem}
+.comp-table th{padding:.55rem .8rem;text-align:left;font-size:.6rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--border2)}
+.comp-table td{padding:.65rem .8rem;border-bottom:1px solid var(--border2);color:var(--text2);vertical-align:top}
+.comp-table tr:last-child td{border:none}
+.comp-table tr:hover td{background:var(--teal-light)}
+.threat-high{color:var(--red);font-weight:700}
+.threat-medium{color:var(--amber);font-weight:700}
+.threat-low{color:var(--emerald);font-weight:700}
+
+/* ── MEMO BOX ── */
+.memo-box{background:var(--teal-light);border:1px solid var(--border2);border-radius:10px;padding:1.1rem 1.25rem;font-size:.83rem;line-height:1.8;color:var(--text2);white-space:pre-wrap;max-height:380px;overflow-y:auto}
+
+/* ── ROI SCENARIOS ── */
+.scenario-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem}
+.scenario-card{border-radius:12px;padding:1rem}
+.scenario-card.base{background:var(--tealg);border:1px solid var(--border)}
+.scenario-card.bull{background:rgba(6,95,70,.08);border:1px solid rgba(6,95,70,.2)}
+.scenario-card.bear{background:var(--rG);border:1px solid rgba(153,27,27,.18)}
+.sc-head{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.09em;margin-bottom:.6rem}
+.scenario-card.base .sc-head{color:var(--teal)}
+.scenario-card.bull .sc-head{color:var(--emerald)}
+.scenario-card.bear .sc-head{color:var(--red)}
+.sc-roi{font-family:'Playfair Display',serif;font-size:2rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.scenario-card.base .sc-roi{color:var(--teal)}
+.scenario-card.bull .sc-roi{color:var(--emerald)}
+.scenario-card.bear .sc-roi{color:var(--red)}
+.sc-sub{font-size:.72rem;color:var(--muted);line-height:1.6}
+
+/* ── SPINNER / STATES ── */
+.spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--border3);border-top-color:var(--teal);border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:.35rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.locked-overlay{position:relative}
+.locked-overlay::after{content:'🔒 Unlock pitch to view';position:absolute;inset:0;background:rgba(250,245,236,.92);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:var(--muted);border-radius:14px;backdrop-filter:blur(4px)}
+.empty-state{text-align:center;padding:2.5rem 1rem;color:var(--muted2);font-size:.84rem}
+.empty-state .es-icon{font-size:2rem;margin-bottom:.6rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeIn .35s ease both}
+</style>
+</head>
+<body>
+
+<script>
+const PITCH      = JSON.parse('{{ pitch | safe }}');
+const ANALYSIS   = JSON.parse('{{ analysis | safe }}');
+const IS_UNLOCKED= {{ 'true' if is_unlocked else 'false' }};
+const PID        = {{ pid }};
+const FN_META    = JSON.parse('{{ fn_meta | safe }}');
+const HISTORY    = JSON.parse('{{ history_json | safe }}');
+const PROFILE    = JSON.parse('{{ profile_json | safe }}');
+const USER_NAME  = {{ user_name | tojson }};
+const USER_ID    = {{ user_id }};
+</script>
+
+<!-- ══ SIDEBAR ══ -->
+<aside>
+  <div class="aside-logo">
+    <div class="logo-icon">◆</div>
+    <div class="aside-logo-text">Dream<span>Launch</span></div>
+  </div>
+
+  <!-- Pitch meta box -->
+  <div class="pitch-meta-box" id="sideMetaBox">
+    <div class="pmb-id">Pitch #<span id="sPitchId">—</span></div>
+    <div class="pmb-title" id="sPitchTitle">Loading…</div>
+    <div class="pmb-badges" id="sPitchBadges"></div>
+  </div>
+
+  <div class="aside-fn-list" id="fnList">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="aside-foot">
+    <a href="/investor" class="back-btn">← Back to Dashboard</a>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<main>
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Loading pitch…</div>
+    <div class="topbar-right">
+      <span id="unlockedBadge"></span>
+      <a href="/messages" class="tb-btn">✉ Message Founder</a>
+      <button class="tb-btn primary" id="unlockBtn" style="display:none"
+        onclick="location.href='/pay/'+PID">🔓 Unlock ₹5,000</button>
+    </div>
+  </div>
+
+  <!-- Locked bar -->
+  <div class="locked-bar" id="lockedBar" style="display:none">
+    🔒 This pitch is <strong>locked</strong> — unlock to access due diligence, investment memo, ROI models and all 13 investor AI tools.
+    <a onclick="location.href='/pay/'+PID">Unlock Now for ₹5,000 →</a>
+  </div>
+
+  <div class="content" id="mainContent">
+    <div class="empty-state"><div class="es-icon"><span class="spinner"></span></div>Loading pitch data…</div>
+  </div>
+</main>
+
+<script>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function safe(v,fb='—'){return v||fb;}
+
+// ─── Build sidebar function list ───
+const INVESTOR_NODES = [
+  {node:14,name:'Thesis Match Score',   icon:'🎯', desc:'Match % vs your thesis',    locked:false},
+  {node:15,name:'Due Diligence',        icon:'📋', desc:'Full DD checklist',          locked:true},
+  {node:16,name:'Competitive Intel',    icon:'🗺️', desc:"Porter's 5 Forces",         locked:true},
+  {node:17,name:'Market Validation',    icon:'📐', desc:'TAM/SAM/SOM fact-check',     locked:true},
+  {node:18,name:'Investment Memo',      icon:'📝', desc:'2000-word IC memo',          locked:true},
+  {node:19,name:'Portfolio Fit',        icon:'🔗', desc:'Synergies & conflicts',       locked:true},
+  {node:20,name:'Risk Matrix',          icon:'⚠️', desc:'Colour-coded risk grid',     locked:true},
+  {node:21,name:'Founder Background',   icon:'🔍', desc:'Verification checklist',     locked:true},
+  {node:22,name:'Term Sheet',           icon:'📄', desc:'Recommended terms',          locked:true},
+  {node:23,name:'Investor Emails',      icon:'✉️', desc:'4 ready-to-send emails',     locked:true},
+  {node:24,name:'Meeting Playbook',     icon:'🤝', desc:'60-min meeting guide',        locked:true},
+  {node:25,name:'ROI Scenarios',        icon:'💰', desc:'3 IRR exit models',          locked:true},
+];
+
+function buildSidebar() {
+  const list = document.getElementById('fnList');
+  // Overview section (always available)
+  let html = `
+    <div class="fn-section">Pitch Overview</div>
+    <button class="fn-btn active" id="fn-overview" onclick="showSection('overview',this)">
+      <div class="fn-icon">◈</div> Pitch Details
+    </button>
+    <button class="fn-btn" id="fn-score" onclick="showSection('score',this)">
+      <div class="fn-icon">⭐</div> AI Score & Analysis
+      ${ANALYSIS.node_2 ? '<span class="fn-check">✓</span>' : ''}
+    </button>
+    <button class="fn-btn" id="fn-swoc" onclick="showSection('swoc',this)">
+      <div class="fn-icon">📊</div> SWOC Analysis
+      ${ANALYSIS.node_3 ? '<span class="fn-check">✓</span>' : ''}
+    </button>
+    <button class="fn-btn" id="fn-flags" onclick="showSection('flags',this)">
+      <div class="fn-icon">🚩</div> Red Flags
+      ${ANALYSIS.node_6 ? '<span class="fn-check">✓</span>' : ''}
+    </button>
+    <button class="fn-btn" id="fn-competitors" onclick="showSection('competitors',this)">
+      <div class="fn-icon">🗺️</div> Competitors
+      ${ANALYSIS.node_8 ? '<span class="fn-check">✓</span>' : ''}
+    </button>
+    <div class="fn-section">Investor Tools</div>`;
+
+  INVESTOR_NODES.forEach(fn => {
+    const done   = !!HISTORY.find(h => h.function_num == fn.node);
+    const locked = fn.locked && !IS_UNLOCKED;
+    html += `
+      <button class="fn-btn ${done?'done':''}" id="fn-node${fn.node}"
+        onclick="${locked ? "location.href='/pay/'+PID" : `runInvestorNode(${fn.node},this)`}"
+        title="${esc(fn.desc)}">
+        <div class="fn-icon">${fn.icon}</div> ${fn.name}
+        ${done ? '<span class="fn-check">✓</span>' : ''}
+        ${locked ? '<span class="fn-lock">🔒</span>' : ''}
+      </button>`;
+  });
+
+  list.innerHTML = html;
+}
+
+// ─── Init page ───
+function initPage() {
+  const n1  = ANALYSIS.node_1 || {};
+  const n2  = ANALYSIS.node_2 || {};
+  const n7  = ANALYSIS.node_7 || {};
+
+  // Sidebar meta
+  document.getElementById('sPitchId').textContent    = PITCH.id;
+  document.getElementById('sPitchTitle').textContent = PITCH.title || ('Pitch #' + PITCH.id);
+  document.getElementById('sPitchBadges').innerHTML  = `
+    <span class="pmb-badge cat">${esc(PITCH.category||'General')}</span>
+    <span class="pmb-badge score">Score: ${PITCH.score||0}</span>
+    <span class="pmb-badge stage">${esc(n7.stage_guess||'Seed')}</span>`;
+
+  // Topbar
+  document.getElementById('topbarTitle').textContent = PITCH.title || ('Pitch #' + PITCH.id);
+
+  // Unlock state
+  if (IS_UNLOCKED) {
+    document.getElementById('unlockedBadge').innerHTML =
+      '<span style="background:rgba(6,95,70,.1);border:1px solid rgba(6,95,70,.2);color:var(--emerald);padding:.25rem .7rem;border-radius:100px;font-size:.7rem;font-weight:700">✓ Unlocked</span>';
+  } else {
+    document.getElementById('unlockBtn').style.display  = 'inline-block';
+    document.getElementById('lockedBar').style.display  = 'flex';
+  }
+
+  buildSidebar();
+  showSection('overview', document.getElementById('fn-overview'));
+}
+
+// ─── Section renderers ───
+let activeSection = '';
+function showSection(name, btn) {
+  activeSection = name;
+  document.querySelectorAll('.fn-btn').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const c = document.getElementById('mainContent');
+  c.innerHTML = '';
+
+  switch(name) {
+    case 'overview':     renderOverview(c); break;
+    case 'score':        renderScore(c); break;
+    case 'swoc':         renderSWOC(c); break;
+    case 'flags':        renderFlags(c); break;
+    case 'competitors':  renderCompetitors(c); break;
+    default:
+      // investor node results
+      const nodeNum = parseInt(name.replace('node',''));
+      if (nodeNum) renderNodeResult(c, nodeNum);
+  }
+}
+
+function renderOverview(c) {
+  const n1 = ANALYSIS.node_1 || {};
+  const n7 = ANALYSIS.node_7 || {};
+  const n9 = ANALYSIS.node_9 || {};
+
+  const fields = [
+    {label:'Problem',             val: n1.problem},
+    {label:'Solution',            val: n1.solution},
+    {label:'Target Market',       val: n1.target_market},
+    {label:'Market Size',         val: n1.market_size},
+    {label:'Competitive Advantage',val:n1.competitive_advantage},
+    {label:'Team',                val: n1.team},
+    {label:'Funding Ask',         val: n1.funding_ask || PITCH.funding_ask},
+    {label:'Product Stage',       val: n1.product_stage},
+    {label:'Revenue Model',       val: n1.revenue_model},
+    {label:'Traction',            val: n1.traction},
+  ];
+
+  c.innerHTML = `
+    <div class="pitch-hero fade-in">
+      <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=1400" alt="">
+      <div class="pitch-hero-ov"></div>
+      <div class="pitch-hero-content">
+        <div class="pitch-hero-score">
+          <div class="phs-val">${PITCH.score||0}</div>
+          <div class="phs-label">AI Score</div>
+        </div>
+        <div class="pitch-hero-text">
+          <h2>${esc(PITCH.title||'Pitch #'+PITCH.id)}</h2>
+          <p>${esc((PITCH.raw_text||'').slice(0,160))}…</p>
+          <div class="pitch-hero-badges">
+            <span class="ph-badge">${esc(PITCH.category||'General')}</span>
+            <span class="ph-badge">${esc(n7.business_model||'')}</span>
+            <span class="ph-badge">📅 ${esc((PITCH.created_at||'').slice(0,10))}</span>
+            <span class="ph-badge">👤 ${esc(PITCH.founder_name||'Founder')}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col fade-in">
+      <div class="card">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span>Pitch Text</div>
+        </div>
+        <div class="raw-text-box">${esc(PITCH.raw_text||'—')}</div>
+      </div>
+      <div class="card">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span>Founder Details</div>
+        </div>
+        <div class="data-grid" style="grid-template-columns:1fr">
+          <div class="data-item"><div class="di-label">Founder Name</div><div class="di-val">${esc(PITCH.founder_name||'—')}</div></div>
+          <div class="data-item"><div class="di-label">Contact Email</div><div class="di-val">${IS_UNLOCKED ? esc(PITCH.founder_email||'—') : '<span class="di-val empty">Unlock to view</span>'}</div></div>
+          <div class="data-item"><div class="di-label">Submitted</div><div class="di-val">${esc((PITCH.created_at||'').slice(0,16)||'—')}</div></div>
+          <div class="data-item"><div class="di-label">Status</div><div class="di-val"><span class="tag green">${esc(PITCH.status||'ACTIVE')}</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card fade-in">
+      <div class="card-h">
+        <div class="card-title"><span class="dot"></span>Extracted Pitch Data</div>
+        <span style="font-size:.7rem;color:var(--muted2)">AI-parsed from raw pitch · Node 1</span>
+      </div>
+      <div class="data-grid">
+        ${fields.map(f=>`
+          <div class="data-item">
+            <div class="di-label">${esc(f.label)}</div>
+            <div class="di-val ${f.val?'':'empty'}">${esc(f.val||'Not specified')}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    ${n7 && Object.keys(n7).length ? `
+    <div class="card fade-in">
+      <div class="card-h"><div class="card-title"><span class="dot"></span>Industry Classification · Node 7</div></div>
+      <div class="data-grid">
+        <div class="data-item"><div class="di-label">Primary Category</div><div class="di-val">${esc(n7.primary_category||'—')}</div></div>
+        <div class="data-item"><div class="di-label">Business Model</div><div class="di-val">${esc(n7.business_model||'—')}</div></div>
+        <div class="data-item"><div class="di-label">Stage</div><div class="di-val">${esc(n7.stage_guess||'—')}</div></div>
+        <div class="data-item"><div class="di-label">Growth Outlook</div><div class="di-val">${esc(n7.sector_growth_outlook||'—')}</div></div>
+      </div>
+      <div style="margin-top:.75rem">
+        <div class="di-label" style="margin-bottom:.4rem">Tags</div>
+        <div class="tag-list">${(n7.secondary_tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
+      </div>
+    </div>` : ''}`;
+}
+
+function renderScore(c) {
+  const n2 = ANALYSIS.node_2 || {};
+  const n5 = ANALYSIS.node_5 || {};
+  const n4 = ANALYSIS.node_4 || {};
+
+  if (!Object.keys(n2).length) {
+    c.innerHTML = `<div class="empty-state"><div class="es-icon">⭐</div><p>AI scoring data not yet available for this pitch.</p></div>`;
+    return;
+  }
+
+  const score = n2.total_score || 0;
+  const bd    = n2.breakdown   || {};
+  const cls   = score>=70?'sc-high':score>=45?'sc-mid':'sc-low';
+
+  c.innerHTML = `
+    <div class="two-col fade-in">
+      <div class="card">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>VC Quality Score · Node 2</div></div>
+        <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1rem">
+          <div class="score-circle ${cls}">
+            <div class="sc-val">${score}</div>
+            <div class="sc-label">/100</div>
+          </div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--teal)">${esc(n2.grade||'—')}</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-top:.25rem">${esc(n2.summary||'')}</div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="scoreRadar"></canvas></div>
+        <div style="font-size:.82rem;color:var(--text2);line-height:1.65;margin-top:.85rem;padding:.85rem;background:var(--teal-light);border-radius:9px;border:1px solid var(--border2)">
+          <strong style="color:var(--teal)">Verdict:</strong> ${esc(n2.investor_verdict||'—')}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:1.25rem">
+        <div class="card">
+          <div class="card-h"><div class="card-title"><span class="dot"></span>Score Breakdown</div></div>
+          ${Object.entries(bd).map(([k,v])=>`
+            <div style="margin-bottom:.55rem">
+              <div style="display:flex;justify-content:space-between;font-size:.77rem;margin-bottom:.25rem">
+                <span style="color:var(--muted);font-weight:600;text-transform:capitalize">${esc(k.replace(/_/g,' '))}</span>
+                <span style="font-weight:700;color:var(--teal)">${v}</span>
+              </div>
+              <div style="height:5px;background:var(--border3);border-radius:3px;overflow:hidden">
+                <div style="height:100%;width:${Math.min(v,30)/30*100}%;background:linear-gradient(90deg,var(--teal),var(--emerald3));border-radius:3px"></div>
+              </div>
+            </div>`).join('')}
+        </div>
+        ${n5 && n5.executive_summary ? `
+        <div class="card">
+          <div class="card-h"><div class="card-title"><span class="dot"></span>Executive Summary · Node 5</div></div>
+          <div style="font-size:.83rem;line-height:1.75;color:var(--text2);">${esc(n5.executive_summary||'')}</div>
+          <div style="margin-top:.75rem;padding:.65rem;background:var(--teal-light);border-radius:8px;border:1px solid var(--border2)">
+            <span style="font-size:.68rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em">Investment Hook</span>
+            <div style="font-size:.85rem;font-weight:600;color:var(--teal);margin-top:.2rem">${esc(n5.investment_hook||'—')}</div>
+          </div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    ${n4 && n4.suggestions ? `
+    <div class="card fade-in">
+      <div class="card-h"><div class="card-title"><span class="dot"></span>YC Improvement Suggestions · Node 4</div><span style="font-size:.7rem;color:var(--muted2)">Grade: ${esc(n4.overall_pitch_grade||'—')}</span></div>
+      ${(n4.suggestions||[]).map(s=>`
+        <div style="background:var(--teal-light);border:1px solid var(--border2);border-radius:10px;padding:.85rem 1rem;margin-bottom:.65rem">
+          <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
+            <span style="font-size:.83rem;font-weight:700;color:var(--teal)">${esc(s.issue||'')}</span>
+            <span class="tag ${s.priority==='High'?'red':s.priority==='Medium'?'amber':'green'}">${esc(s.priority||'')}</span>
+          </div>
+          <div style="font-size:.78rem;color:var(--muted);margin-bottom:.3rem">${esc(s.why_it_matters||'')}</div>
+          <div style="font-size:.8rem;color:var(--text2)"><strong>Action:</strong> ${esc(s.action||'')}</div>
+        </div>`).join('')}
+    </div>` : ''}`;
+
+  // Radar chart
+  if (Object.keys(bd).length) {
+    const labels = Object.keys(bd).map(k=>k.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase()));
+    const data   = Object.values(bd);
+    new Chart(document.getElementById('scoreRadar'), {
+      type: 'radar',
+      data: {
+        labels,
+        datasets:[{
+          data, label:'Score',
+          borderColor:'#0d6e6e', backgroundColor:'rgba(13,110,110,.12)',
+          pointBackgroundColor:'#0d6e6e', pointBorderColor:'#fff',
+          borderWidth:2, pointRadius:4
+        }]
+      },
+      options:{
+        responsive:true, maintainAspectRatio:false,
+        plugins:{legend:{display:false}},
+        scales:{r:{
+          grid:{color:'rgba(13,110,110,.08)'},
+          ticks:{color:'#7a6a50',font:{size:10},backdropColor:'transparent'},
+          pointLabels:{color:'#7a6a50',font:{size:10}}
+        }}
+      }
+    });
+  }
+}
+
+function renderSWOC(c) {
+  const n3 = ANALYSIS.node_3 || {};
+  if (!Object.keys(n3).length) {
+    c.innerHTML = `<div class="empty-state"><div class="es-icon">📊</div><p>SWOC analysis not yet available.</p></div>`;
+    return;
+  }
+  c.innerHTML = `
+    <div class="card fade-in">
+      <div class="card-h">
+        <div class="card-title"><span class="dot"></span>SWOC Analysis · Node 3</div>
+        <span style="font-size:.7rem;color:var(--muted2)">Strategic Score: ${n3.strategic_score||'—'}/100</span>
+      </div>
+      <div style="background:var(--teal-light);border:1px solid var(--border2);border-radius:9px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.83rem;color:var(--text2)">
+        <strong style="color:var(--teal)">Summary:</strong> ${esc(n3.summary||'—')}
+      </div>
+      <div class="swoc-grid">
+        <div class="swoc-box s">
+          <div class="swoc-label">✓ Strengths</div>
+          ${(n3.strengths||[]).map(s=>`<div class="swoc-item">${esc(s)}</div>`).join('')}
+        </div>
+        <div class="swoc-box w">
+          <div class="swoc-label">✗ Weaknesses</div>
+          ${(n3.weaknesses||[]).map(s=>`<div class="swoc-item">${esc(s)}</div>`).join('')}
+        </div>
+        <div class="swoc-box o">
+          <div class="swoc-label">◆ Opportunities</div>
+          ${(n3.opportunities||[]).map(s=>`<div class="swoc-item">${esc(s)}</div>`).join('')}
+        </div>
+        <div class="swoc-box c">
+          <div class="swoc-label">⚠ Challenges</div>
+          ${(n3.challenges||[]).map(s=>`<div class="swoc-item">${esc(s)}</div>`).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderFlags(c) {
+  const n6 = ANALYSIS.node_6 || {};
+  if (!Object.keys(n6).length) {
+    c.innerHTML = `<div class="empty-state"><div class="es-icon">🚩</div><p>Red flag analysis not yet available.</p></div>`;
+    return;
+  }
+  const riskCls = {High:'red',Medium:'medium',Low:'low'};
+  c.innerHTML = `
+    <div class="card fade-in">
+      <div class="card-h">
+        <div class="card-title"><span class="dot"></span>Red Flag Detection · Node 6</div>
+        <div style="display:flex;align-items:center;gap:.5rem">
+          <span class="tag ${n6.risk_level==='High'?'red':n6.risk_level==='Low'?'green':'amber'}">${esc(n6.risk_level||'—')} Risk</span>
+          <span style="font-size:.7rem;color:var(--muted2)">Investability: ${n6.investability_score||'—'}/100</span>
+        </div>
+      </div>
+      <div style="background:var(--teal-light);border:1px solid var(--border2);border-radius:9px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.83rem;color:var(--text2)">
+        ${esc(n6.overall_assessment||'—')}
+      </div>
+      ${(n6.flags||[]).map(f=>`
+        <div class="flag-card ${(riskCls[f.severity]||'low')}">
+          <div class="flag-type">${esc(f.type||'')} · ${esc(f.severity||'')}</div>
+          <div class="flag-issue">${esc(f.issue||'')}</div>
+          <div class="flag-rec">💡 ${esc(f.recommendation||'')}</div>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderCompetitors(c) {
+  const n8 = ANALYSIS.node_8 || {};
+  if (!Object.keys(n8).length) {
+    c.innerHTML = `<div class="empty-state"><div class="es-icon">🗺️</div><p>Competitor analysis not yet available.</p></div>`;
+    return;
+  }
+  c.innerHTML = `
+    <div class="card fade-in">
+      <div class="card-h">
+        <div class="card-title"><span class="dot"></span>Competitor Mapping · Node 8</div>
+        <div style="display:flex;gap:.5rem">
+          <span class="tag green">Moat: ${n8.competitive_moat_score||'—'}/10</span>
+          <span class="tag">${esc(n8.moat_type||'—')}</span>
+        </div>
+      </div>
+      <div style="background:var(--teal-light);border:1px solid var(--border2);border-radius:9px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.83rem;color:var(--text2)">
+        <strong style="color:var(--teal)">Advantage:</strong> ${esc(n8.competitive_advantage_summary||'—')}
+      </div>
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Direct Competitors</div>
+      <div style="overflow-x:auto;border:1px solid var(--border2);border-radius:10px;margin-bottom:1rem">
+        <table class="comp-table">
+          <thead><tr><th>Company</th><th>Position</th><th>Differentiator</th><th>Weakness</th><th>Threat</th></tr></thead>
+          <tbody>
+            ${(n8.direct_competitors||[]).map(comp=>`
+              <tr>
+                <td><strong style="color:var(--teal)">${esc(comp.name||'')}</strong><br><span style="font-size:.7rem;color:var(--muted)">${esc(comp.funding||'')}</span></td>
+                <td>${esc(comp.market_position||'')}</td>
+                <td style="max-width:180px">${esc(comp.differentiator||'')}</td>
+                <td style="max-width:180px;color:var(--emerald)">${esc(comp.weakness||'')}</td>
+                <td class="threat-${(comp.threat_level||'').toLowerCase()}">${esc(comp.threat_level||'')}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      ${(n8.indirect_competitors||[]).length ? `
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem">Indirect / Alternatives</div>
+      <div class="list-clean">
+        ${(n8.indirect_competitors||[]).map(c=>`<li>${esc(c.name||'')} — ${esc(c.type||'')} (${esc(c.why_people_use_it||'')})</li>`).join('')}
+      </div>` : ''}
+    </div>`;
+}
+
+// ─── Run investor node (13-25) ───
+async function runInvestorNode(node, btn) {
+  showSection('node'+node, btn);
+  const c = document.getElementById('mainContent');
+
+  if (!IS_UNLOCKED && node !== 14) {
+    c.innerHTML = `
+      <div class="card fade-in" style="text-align:center;padding:3rem 2rem">
+        <div style="font-size:2.5rem;margin-bottom:1rem">🔒</div>
+        <div style="font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--teal);margin-bottom:.5rem">Unlock Required</div>
+        <div style="color:var(--muted);font-size:.88rem;margin-bottom:1.5rem">Unlock this pitch to access all 13 investor AI tools including this analysis.</div>
+        <button class="tb-btn primary" onclick="location.href='/pay/'+PID">🔓 Unlock for ₹5,000</button>
+      </div>`;
+    return;
+  }
+
+  const fn = INVESTOR_NODES.find(f => f.node === node) || {};
+  c.innerHTML = `<div class="empty-state"><span class="spinner"></span>Running ${fn.name||'AI Analysis'}…</div>`;
+
+  // Build request body
+  const body = {};
+  if (node === 14) {
+    body.thesis = (PROFILE && PROFILE.thesis) || 'General VC investing in Indian startups';
+  } else if (node === 25) {
+    body.amount = 'Rs2 crore';
+    body.stake  = '15%';
+  } else if (node === 19) {
+    body.portfolio = (PROFILE && PROFILE.industries) || 'No portfolio specified';
+  }
+
+  try {
+    const r = await fetch(`/api/investor/analyze/${PID}/${node}`, {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(body)
+    });
+    const d = await r.json();
+    if (d.success && d.data) {
+      renderNodeData(c, node, d.data);
+      // Mark done in sidebar
+      const sideBtn = document.getElementById(`fn-node${node}`);
+      if (sideBtn && !sideBtn.querySelector('.fn-check')) {
+        sideBtn.classList.add('done');
+        sideBtn.insertAdjacentHTML('beforeend','<span class="fn-check">✓</span>');
+      }
+    } else {
+      c.innerHTML = `<div class="card fade-in"><div class="empty-state" style="color:var(--red)">Error: ${esc(d.error||'Analysis failed. Please try again.')}</div></div>`;
+    }
+  } catch(e) {
+    c.innerHTML = `<div class="card fade-in"><div class="empty-state" style="color:var(--red)">Network error: ${esc(e.message)}</div></div>`;
+  }
+}
+
+function renderNodeData(c, node, data) {
+  const fn = INVESTOR_NODES.find(f=>f.node===node)||{};
+  let html = '';
+
+  // ── Node 14: Thesis Match ──
+  if (node === 14) {
+    const cls = (data.match_score||0)>=75?'sc-high':(data.match_score||0)>=50?'sc-mid':'sc-low';
+    html = `
+      <div class="card fade-in">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>Thesis Match Score · Node 14</div></div>
+        <div style="display:flex;align-items:center;gap:1.5rem;margin-bottom:1.25rem">
+          <div class="score-circle ${cls}">
+            <div class="sc-val">${data.match_score||0}</div>
+            <div class="sc-label">Match</div>
+          </div>
+          <div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.5rem;font-weight:700;color:var(--teal)">${esc(data.match_grade||'—')}</div>
+            <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem">${esc(data.recommendation||'')}</div>
+            <div style="margin-top:.4rem"><span class="tag green">Conviction: ${esc(data.conviction_level||'—')}</span></div>
+          </div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div style="font-size:.7rem;font-weight:700;color:var(--emerald);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">✓ Why it Matches</div>
+            <ul class="list-clean">${(data.match_reasons||[]).map(r=>`<li class="green">${esc(r)}</li>`).join('')}</ul>
+          </div>
+          <div>
+            <div style="font-size:.7rem;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem">✗ Mismatches</div>
+            <ul class="list-clean">${(data.mismatch_reasons||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div style="margin-top:1rem;padding:.85rem;background:var(--teal-light);border:1px solid var(--border2);border-radius:9px">
+          <div class="di-label">Suggested Check Size</div>
+          <div style="font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--teal)">${esc(data.suggested_check_size||'—')}</div>
+        </div>
+      </div>`;
+  }
+
+  // ── Node 15: Due Diligence ──
+  else if (node === 15) {
+    html = `
+      <div class="card fade-in">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>Due Diligence Checklist · Node 15</div>
+          <span class="tag">${esc(data.dd_complexity||'—')} · ${esc(data.estimated_dd_duration||'—')}</span>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="di-label" style="margin-bottom:.5rem">Documents to Request</div>
+            <ul class="list-clean">${(data.documents_to_request||[]).map(d=>`<li>${esc(d)}</li>`).join('')}</ul>
+          </div>
+          <div>
+            <div class="di-label" style="margin-bottom:.5rem">Red Flags to Watch</div>
+            <ul class="list-clean">${(data.red_flags_to_watch||[]).map(d=>`<li class="red">${esc(d)}</li>`).join('')}</ul>
+          </div>
+        </div>
+        <div style="margin-top:1rem">
+          <div class="di-label" style="margin-bottom:.5rem">Key Questions to Ask</div>
+          <ul class="list-clean">${(data.key_questions||[]).map(q=>`<li>${esc(q)}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+  }
+
+  // ── Node 17: Market Validation ──
+  else if (node === 17) {
+    const tamV = data.tam_validation||{}, samV = data.sam_validation||{}, somV = data.som_validation||{};
+    html = `
+      <div class="card fade-in">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>Market Validation · Node 17</div>
+          <span style="font-size:.7rem;color:var(--muted2)">Credibility: ${data.credibility_score||'—'}/10</span>
+        </div>
+        <div class="kv-grid" style="grid-template-columns:repeat(3,1fr)">
+          ${[['TAM',tamV],['SAM',samV],['SOM',somV]].map(([label,v])=>`
+            <div class="kv-item">
+              <div class="kv-label">${label}</div>
+              <div class="kv-val">${esc(v.actual_estimate||'—')}</div>
+              <div style="font-size:.72rem;margin-top:.2rem"><span class="tag ${v.verdict?.includes('Over')?'amber':'green'}">${esc(v.verdict||'—')}</span></div>
+              <div style="font-size:.76rem;color:var(--muted);margin-top:.3rem;line-height:1.45">${esc(v.reasoning||'')}</div>
+            </div>`).join('')}
+        </div>
+        <div style="margin-top:.85rem">
+          <div class="di-label" style="margin-bottom:.4rem">Recommended Data Sources</div>
+          <div class="tag-list">${(data.data_sources_recommended||[]).map(s=>`<span class="tag">${esc(s)}</span>`).join('')}</div>
+        </div>
+      </div>`;
+  }
+
+  // ── Node 18: Investment Memo ──
+  else if (node === 18) {
+    const terms = data.proposed_terms||{};
+    html = `
+      <div class="card fade-in">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span>Investment Memo · Node 18</div>
+          <span class="tag ${data.recommendation==='Invest'?'green':'amber'}">${esc(data.recommendation||'—')} · ${data.confidence_level||'—'}% confidence</span>
+        </div>
+        <div class="kv-grid">
+          <div class="kv-item"><div class="kv-label">Amount</div><div class="kv-val">${esc(terms.amount||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Stake</div><div class="kv-val">${esc(terms.stake||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Instrument</div><div class="kv-val">${esc(terms.instrument||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Deal Timeline</div><div class="kv-val">${esc(data.deal_timeline||'—')}</div></div>
+        </div>
+        <div class="memo-box">${esc(data.memo_markdown||'No memo generated.')}</div>
+      </div>`;
+  }
+
+  // ── Node 20: Risk Matrix ──
+  else if (node === 20) {
+    const lvlCls = {High:'red',Medium:'amber',Low:'green'};
+    html = `
+      <div class="card fade-in">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span>Risk Assessment Matrix · Node 20</div>
+          <span style="font-size:.7rem;color:var(--muted2)">Overall Risk: ${data.overall_risk_score||'—'}/10</span>
+        </div>
+        <div style="background:var(--teal-light);border:1px solid var(--border2);border-radius:9px;padding:.75rem 1rem;margin-bottom:1rem;font-size:.83rem;color:var(--text2)">${esc(data.risk_summary||'')}</div>
+        ${(data.risk_matrix||[]).map(r=>`
+          <div class="flag-card ${lvlCls[r.level]||'low'}" style="margin-bottom:.65rem">
+            <div style="display:flex;justify-content:space-between;margin-bottom:.3rem">
+              <div class="flag-type">${esc(r.category||'')}</div>
+              <span class="tag ${lvlCls[r.level]||''}">${esc(r.level||'')}</span>
+            </div>
+            <div class="tag-list" style="margin-bottom:.4rem">${(r.factors||[]).map(f=>`<span class="tag">${esc(f)}</span>`).join('')}</div>
+            <div class="flag-rec">💡 ${esc(r.mitigation||'')}</div>
+          </div>`).join('')}
+        <div style="margin-top:.85rem">
+          <div class="di-label" style="margin-bottom:.5rem">Investment Conditions</div>
+          <ul class="list-clean">${(data.investment_conditions||[]).map(c=>`<li>${esc(c)}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+  }
+
+  // ── Node 22: Term Sheet ──
+  else if (node === 22) {
+    html = `
+      <div class="card fade-in">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>Term Sheet Recommendations · Node 22</div></div>
+        <div class="kv-grid">
+          <div class="kv-item"><div class="kv-label">Pre-Money Valuation</div><div class="kv-val kv-val score-mid">${esc(data.pre_money_valuation||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Investment Amount</div><div class="kv-val">${esc(data.investment_amount||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Equity Stake</div><div class="kv-val">${esc(data.equity_stake||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Instrument</div><div class="kv-val">${esc(data.instrument||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Liquidation Pref</div><div class="kv-val">${esc(data.liquidation_preference||'—')}</div></div>
+          <div class="kv-item"><div class="kv-label">Anti-Dilution</div><div class="kv-val">${esc(data.anti_dilution||'—')}</div></div>
+        </div>
+        <div style="margin-top:.85rem">
+          <div class="di-label" style="margin-bottom:.5rem">Information Rights</div>
+          <ul class="list-clean">${(data.information_rights||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ul>
+        </div>
+        <div style="margin-top:.85rem">
+          <div class="di-label" style="margin-bottom:.5rem">Protective Provisions</div>
+          <ul class="list-clean">${(data.protective_provisions||[]).map(r=>`<li>${esc(r)}</li>`).join('')}</ul>
+        </div>
+      </div>`;
+  }
+
+  // ── Node 23: Investor Emails ──
+  else if (node === 23) {
+    html = `
+      <div class="card fade-in">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>Investor Email Templates · Node 23</div></div>
+        ${(data.emails||[]).map((email,i)=>`
+          <div style="background:var(--teal-light);border:1px solid var(--border2);border-radius:12px;padding:1.1rem;margin-bottom:.85rem">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem">
+              <span class="tag green">${esc(email.type||'Email '+(i+1))}</span>
+              <span style="font-size:.7rem;color:var(--muted2)">${esc(email.send_within||'')}</span>
+            </div>
+            <div style="font-size:.78rem;font-weight:700;color:var(--teal);margin-bottom:.5rem">Subject: ${esc(email.subject||'')}</div>
+            <div style="font-size:.8rem;line-height:1.75;color:var(--text2);white-space:pre-wrap;max-height:150px;overflow-y:auto">${esc(email.body||'')}</div>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  // ── Node 25: ROI Scenarios ──
+  else if (node === 25) {
+    const sc = data.scenarios||{};
+    const base=sc.base_case||{}, bull=sc.bull_case||{}, bear=sc.bear_case||{};
+    html = `
+      <div class="card fade-in">
+        <div class="card-h">
+          <div class="card-title"><span class="dot"></span>ROI Exit Scenarios · Node 25</div>
+          <span style="font-size:.7rem;color:var(--muted2)">Weighted IRR: ${esc(data.weighted_irr||'—')}</span>
+        </div>
+        <div class="scenario-grid">
+          <div class="scenario-card base">
+            <div class="sc-head">⚖ Base Case · ${esc(base.probability||'60%')}</div>
+            <div class="sc-roi">${esc(base.roi||'—')}</div>
+            <div class="sc-sub">IRR: ${esc(base.irr||'—')}<br>Exit Year: ${esc(String(base.exit_year||'—'))}<br>Exit Val: ${esc(base.exit_valuation||'—')}</div>
+          </div>
+          <div class="scenario-card bull">
+            <div class="sc-head">🚀 Bull Case · ${esc(bull.probability||'25%')}</div>
+            <div class="sc-roi">${esc(bull.roi||'—')}</div>
+            <div class="sc-sub">IRR: ${esc(bull.irr||'—')}<br>Exit Year: ${esc(String(bull.exit_year||'—'))}<br>Exit Val: ${esc(bull.exit_valuation||'—')}</div>
+          </div>
+          <div class="scenario-card bear">
+            <div class="sc-head">📉 Bear Case · ${esc(bear.probability||'15%')}</div>
+            <div class="sc-roi">${esc(bear.roi||'—')}</div>
+            <div class="sc-sub">IRR: ${esc(bear.irr||'—')}<br>Exit Year: ${esc(String(bear.exit_year||'—'))}<br>Exit Val: ${esc(bear.exit_valuation||'—')}</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;padding:.85rem;background:var(--teal-light);border:1px solid var(--border2);border-radius:9px;font-size:.83rem;color:var(--text2)">
+          <strong style="color:var(--teal)">Summary:</strong> ${esc(data.summary||'—')}
+        </div>
+        <div class="chart-wrap" style="margin-top:1rem"><canvas id="roiChart"></canvas></div>
+      </div>`;
+
+    // ROI bar chart — rendered after HTML inserted
+    setTimeout(() => {
+      const ctx = document.getElementById('roiChart');
+      if (!ctx) return;
+      new Chart(ctx, {
+        type:'bar',
+        data:{
+          labels:['Base Case','Bull Case','Bear Case'],
+          datasets:[{
+            label:'ROI',
+            data:[parseFloat(base.roi)||0, parseFloat(bull.roi)||0, parseFloat(bear.roi)||0],
+            backgroundColor:['rgba(13,110,110,.6)','rgba(6,95,70,.7)','rgba(153,27,27,.5)'],
+            borderRadius:8, borderSkipped:false
+          }]
+        },
+        options:{
+          responsive:true, maintainAspectRatio:false,
+          plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.raw}x ROI`}}},
+          scales:{
+            y:{grid:{color:'rgba(13,110,110,.06)'},ticks:{color:'#7a6a50',font:{size:10}},border:{display:false}},
+            x:{grid:{display:false},ticks:{color:'#7a6a50',font:{size:10}},border:{display:false}}
+          }
+        }
+      });
+    }, 80);
+  }
+
+  // ── Generic fallback for other nodes ──
+  else {
+    html = `
+      <div class="card fade-in">
+        <div class="card-h"><div class="card-title"><span class="dot"></span>${esc(fn.name||'AI Analysis')} · Node ${node}</div></div>
+        <pre style="font-size:.78rem;line-height:1.7;color:var(--text2);white-space:pre-wrap;overflow-x:auto">${esc(JSON.stringify(data,null,2))}</pre>
+      </div>`;
+  }
+
+  c.innerHTML = html;
+}
+
+// ─── Boot ───
+document.addEventListener('DOMContentLoaded', initPage);
+</script>
+</body>
+</html>

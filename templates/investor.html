@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Investor Terminal | Nexus VC</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap');
+        body { background: #07070b; color: #fff; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .row-hover:hover { background: rgba(59, 130, 246, 0.05); border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="p-8 md:p-12">
+    <div class="max-w-7xl mx-auto">
+        <header class="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+            <div>
+                <span class="text-blue-500 font-bold text-xs tracking-[0.4em] uppercase mb-2 block">Alpha Dealflow</span>
+                <h1 class="text-5xl font-black tracking-tight">Venture Matrix</h1>
+            </div>
+            <div class="flex gap-4">
+                <div class="glass p-4 rounded-2xl min-w-[140px] text-center">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">In Pipeline</p>
+                    <p class="text-2xl font-black text-blue-400">24</p>
+                </div>
+                <div class="glass p-4 rounded-2xl min-w-[140px] text-center border-emerald-500/20">
+                    <p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Avg AI Score</p>
+                    <p class="text-2xl font-black text-emerald-400">78.4</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="glass rounded-[2rem] overflow-hidden">
+            <table class="w-full text-left">
+                <thead class="bg-white/5 text-slate-500 text-[10px] uppercase tracking-[0.2em] font-black">
+                    <tr>
+                        <th class="p-8">Venture Entity</th>
+                        <th class="p-8">Sector / Vertical</th>
+                        <th class="p-8">AI Conviction</th>
+                        <th class="p-8">Requested</th>
+                        <th class="p-8 text-right">Protocol</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                    <tr class="row-hover transition-all group">
+                        <td class="p-8">
+                            <div class="font-black text-xl text-white group-hover:text-blue-400 transition-colors">Aether AI</div>
+                            <div class="text-xs text-slate-500 font-medium">Founder: Dr. Aris Thorne</div>
+                        </td>
+                        <td class="p-8">
+                            <span class="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-4 py-1.5 rounded-full text-[10px] font-black uppercase">DeepTech</span>
+                        </td>
+                        <td class="p-8">
+                            <div class="flex items-center gap-4">
+                                <div class="w-32 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-blue-600 to-purple-500" style="width: 92%"></div>
+                                </div>
+                                <span class="font-mono font-bold text-blue-300">92%</span>
+                            </div>
+                        </td>
+                        <td class="p-8">
+                            <div class="font-black text-lg">$4.5M</div>
+                            <div class="text-[10px] text-slate-500 uppercase">Series A</div>
+                        </td>
+                        <td class="p-8 text-right">
+                            <button class="bg-white text-black px-6 py-3 rounded-xl text-xs font-black uppercase hover:bg-blue-500 hover:text-white transition-all active:scale-95">Generate Memo</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register · {{ role }} · DreamLaunch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --ivory:#fdf8f0;--ivory2:#f7f0e4;
+      --gold:#b8860b;--gold2:#d4a017;--goldg:rgba(184,134,11,.09);
+      --navy:#0d1b2a;--navy2:#1a2d42;
+      --text:#1a1208;--muted:#7a6a50;--border:rgba(184,134,11,.2);--border2:rgba(184,134,11,.1)
+    }
+    body{font-family:'Outfit',sans-serif;background:var(--ivory);min-height:100vh;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+    .left{position:relative;overflow:hidden;background:url('https://images.pexels.com/photos/3183186/pexels-photo-3183186.jpeg?auto=compress&cs=tinysrgb&w=1200') center/cover}
+    .left::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(13,27,42,.88),rgba(13,27,42,.6))}
+    .left-inner{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:3rem}
+    .left-logo{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:#f0c040;margin-bottom:2.5rem}
+    .left-inner h2{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:700;color:#fff;line-height:1.08;margin-bottom:1rem;letter-spacing:-.01em}
+    .left-inner h2 em{color:#f0c040;font-style:italic}
+    .left-inner p{font-size:.9rem;color:rgba(255,255,255,.45);line-height:1.75;font-weight:300;max-width:340px;margin-bottom:2rem}
+    .feat-list{list-style:none;display:flex;flex-direction:column;gap:.65rem}
+    .feat-list li{display:flex;align-items:center;gap:.65rem;font-size:.84rem;color:rgba(255,255,255,.62)}
+    .feat-list li::before{content:'◆';color:#f0c040;font-size:.5rem;flex-shrink:0}
+    .right{background:var(--ivory);display:flex;align-items:center;justify-content:center;padding:3rem;position:relative}
+    #particles-reg{position:absolute;inset:0}
+    .form-box{width:100%;max-width:400px;position:relative;z-index:2}
+    .role-chip{display:inline-flex;align-items:center;gap:.4rem;background:var(--goldg);border:1px solid var(--border);color:var(--gold);padding:.24rem .75rem;border-radius:100px;font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:1.5rem}
+    h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--navy);margin-bottom:.35rem;letter-spacing:-.01em}
+    .sub{font-size:.87rem;color:var(--muted);margin-bottom:2rem;font-weight:300}
+    .field{margin-bottom:1.2rem}
+    label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.45rem}
+    input{width:100%;background:#fff;border:1.5px solid var(--border2);border-radius:10px;padding:.8rem 1.1rem;font-size:.9rem;font-family:'Outfit',sans-serif;color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;box-shadow:0 1px 4px rgba(26,18,8,.04)}
+    input:focus{border-color:var(--gold2);box-shadow:0 0 0 3px rgba(184,134,11,.1)}
+    input::placeholder{color:rgba(122,106,80,.4)}
+    .error{background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;border-radius:9px;padding:.7rem .95rem;font-size:.83rem;margin-bottom:1.2rem;font-weight:500}
+    .btn{width:100%;padding:.88rem;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;border:none;font-family:'Outfit',sans-serif;background:linear-gradient(135deg,var(--navy),var(--navy2));color:#fff;transition:all .22s;letter-spacing:.01em;margin-top:.5rem}
+    .btn:hover{box-shadow:0 8px 24px rgba(13,27,42,.28);transform:translateY(-1px)}
+    .divider{display:flex;align-items:center;gap:.85rem;margin:1.35rem 0}
+    .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border2)}
+    .divider span{color:var(--muted);font-size:.73rem}
+    .link-row{text-align:center;font-size:.84rem;color:var(--muted);font-weight:300}
+    .link-row a{color:var(--gold);font-weight:600;text-decoration:none}
+    .link-row a:hover{text-decoration:underline}
+    .back-link{display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:1.35rem;font-size:.82rem;color:var(--muted);text-decoration:none;font-weight:500;transition:color .2s}
+    .back-link:hover{color:var(--gold)}
+    @media(max-width:768px){body{grid-template-columns:1fr;overflow:auto}.left{display:none}.right{min-height:100vh}}
+    </style>
+</head>
+<body>
+<div class="left">
+  <div class="left-inner">
+    <div class="left-logo">◆ DreamLaunch</div>
+    <h2>Build the<br><em>Future</em> Today</h2>
+    <p>Join thousands of innovators and investors using real-time AI intelligence to bridge vision and capital.</p>
+    {% if role == 'Innovator' %}
+    <ul class="feat-list">
+      <li>AI-scored pitch on the Sequoia VC rubric</li>
+      <li>SWOC analysis + red flag detection</li>
+      <li>Competitor map + investor profiling</li>
+      <li>12-slide deck outline with design tips</li>
+    </ul>
+    {% else %}
+    <ul class="feat-list">
+      <li>Semantic thesis-match scoring</li>
+      <li>AI due diligence checklist per deal</li>
+      <li>2000-word investment memos</li>
+      <li>ROI exit scenario projections</li>
+    </ul>
+    {% endif %}
+  </div>
+</div>
+<div class="right">
+  <div id="particles-reg"></div>
+  <div class="form-box">
+    <div class="role-chip">◆ {{ role }} Registration</div>
+    <h1>Create Account</h1>
+    <div class="sub">Begin your intelligence-backed journey</div>
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    <form method="POST">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" name="name" required placeholder="Alex Rivera">
+      </div>
+      <div class="field">
+        <label>Work Email</label>
+        <input type="email" name="email" required placeholder="alex@company.com">
+      </div>
+      <div class="field">
+        <label>Secure Password</label>
+        <input type="password" name="password" required minlength="8" placeholder="Minimum 8 characters">
+      </div>
+      <button type="submit" class="btn">Create Account →</button>
+    </form>
+    <div class="divider"><span>Already a member?</span></div>
+    <div class="link-row"><a href="/login/{{ role.lower() }}">Sign in to your account →</a></div>
+    <a href="/" class="back-link">← Return to Home</a>
+  </div>
+</div>
+<script>
+particlesJS("particles-reg",{particles:{number:{value:20},color:{value:"#b8860b"},shape:{type:"circle"},opacity:{value:.1,random:true},size:{value:2.5},line_linked:{enable:true,distance:140,color:"#b8860b",opacity:.05,width:1},move:{enable:true,speed:.7}}});
+</script>
+</body>
+</html>
