@@ -1,6 +1,6 @@
 from google import genai
 
-client = genai.Client(api_key="AIzaSyB_-moPzIWKi3gSRX6QAgSPYdQTeINsZLM")
+client = genai.Client(api_key="Gemini_api_key")
 
 print("Available Models and Versions:")
 for model in client.models.list():
